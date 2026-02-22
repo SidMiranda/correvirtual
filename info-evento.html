@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Descrição do Evento</title>
+  <link rel="stylesheet" href="info-evento.css">
+</head>
+<body>
+
+  <!-- BANNER -->
+  <div class="banner-wrap">
+    <a class="back-button" href="index.html">← Voltar</a>
+    <section class="event-banner">
+      <img src="img/banner-evento.jpg" alt="Banner do evento" class="banner-img">
+    </section>
+  </div>
+
+  <!-- CONTEÚDO -->
+  <section class="event-content">
+
+    <!-- COLUNA DIREITA (CTA / DATA / LOCAL) -->
+    <aside class="event-side">
+      <div class="event-info-box">
+        <h3>Data</h3>
+        <p>03 de Março de 2026</p>
+      </div>
+
+      <div class="event-info-box">
+        <h3>Local</h3>
+        <p>Av. 9 de Abril<br>
+        Mogi Guaçu - SP</p>
+      </div>
+
+      <button class="cta-button" onclick="redirectPayment()">
+        Inscreva-se
+      </button>
+    </aside>
+
+    <!-- COLUNA ESQUERDA (DESCRIÇÕES) -->
+    <div class="event-details">
+
+      <div class="info-block">
+        <h2>Descrição</h2>
+        <p>
+          O CarnaRun do Quarteto - 2025 é uma experiência completa que vai além da corrida.
+          Um evento pensado para superar limites, conectar pessoas e
+          proporcionar uma jornada inesquecível.
+        </p>
+      </div>
+
+      <div class="info-block">
+        <h2>Cronograma</h2>
+        <p>
+          04h - Abertura do estacionamento<br>
+          05h30 - Largada 10km<br>
+          06h - Largada 5km<br>
+          08h30 - Premiação
+        </p>
+      </div>
+
+      <div class="info-block">
+        <h2>Inscrição</h2>
+        <p>
+          A inscrição dá direito ao kit exclusivo do evento.
+          Clientes parceiros possuem desconto especial.
+        </p>
+      </div>
+
+    </div>
+
+  </section>
+
+  <script>
+    function redirectPayment() {
+      alert("Redirecionando para pagamento");
+    }
+  </script>
+
+</body>
+</html>
