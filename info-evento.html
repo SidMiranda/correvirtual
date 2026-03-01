@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Descrição do Evento</title>
+  
   <link rel="stylesheet" href="info-evento.css">
+  <link rel="stylesheet" href="auth-modal.css">
 </head>
 <body>
 
@@ -19,7 +21,7 @@
   <!-- CONTEÚDO -->
   <section class="event-content">
 
-    <!-- COLUNA DIREITA (CTA / DATA / LOCAL) -->
+    <!-- COLUNA DIREITA -->
     <aside class="event-side">
       <div class="event-info-box">
         <h3>Data</h3>
@@ -32,20 +34,18 @@
         Mogi Guaçu - SP</p>
       </div>
 
-      <button class="cta-button" onclick="redirectPayment()">
+      <button class="cta-button" onclick="openLogin()">
         Inscreva-se
       </button>
     </aside>
 
-    <!-- COLUNA ESQUERDA (DESCRIÇÕES) -->
+    <!-- COLUNA ESQUERDA -->
     <div class="event-details">
 
       <div class="info-block">
         <h2>Descrição</h2>
         <p>
           O CarnaRun do Quarteto - 2025 é uma experiência completa que vai além da corrida.
-          Um evento pensado para superar limites, conectar pessoas e
-          proporcionar uma jornada inesquecível.
         </p>
       </div>
 
@@ -63,7 +63,6 @@
         <h2>Inscrição</h2>
         <p>
           A inscrição dá direito ao kit exclusivo do evento.
-          Clientes parceiros possuem desconto especial.
         </p>
       </div>
 
@@ -71,11 +70,71 @@
 
   </section>
 
-  <script>
-    function redirectPayment() {
-      alert("Redirecionando para pagamento");
-    }
-  </script>
+  <!-- ================= MODAL ================= -->
+
+  <div class="modal-overlay" id="authModal">
+
+    <div class="modal">
+
+      <span class="close-modal" onclick="closeModal()">×</span>
+
+      <!-- LOGIN -->
+      <div class="form-container" id="loginForm">
+
+        <h2>Login</h2>
+
+        <input type="text" placeholder="CPF ou Email">
+        <input type="password" placeholder="Senha">
+
+        <button class="btn-primary">Entrar</button>
+
+        <div class="form-links">
+          <span onclick="showRegister()">Criar conta</span>
+          <span onclick="showReset()">Esqueci a senha</span>
+        </div>
+
+      </div>
+
+      <!-- REGISTRO -->
+      <div class="form-container hidden" id="registerForm">
+
+        <h2>Registrar</h2>
+
+        <input type="text" placeholder="Nome completo">
+        <input type="date">
+        <input type="text" placeholder="Celular">
+        <input type="email" placeholder="Email">
+        <input type="text" placeholder="CPF">
+        <input type="password" placeholder="Senha">
+
+        <button class="btn-primary">Registrar</button>
+
+        <div class="form-links">
+          <span onclick="showLogin()">Já tenho conta</span>
+        </div>
+
+      </div>
+
+      <!-- RESET -->
+      <div class="form-container hidden" id="resetForm">
+
+        <h2>Resetar Senha</h2>
+
+        <input type="email" placeholder="Digite seu email">
+
+        <button class="btn-primary">Enviar nova senha</button>
+
+        <div class="form-links">
+          <span onclick="showLogin()">Voltar ao login</span>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="auth-modal.js"></script>
 
 </body>
 </html>
