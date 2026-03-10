@@ -6,36 +6,52 @@ echo   RESET COMPLETO DO AMBIENTE LARAVEL
 echo ==========================================
 echo.
 
-echo [1/6] Derrubando containers e limpando o banco de dados...
+echo [1/7] Derrubando containers e volumes...
 docker compose down -v
 
 echo.
-echo [2/6] Buildando e subindo imagens...
-docker compose up -d --build
+echo [2/7] Rebuildando imagens...
+docker compose build --no-cache
 
 echo.
-echo [3/6] Aguardando o MySQL iniciar (um banco zerado demora uns segundos)...
+echo [3/7] Subindo containers...
+docker compose up -d
+
+echo.
+echo [4/7] Aguardando MySQL inicializar...
 timeout /t 15 > nul
 
 echo.
-echo [4/6] Recriando estrutura do storage (Volume Limpo)...
-docker exec -it corre_app mkdir -p storage/framework/sessions
-docker exec -it corre_app mkdir -p storage/framework/views
-docker exec -it corre_app mkdir -p storage/framework/cache
-docker exec -it corre_app mkdir -p storage/logs
+echo [5/7] Recriando estrutura do storage...
+
+docker exec corre_app mkdir -p storage/framework/sessions
+docker exec corre_app mkdir -p storage/framework/views
+docker exec corre_app mkdir -p storage/framework/cache
+docker exec corre_app mkdir -p storage/logs
+
+docker exec corre_app touch storage/logs/laravel.log
 
 echo.
-echo [5/6] Ajustando permissoes e donos...
-docker exec -it corre_app chown -R www-data:www-data storage bootstrap/cache
-docker exec -it corre_app chmod -R 775 storage bootstrap/cache
+echo [6/7] Ajustando permissoes...
+
+docker exec corre_app chown -R www-data:www-data storage bootstrap/cache
+docker exec corre_app chmod -R 775 storage bootstrap/cache
 
 echo.
-echo [6/6] Limpando caches e rodando migrations do zero...
-docker exec -it corre_app php artisan optimize:clear
-docker exec -it corre_app php artisan migrate:fresh --force
+echo [7/7] Limpando cache e recriando banco...
+
+docker exec corre_app php artisan optimize:clear
+docker exec corre_app php artisan config:clear
+docker exec corre_app php artisan cache:clear
+docker exec corre_app php artisan route:clear
+docker exec corre_app php artisan view:clear
+
+docker exec corre_app php artisan migrate:fresh --force
 
 echo.
-echo Status final dos containers:
+echo ==========================================
+echo   STATUS DOS CONTAINERS
+echo ==========================================
 docker ps
 
 echo.

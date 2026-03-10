@@ -11,19 +11,29 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             
-            // Relacionamento (Agora funciona porque a organizers vai rodar antes!)
-            $table->foreignId('organizer_id')->nullable()->constrained('organizers')->nullOnDelete();
+            // Relacionamento
+            $table->foreignId('organizer_id')
+                ->nullable()
+                ->constrained('organizers')
+                ->nullOnDelete();
 
-            // Dados Pessoais
+            // Dados pessoais
             $table->string('name');
             $table->string('email')->unique();
-            $table->string('cpf')->unique()->nullable();
-            $table->string('phone')->nullable();
+            $table->string('cpf', 14)->unique()->nullable();
+            $table->string('phone', 20)->nullable();
             $table->date('birth_date')->nullable();
+
+            $table->enum('sex', ['male', 'female', 'other'])->nullable();
+
+            // Verificação de email
             $table->timestamp('email_verified_at')->nullable();
+            $table->string('email_verification_code', 4)->nullable();
+
+            // Autenticação
             $table->string('password');
 
-            // Controle de Acesso
+            // Controle de acesso
             $table->enum('role', ['super_admin', 'organizer_admin', 'athlete'])->default('athlete');
             $table->boolean('active')->default(true);
 

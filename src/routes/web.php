@@ -16,3 +16,10 @@ Route::get('/evento', function () {
 Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::get('/verify-email', function () {
+    return view('auth.verify-email');
+})->name('verify.email.form');
+
+Route::post('/verify-email', [AuthController::class, 'verifyEmail'])
+    ->name('verify.email');

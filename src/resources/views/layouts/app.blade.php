@@ -56,6 +56,12 @@
                 
                 <input type="text" name="name" placeholder="Nome completo" value="{{ old('name') }}" required>
                 <input type="date" name="birth_date" value="{{ old('birth_date') }}" required>
+                <select name="sex" required>
+                    <option value="">Sexo</option>
+                    <option value="male">Masculino</option>
+                    <option value="female">Feminino</option>
+                    <option value="other">Outro</option>
+                </select>
                 <input type="text" name="phone" placeholder="Celular" value="{{ old('phone') }}" required>
                 <input type="email" name="email" placeholder="Email" value="{{ old('email') }}" required>
                 <input type="text" name="cpf" placeholder="CPF" value="{{ old('cpf') }}" required>

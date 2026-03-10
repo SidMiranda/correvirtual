@@ -36,6 +36,21 @@ services:
     depends_on:
       - app
 
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: corre_phpmyadmin
+    restart: unless-stopped
+    environment:
+      # ESSA É A PARTE MAIS IMPORTANTE:
+      # Diz ao phpMyAdmin qual é a máquina do banco de dados.
+      # O valor DEVE ser exatamente o nome do seu serviço de banco acima (que é 'mysql').
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+    ports:
+      - "8080:80"  # Vamos acessar o phpMyAdmin na porta 8080 do seu PC
+    depends_on:
+      - mysql
+
 volumes:
   mysql_data:
   laravel_storage:
