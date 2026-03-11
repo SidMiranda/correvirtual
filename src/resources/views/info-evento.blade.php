@@ -27,9 +27,10 @@
         <p>Av. 9 de Abril<br>Mogi Guaçu - SP</p>
       </div>
 
-      <button class="cta-button" onclick="openLogin()">
+      <a href="/registrations/1/pay" class="cta-button">
         Inscreva-se
-      </button>
+      </a>
+
     </aside>
 
     <div class="event-details">

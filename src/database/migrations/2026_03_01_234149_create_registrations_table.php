@@ -8,22 +8,26 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('registrations', function (Blueprint $table) {
+        Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            
-            // Relacionamentos cruciais
-            $table->foreignId('event_id')->constrained('events')->cascadeOnDelete();
-            $table->foreignId('event_modality_id')->constrained('event_modalities')->cascadeOnDelete();
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            
-            // Cupom é opcional, então pode ser nulo
-            $table->foreignId('coupon_id')->nullable()->constrained('coupons')->nullOnDelete();
-            
-            // Dados financeiros e de status
-            $table->decimal('amount', 10, 2); // Valor final calculado (com ou sem desconto)
-            $table->enum('status', ['pending', 'paid', 'cancelled'])->default('pending');
-            
-            $table->timestamp('registered_at')->useCurrent(); // Data exata em que o cara clicou em "Inscrever-se"
+
+            $table->foreignId('registration_id')->constrained('registrations')->cascadeOnDelete();
+
+            $table->string('provider')->default('mercadopago');
+            $table->string('transaction_id')->nullable();
+            $table->string('payment_method')->default('pix');
+
+            $table->enum('status', ['pending', 'approved', 'rejected', 'refunded'])->default('pending');
+
+            $table->text('qr_code')->nullable();
+            $table->longText('qr_code_base64')->nullable();
+            $table->string('ticket_url')->nullable();
+            $table->dateTime('expires_at')->nullable();
+
+            $table->dateTime('paid_at')->nullable();
+
+            $table->json('payload')->nullable();
+
             $table->timestamps();
         });
     }

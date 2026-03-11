@@ -16,10 +16,9 @@ return new class extends Migration
             
             $table->string('name'); // Ex: 5km, 10km, Caminhada 3km
             $table->decimal('distance_km', 5, 2)->nullable(); // Ex: 5.00
-            
-            $table->decimal('price', 10, 2); // Valor da inscrição
-            
-            $table->integer('max_participants')->nullable(); // Limite de vagas
+                        
+            $table->integer('max_participants')->nullable();
+            $table->integer('registered_count')->default(0);
             $table->boolean('active')->default(true);
             
             $table->timestamps();

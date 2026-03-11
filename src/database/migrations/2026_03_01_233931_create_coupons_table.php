@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('code')->unique(); // O código do cupom que o usuário digita
             $table->enum('discount_type', ['percentage', 'fixed'])->default('fixed'); // Porcentagem ou valor fixo
             $table->decimal('discount_value', 10, 2); // Ex: 10.00 (10 reais ou 10%)
-            
+            $table->decimal('minimum_amount', 10, 2)->nullable();
             $table->integer('usage_limit')->nullable(); // Quantas vezes pode ser usado no total (nulo = ilimitado)
             $table->integer('used_count')->default(0); // Quantas vezes já foi usado
             
