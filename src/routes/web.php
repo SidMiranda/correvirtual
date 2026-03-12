@@ -14,7 +14,14 @@ use App\Models\Event;
 
 Route::get('/', function () {
     return view('index');
+    // Busca apenas eventos ativos e ordena pela data (mais próximos primeiro)
+    // $events = Event::where('active', true)
+    //                ->orderBy('event_date', 'asc')
+    //                ->get();
+
+    // return view('index', compact('events'));
 })->name('home');
+
 
 Route::get('/evento', function () {
     return view('info-evento');
@@ -72,9 +79,9 @@ Route::get('/teste-pix', function () {
 |--------------------------------------------------------------------------
 */
 
-Route::get('/registrations/{id}/pay', [RegistrationController::class, 'pay'])
+// Route::get('/registrations/{id}/pay', [RegistrationController::class, 'pay'])
 #Route::get('/registrations/{id}/pay', [RegistrationController::class, 'pay'])
     #->middleware('auth');
 
-Route::get('/events/{id}/register', [RegistrationController::class, 'create'])
-    ->middleware('auth');
+// Route::get('/events/{id}/register', [RegistrationController::class, 'create'])
+//     ->middleware('auth');

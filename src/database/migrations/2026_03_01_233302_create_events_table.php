@@ -10,18 +10,14 @@ return new class extends Migration
     {
         Schema::create('events', function (Blueprint $table) {
             $table->id();
-            
-            // Relacionamento com o organizador (se o organizador for apagado, os eventos dele também são)
-            $table->foreignId('organizer_id')->constrained('organizers')->cascadeOnDelete();
-            
+            $table->foreignId('organizer_id')->constrained();
             $table->string('title');
-            $table->string('slug')->unique(); // Para a URL amigável (ex: correvirtual.com/carnarun-2026)
-            $table->text('description')->nullable();
+            $table->string('slug')->unique();
+            $table->text('description');
             $table->string('location');
-            
             $table->dateTime('event_date');
-            $table->dateTime('registration_deadline'); // Data limite para inscrições
-            
+            $table->dateTime('registration_deadline');
+            $table->string('banner_url')->nullable();
             $table->boolean('active')->default(true);
             $table->timestamps();
         });

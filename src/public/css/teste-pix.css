@@ -1,0 +1,90 @@
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    background:#f4f6f9;
+    margin:0;
+    height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.container{
+    background:white;
+    padding:40px;
+    border-radius:12px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.08);
+    max-width:420px;
+    width:90%;
+    text-align:center;
+}
+
+h1{
+    margin-top:0;
+    font-size:24px;
+    color:#222;
+}
+
+.subtitle{
+    color:#666;
+    margin-bottom:25px;
+}
+
+.qrcode{
+    margin:20px 0;
+}
+
+.qrcode img{
+    width:230px;
+    height:auto;
+}
+
+.pix-code{
+    width:100%;
+    margin-top:10px;
+    padding:10px;
+    border-radius:6px;
+    border:1px solid #ddd;
+    font-size:13px;
+    resize:none;
+}
+
+.copy-btn{
+    margin-top:10px;
+    background:#009ee3;
+    color:white;
+    border:none;
+    padding:10px 18px;
+    border-radius:6px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.copy-btn:hover{
+    background:#0084bf;
+}
+
+.status{
+    margin-top:15px;
+    font-size:13px;
+    color:#888;
+}
+
+.ticket-link{
+    margin-top:20px;
+    display:block;
+    color:#009ee3;
+    text-decoration:none;
+    font-size:14px;
+}
+
+@media(max-width:500px){
+
+    .container{
+        padding:25px;
+    }
+
+    .qrcode img{
+        width:200px;
+    }
+
+}

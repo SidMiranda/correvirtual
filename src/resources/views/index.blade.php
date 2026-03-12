@@ -3,7 +3,9 @@
 @section('title', 'Eventos - Corre Virtual')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/top-bar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/main-banner.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/event-cards.css') }}">
 @endpush
 
 @section('content')

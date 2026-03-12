@@ -8,27 +8,48 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('payments', function (Blueprint $table) {
+        Schema::create('registrations', function (Blueprint $table) {
+
             $table->id();
 
-            $table->foreignId('registration_id')->constrained('registrations')->cascadeOnDelete();
+            // evento
+            $table->foreignId('event_id')
+                ->constrained()
+                ->cascadeOnDelete();
 
-            $table->string('provider')->default('mercadopago');
-            $table->string('transaction_id')->nullable();
-            $table->string('payment_method')->default('pix');
+            // atleta
+            $table->foreignId('user_id')
+                ->constrained()
+                ->cascadeOnDelete();
 
-            $table->enum('status', ['pending', 'approved', 'rejected', 'refunded'])->default('pending');
+            // modalidade escolhida
+            $table->string('distance');
+            // ex: 3k_walk, 5k_run, 10k_run
 
-            $table->text('qr_code')->nullable();
-            $table->longText('qr_code_base64')->nullable();
-            $table->string('ticket_url')->nullable();
-            $table->dateTime('expires_at')->nullable();
+            // kit escolhido
+            $table->string('kit')->nullable();
 
-            $table->dateTime('paid_at')->nullable();
+            // preço no momento da inscrição
+            $table->decimal('price', 8, 2);
 
-            $table->json('payload')->nullable();
+            // número de peito (gerado depois do pagamento)
+            $table->integer('bib_number')->nullable();
+
+            // status da inscrição
+            $table->enum('status', [
+                'pending',   // aguardando pagamento
+                'confirmed', // pago
+                'cancelled'
+            ])->default('pending');
+
+            // quando foi confirmado
+            $table->timestamp('confirmed_at')->nullable();
 
             $table->timestamps();
+
+            // evita inscrição duplicada no mesmo evento
+            $table->unique(['event_id', 'user_id']);
+
         });
     }
 

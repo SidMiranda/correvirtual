@@ -22,20 +22,28 @@ echo [4/7] Aguardando MySQL inicializar...
 timeout /t 15 > nul
 
 echo.
-echo [5/7] Recriando estrutura do storage...
+echo [5/7] Instalando dependencias e ajustando permissoes (Root)...
 
-docker exec corre_app mkdir -p storage/framework/sessions
-docker exec corre_app mkdir -p storage/framework/views
-docker exec corre_app mkdir -p storage/framework/cache
-docker exec corre_app mkdir -p storage/logs
+REM Cria a estrutura de pastas forcadamente caso nao exista
+docker exec -u root corre_app sh -c "mkdir -p storage/framework/sessions"
+docker exec -u root corre_app sh -c "mkdir -p storage/framework/views"
+docker exec -u root corre_app sh -c "mkdir -p storage/framework/cache"
+docker exec -u root corre_app sh -c "mkdir -p storage/app/temp"
+docker exec -u root corre_app sh -c "mkdir -p storage/logs"
+docker exec -u root corre_app sh -c "touch storage/logs/laravel.log"
 
-docker exec corre_app touch storage/logs/laravel.log
+REM Aplica permissoes 777 para evitar qualquer erro de escrita no Windows/Docker
+docker exec -u root corre_app sh -c "chmod -R 777 storage bootstrap/cache storage/app/temp"
+docker exec -u root corre_app sh -c "chown -R www-data:www-data storage bootstrap/cache storage/app/temp"
 
-echo.
-echo [6/7] Ajustando permissoes...
+REM Garante que as dependencias do PHP estao instaladas (Agora com a pasta temp existindo)
+docker exec corre_app composer install --no-interaction --prefer-dist
 
-docker exec corre_app chown -R www-data:www-data storage bootstrap/cache
-docker exec corre_app chmod -R 775 storage bootstrap/cache
+REM Gera a chave de criptografia do Laravel se nao existir
+docker exec corre_app php artisan key:generate
+
+REM Cria o link simbolico para imagens publicas (essencial para os banners)
+docker exec corre_app php artisan storage:link
 
 echo.
 echo [7/7] Limpando cache e recriando banco...
@@ -46,7 +54,8 @@ docker exec corre_app php artisan cache:clear
 docker exec corre_app php artisan route:clear
 docker exec corre_app php artisan view:clear
 
-docker exec corre_app php artisan migrate:fresh --force
+REM Roda as migrations e os SEEDERS (Cria os eventos CarnaRun, etc)
+docker exec corre_app php artisan migrate:fresh --seed --force
 
 echo.
 echo ==========================================
