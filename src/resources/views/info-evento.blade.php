@@ -28,7 +28,7 @@
         <p>Av. 9 de Abril<br>Mogi Guaçu - SP</p>
       </div>
 
-      <a href="/events/1/register" class="cta-button">
+      <a href="/registrations/1/register" class="cta-button">
         Inscreva-se
       </a>
 

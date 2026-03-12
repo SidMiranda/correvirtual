@@ -12,6 +12,10 @@ use Illuminate\Http\Request;
 
 class RegistrationController extends Controller
 {
+    public function register(){
+        return view('registrations.create');
+    }
+    
     public function store(Request $request, $eventId)
     {
         // 1. Validação: Garante que estamos recebendo IDs válidos do formulário
@@ -109,9 +113,9 @@ class RegistrationController extends Controller
     }
 
     public function create($id)
-{
-        $event = Event::findOrFail($id);
+    {
+            $event = Event::findOrFail($id);
 
-        return view('registrations.create', compact('event'));
-}
+            return view('registrations.create', compact('event'));
+    }
 }

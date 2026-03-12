@@ -13,11 +13,11 @@
 @csrf
 
 <h2 class="event-title">
-{{ $event['name'] }}
+CarnaRun do Quarteto - 2025
 </h2>
 
 <div class="athlete-box">
-👤 Atleta: <strong>{{ Auth::user()->name }}</strong>
+👤 Atleta: <strong>Sidney Miranda</strong>
 </div>
 
 <label>Modalidade</label>
