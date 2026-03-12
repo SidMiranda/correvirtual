@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Services\MercadoPagoService;
 use App\Http\Controllers\RegistrationController;
+use App\Models\Event;
 
 /*
 |--------------------------------------------------------------------------
@@ -72,4 +73,8 @@ Route::get('/teste-pix', function () {
 */
 
 Route::get('/registrations/{id}/pay', [RegistrationController::class, 'pay'])
+#Route::get('/registrations/{id}/pay', [RegistrationController::class, 'pay'])
+    #->middleware('auth');
+
+Route::get('/events/{id}/register', [RegistrationController::class, 'create'])
     ->middleware('auth');

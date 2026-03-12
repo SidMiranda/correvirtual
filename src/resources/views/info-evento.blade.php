@@ -3,6 +3,7 @@
 @section('title', 'Descrição do Evento - Corre Virtual')
 
 @push('styles')
+    <link rel="stylesheet" href="{{ asset('css/top-bar.css') }}">
     <link rel="stylesheet" href="{{ asset('css/info-evento.css') }}">
 @endpush
 
@@ -27,7 +28,7 @@
         <p>Av. 9 de Abril<br>Mogi Guaçu - SP</p>
       </div>
 
-      <a href="/registrations/1/pay" class="cta-button">
+      <a href="/events/1/register" class="cta-button">
         Inscreva-se
       </a>
 

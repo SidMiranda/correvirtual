@@ -1,0 +1,58 @@
+/* TOPBAR */
+.topbar {
+    width: 100%;
+    background: #111;
+    padding: 10px 20px;
+}
+
+.topbar-content {
+    max-width: 1200px;
+    margin: auto;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 18px;
+}
+
+.user-name {
+    color: #fff;
+    font-size: 14px;
+}
+
+.top-link {
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.top-link:hover {
+    text-decoration: underline;
+}
+
+.logout-btn,
+.login-btn {
+    background: #1db954;
+    border: none;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.logout-btn:hover,
+.login-btn:hover {
+    background: #18a148;
+}
+
+/* RESPONSIVO */
+
+@media (max-width: 600px) {
+
+    .topbar-content {
+        gap: 10px;
+        font-size: 13px;
+    }
+
+}
