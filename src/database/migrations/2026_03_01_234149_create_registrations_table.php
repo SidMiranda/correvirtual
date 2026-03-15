@@ -23,11 +23,11 @@ return new class extends Migration
                 ->cascadeOnDelete();
 
             // modalidade escolhida
-            $table->string('distance');
+            $table->string('modality_id');
             // ex: 3k_walk, 5k_run, 10k_run
 
             // kit escolhido
-            $table->string('kit')->nullable();
+            $table->string('kit_id');
 
             // preço no momento da inscrição
             $table->decimal('price', 8, 2);

@@ -4,11 +4,11 @@
 
 @section('content')
 
-<div class="modal-overlay" style="display:flex">
+<div class="modal-overlay">
 
-<div class="modal">
+<div class="modal text-left">
 
-<form method="POST" action="/registrations/store" class="form-container">
+<form method="POST" action="/registrations/1" class="form-container">
 
 @csrf
 
@@ -16,45 +16,46 @@
 CarnaRun do Quarteto - 2025
 </h2>
 
-<div class="athlete-box">
-👤 Atleta: <strong>Sidney Miranda</strong>
+<div class="athlete-info">
+    <span>👤 Atleta:</span>
+    <strong>{{ Auth::user()->name }}</strong>
 </div>
+<p><hr></p>
+<select name="modality_id" required>
 
-<label>Modalidade</label>
+<option value="">Modalidade</option>
 
-<select name="distance" required>
-
-<option value="">Escolha</option>
-
-<option value="3k_walk">
+<option value="1">
 3km Caminhada
 </option>
 
-<option value="5k_run">
+<option value="2">
+5km Caminhada
+</option>
+
+<option value="3">
 5km Corrida
 </option>
 
-<option value="10k_run">
+<option value="4">
 10km Corrida
 </option>
 
 </select>
 
-<label>Kit</label>
+<select name="kit_id" required>
 
-<select name="kit" required>
+<option value="">kit</option>
 
-<option value="">Escolha</option>
-
-<option value="basic">
+<option value="1">
 Kit Básico
 </option>
 
-<option value="medal">
+<option value="2">
 Só medalha
 </option>
 
-<option value="pcd">
+<option value="3">
 Kit PCD
 </option>
 

@@ -82,3 +82,7 @@ Route::get('/teste-pix', function () {
 Route::get('/registrations/{event_id}/register', [RegistrationController::class, 'register'])
     ->middleware('auth')
     ->name('registrations.register');
+
+Route::post('/registrations/{event_id}', [RegistrationController::class, 'store'])
+    ->middleware('auth')
+    ->name('registrations.store');

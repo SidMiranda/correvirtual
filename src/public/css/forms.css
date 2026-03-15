@@ -1,0 +1,151 @@
+/* --- Layout Centralizado (Overlay) --- */
+.modal-overlay, .auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Ocupa a altura total da tela */
+    width: 100%;
+    background-color: #f5f5f5; /* Cor de fundo padrão */
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* --- Caixa do Formulário (Modal) --- */
+.modal, .form-box {
+    background: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 400px; /* Largura máxima padrão para login/registro */
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Espaçamento entre elementos filhos */
+}
+
+/* --- Títulos --- */
+.modal h2, .form-box h2 {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 24px;
+}
+
+.modal p, .form-box p {
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* --- Inputs Gerais --- */
+.form-container input[type="text"],
+.form-container input[type="email"],
+.form-container input[type="password"],
+.form-container input[type="date"],
+.form-container input[type="number"],
+.form-container select {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.3s;
+    box-sizing: border-box;
+}
+
+.form-container input:focus,
+.form-container select:focus {
+    border-color: #2e7d32;
+}
+
+/* --- Inputs de Código de Verificação (4 dígitos) --- */
+.code-inputs {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.code-inputs input {
+    width: 50px;
+    height: 60px;
+    font-size: 28px;
+    text-align: center;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+}
+
+.code-inputs input:focus {
+    border-color: #2e7d32;
+    color: #2e7d32;
+}
+
+/* --- Botões --- */
+.btn-primary, button[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    background: #2e7d32;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+    margin-top: 10px;
+}
+
+.btn-primary:hover, button[type="submit"]:hover {
+    background: #1b5e20;
+}
+
+.btn-primary:active {
+    transform: scale(0.98);
+}
+
+/* --- Links (Recuperar senha, Criar conta) --- */
+.form-links {
+    margin-top: 15px;
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.form-links a {
+    color: #2e7d32;
+    text-decoration: none;
+}
+
+.form-links a:hover {
+    text-decoration: underline;
+}
+
+/* --- Alertas e Erros (Padronização) --- */
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: bold;
+}
+.alert-success {
+    background: #1db954;
+    color: white;
+}
+.alert-error {
+    background: #e74c3c;
+    color: white;
+}
+.alert-error ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* --- Modificadores de Alinhamento --- */
+.text-left {
+    text-align: left;
+    align-items: flex-start; /* Alinha itens flex (inputs) à esquerda */
+}

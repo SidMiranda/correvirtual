@@ -1,61 +1,12 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<title>Confirmar Email</title>
 
-<style>
+@extends('layouts.auth')
 
-body{
-    font-family: Arial, Helvetica, sans-serif;
-    background:#f5f5f5;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-}
+@section('title', 'Confirmar Email')
 
-.container{
-    background:white;
-    padding:40px;
-    border-radius:10px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.1);
-    text-align:center;
-}
+@section('content')
 
-.code-inputs{
-    display:flex;
-    gap:10px;
-    justify-content:center;
-    margin-top:20px;
-}
-
-.code-inputs input{
-    width:50px;
-    height:60px;
-    font-size:28px;
-    text-align:center;
-    border:2px solid #ddd;
-    border-radius:8px;
-}
-
-button{
-    margin-top:20px;
-    padding:10px 30px;
-    border:none;
-    border-radius:6px;
-    background:#2e7d32;
-    color:white;
-    font-size:16px;
-    cursor:pointer;
-}
-
-</style>
-
-</head>
-<body>
-
-<div class="container">
+<div class="modal-overlay">
+<div class="modal">
 
 <h2>Confirme seu email</h2>
 
@@ -71,12 +22,16 @@ button{
 <input type="number" name="d4" maxlength="1">
 </div>
 
-<button type="submit">Confirmar</button>
+<button type="submit" class="btn-primary">Confirmar</button>
 
 </form>
 
 </div>
+</div>
 
+@endsection
+
+@push('scripts')
 <script>
 
 const inputs = document.querySelectorAll(".code-inputs input");
@@ -94,6 +49,4 @@ inputs[index+1].focus();
 });
 
 </script>
-
-</body>
-</html>
+@endpush

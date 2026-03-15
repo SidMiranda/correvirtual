@@ -12,10 +12,17 @@ class Registration extends Model
     protected $fillable = [
         'user_id',
         'event_id',
+        'modality_id',
+        'kit_id',
+        'price',
+        'bib_number',
         'status',
-        'category',
-        'kit',
-        'price'
+        'confirmed_at',
+    ];
+
+    protected $casts = [
+        'confirmed_at' => 'datetime',
+        'price' => 'decimal:2',
     ];
 
     /*
