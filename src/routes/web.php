@@ -23,6 +23,8 @@ Route::get('/', function () {
 })->name('home');
 
 
+
+
 Route::get('/evento', function () {
     return view('info-evento');
 })->name('evento');
@@ -86,3 +88,7 @@ Route::get('/registrations/{event_id}/register', [RegistrationController::class,
 Route::post('/registrations/{event_id}', [RegistrationController::class, 'store'])
     ->middleware('auth')
     ->name('registrations.store');
+
+Route::get('/my-registrations', [RegistrationController::class, 'myRegistrations'])
+    ->middleware('auth')
+    ->name('registrations.my');

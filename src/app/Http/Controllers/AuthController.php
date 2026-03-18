@@ -23,6 +23,20 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
+        // Remove pontos e traços do CPF antes da validação
+        if ($request->has('cpf')) {
+            $request->merge([
+                'cpf' => preg_replace('/[^0-9]/', '', $request->cpf)
+            ]);
+        }
+
+        // Remove a formatação do celular (parênteses, espaços e traços)
+        if ($request->has('phone')) {
+            $request->merge([
+                'phone' => preg_replace('/[^0-9]/', '', $request->phone)
+            ]);
+        }
+
         // 1. Validação dos dados que vêm do seu modal
         $request->validate([
             'name' => 'required|string|max:255',
@@ -30,7 +44,7 @@ class AuthController extends Controller
             'sex' => 'required|in:male,female,other',
             'phone' => 'required|string|max:20',
             'email' => 'required|string|email|max:255|unique:users',
-            'cpf' => 'required|string|max:14|unique:users',
+            'cpf' => 'required|string|size:11|unique:users',
             'password' => 'required|string|min:6', // No futuro colocamos regras mais fortes
         ]);
 
@@ -98,6 +112,11 @@ class AuthController extends Controller
         $login = $request->email_or_cpf;
 
         $field = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'cpf';
+
+        // Se for CPF (não passou na validação de e-mail), removemos a pontuação antes de buscar no banco
+        if ($field === 'cpf') {
+            $login = preg_replace('/[^0-9]/', '', $login);
+        }
 
         if (Auth::attempt([$field => $login, 'password' => $request->password])) {
 

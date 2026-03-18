@@ -88,6 +88,15 @@ class RegistrationController extends Controller
         $event = Event::findOrFail($id);
         return view('registrations.create', compact('event'));
     }
+
+    public function myRegistrations()
+    {
+        $user = auth()->user();
+        dd($user->registrations());
+
+        $registrations = $user->registrations()->with('event')->get();
+        return view('registrations.my', compact('registrations'));
+    }
 }
 
     // 4. Gerar o PIX no Mercado Pago

@@ -46,3 +46,23 @@ Criar conta
 </div>
 
 @endsection
+
+@push('scripts')
+<script>
+    const loginInput = document.querySelector('input[name="email_or_cpf"]');
+    if(loginInput) {
+        loginInput.addEventListener('input', function(e) {
+            let value = e.target.value;
+            // Aplica a máscara apenas se o usuário digitar padrões numéricos do CPF
+            if (/^[\d.-]*$/.test(value)) {
+                value = value.replace(/\D/g, "");
+                if (value.length > 11) value = value.substring(0, 11);
+                value = value.replace(/(\d{3})(\d)/, "$1.$2");
+                value = value.replace(/(\d{3})(\d)/, "$1.$2");
+                value = value.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+                e.target.value = value;
+            }
+        });
+    }
+</script>
+@endpush

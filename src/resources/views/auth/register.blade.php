@@ -95,3 +95,30 @@ Já tenho conta
 </div>
 
 @endsection
+
+@push('scripts')
+<script>
+    const cpfInput = document.querySelector('input[name="cpf"]');
+    if(cpfInput) {
+        cpfInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, ""); // Remove tudo que não for número
+            if (value.length > 11) value = value.substring(0, 11); // Limita a 11 dígitos
+            value = value.replace(/(\d{3})(\d)/, "$1.$2");
+            value = value.replace(/(\d{3})(\d)/, "$1.$2");
+            value = value.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+            e.target.value = value;
+        });
+    }
+
+    const phoneInput = document.querySelector('input[name="phone"]');
+    if(phoneInput) {
+        phoneInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, ""); // Remove tudo que não for número
+            if (value.length > 11) value = value.substring(0, 11); // Limita a 11 dígitos (DDD + 9 dígitos)
+            value = value.replace(/^(\d{2})(\d)/g, "($1) $2"); // Coloca parênteses no DDD
+            value = value.replace(/(\d)(\d{4})$/, "$1-$2"); // Coloca o hífen antes dos últimos 4 dígitos
+            e.target.value = value;
+        });
+    }
+</script>
+@endpush
