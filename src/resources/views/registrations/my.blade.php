@@ -3,15 +3,23 @@
 @section('title', 'Minhas Inscrições - Corre Virtual')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/my-registrations.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/top-bar.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/my-registrations.css') }}">
 @endpush
 
 @section('content')
-  <div class="container">
-    <h2 class="my-registrations-title">Minhas Inscrições</h2>
+  <div class="container {{ $registrations->isEmpty() ? 'empty-container' : '' }}">
     @if($registrations->isEmpty())
-      <p>Você ainda não possui nenhuma inscrição.</p>
+      <div class="empty-state-wrapper">
+        <h2 class="my-registrations-title">Minhas Inscrições</h2>
+        <div class="empty-registrations-card">
+          <div class="empty-icon">🏃‍♂️</div>
+          <p>Você ainda não possui nenhuma inscrição.</p>
+          <a href="{{ url('/') }}" class="btn-back-calendar">Voltar para o calendário</a>
+        </div>
+      </div>
     @else
+      <h2 class="my-registrations-title">Minhas Inscrições</h2>
       <div class="registrations-grid">
         @foreach($registrations as $registration)
           <div class="registration-card">

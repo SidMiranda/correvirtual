@@ -12,17 +12,17 @@
 
 <p>Digite o código enviado para seu email</p>
 
-<form method="POST" action="/verify-email">
+<form method="POST" action="/verify-email" id="verify-form">
 @csrf
 
 <div class="code-inputs">
-<input type="number" name="d1" maxlength="1">
-<input type="number" name="d2" maxlength="1">
-<input type="number" name="d3" maxlength="1">
-<input type="number" name="d4" maxlength="1">
+<input type="text" name="d1" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+<input type="text" name="d2" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+<input type="text" name="d3" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+<input type="text" name="d4" maxlength="1" inputmode="numeric" pattern="[0-9]*">
 </div>
 
-<button type="submit" class="btn-primary">Confirmar</button>
+<button type="submit" class="btn-primary" style="background-color: #0d6efd; border-color: #0d6efd; color: #fff;">Confirmar</button>
 
 </form>
 
@@ -35,15 +35,29 @@
 <script>
 
 const inputs = document.querySelectorAll(".code-inputs input");
+const form = document.getElementById("verify-form");
 
 inputs.forEach((input, index) => {
 
-input.addEventListener("input", () => {
+input.addEventListener("input", (e) => {
+    // Remove qualquer caractere digitado que não seja número
+    e.target.value = e.target.value.replace(/\D/g, "");
 
-if(input.value.length === 1 && index < inputs.length -1){
-inputs[index+1].focus();
-}
+    if(e.target.value.length === 1) {
+        if(index < inputs.length - 1){
+            inputs[index+1].focus();
+        } else {
+            // No último dígito, submete o formulário automaticamente
+            form.submit();
+        }
+    }
+});
 
+// Permite voltar de input apagando com a tecla Backspace
+input.addEventListener("keydown", (e) => {
+    if(e.key === "Backspace" && e.target.value === "" && index > 0) {
+        inputs[index-1].focus();
+    }
 });
 
 });

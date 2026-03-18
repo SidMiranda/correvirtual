@@ -92,9 +92,10 @@ class RegistrationController extends Controller
     public function myRegistrations()
     {
         $user = auth()->user();
-        dd($user->registrations());
 
-        $registrations = $user->registrations()->with('event')->get();
+        $registrations = Registration::with(['event', 'modality', 'kit'])
+            ->where('user_id', $user->id)
+            ->get();
         return view('registrations.my', compact('registrations'));
     }
 }

@@ -1,0 +1,138 @@
+.my-registrations-title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.registrations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.registration-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.2s;
+}
+
+.registration-card:hover {
+    transform: translateY(-5px);
+}
+
+.registration-card__image-wrapper {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+}
+
+.registration-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.registration-card__content {
+    padding: 1.5rem;
+}
+
+.registration-card__title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.registration-card__date {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 0.5rem;
+}
+
+.registration-card__status {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 1.5rem;
+}
+
+.registration-card__button {
+    display: inline-block;
+    background-color: #007bff;
+    color: #fff;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.registration-card__button:hover {
+    background-color: #0056b3;
+}
+
+/* =========================================
+   Empty State - Nenhuma inscrição
+   ========================================= */
+
+.empty-container {
+    min-height: calc(100vh - 100px); /* Ajusta a altura da tela considerando o topo/menu */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto; /* Sobrescreve margem padrão do container focado na centralização */
+}
+
+.empty-state-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+}
+
+.empty-registrations-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 48px 24px;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06); /* Sombra bem suave e elegante */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid #f1f1f1;
+}
+
+.empty-registrations-card .empty-icon {
+    font-size: 3.5rem;
+    margin-bottom: 12px;
+}
+
+.empty-registrations-card p {
+    font-size: 1.1rem;
+    color: #666666;
+    margin: 0 0 24px 0;
+    line-height: 1.5;
+}
+
+.btn-back-calendar {
+    display: inline-block;
+    background-color: #2563eb; /* Azul vibrante (Adapte para a cor principal do seu tema se preferir) */
+    color: #ffffff;
+    padding: 14px 28px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+
+.btn-back-calendar:hover {
+    background-color: #1d4ed8;
+    transform: translateY(-2px); /* Efeito de elevação sutil ao passar o mouse */
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+}
