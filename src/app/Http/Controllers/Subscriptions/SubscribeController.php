@@ -31,6 +31,15 @@ class SubscribeController extends Controller
         // Se não existir, retorna um erro 404 automaticamente.
         $event = Event::findOrFail($eventId);
 
+        // Verifica se o usuário já está inscrito neste evento
+        $alreadySubscribed = Subscription::where('event_id', $event->id)
+            ->where('user_id', auth()->id())
+            ->exists();
+
+        if ($alreadySubscribed) {
+            return redirect('/my-subscriptions')->with('info', 'Você já está inscrito neste evento.');
+        }
+
         Subscription::create([
             'event_id'    => $event->id,
             'user_id'     => auth()->id(),

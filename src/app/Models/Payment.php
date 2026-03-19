@@ -8,7 +8,7 @@ class Payment extends Model
 {
 
     protected $fillable = [
-        'registration_id',
+        'subscription_id',
         'provider',
         'transaction_id',
         'payment_method',
@@ -21,9 +21,9 @@ class Payment extends Model
         'payload'
     ];
 
-    public function registration()
+    public function subscription()
     {
-        return $this->belongsTo(Registration::class);
+        return $this->belongsTo(Subscription::class);
     }
 
 }

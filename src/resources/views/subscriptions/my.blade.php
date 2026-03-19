@@ -9,8 +9,21 @@
 
 @section('content')
   <div class="container">
-    
-    {{-- 
+
+    {{-- Exibição de Mensagens de Sessão --}}
+    @if (session('info'))
+      <div class="alert alert-info" style="background-color: #d1ecf1; color: #0c5460; padding: 15px; border-radius: 8px; margin-top: 20px; border: 1px solid #bee5eb;">
+          {{ session('info') }}
+      </div>
+    @endif
+
+    @if (session('success'))
+      <div class="alert alert-success" style="background-color: #d4edda; color: #155724; padding: 15px; border-radius: 8px; margin-top: 20px; border: 1px solid #c3e6cb;">
+          {{ session('success') }}
+      </div>
+    @endif
+
+    {{--
       MOCK: Condição alterada para exibir sempre os dados mockados temporariamente.
       No futuro, remova "false && " para voltar a testar o empty state se não houver inscrições.
     --}}
@@ -27,11 +40,11 @@
       </div>
     @else
       <h2 class="my-registrations-title">Minhas Inscrições</h2>
-      
+
       <!-- Seção: Próximos Eventos -->
       <h3 class="section-title">Próximos Eventos</h3>
       <div class="registrations-list">
-        
+
         <!-- Mock: Evento Ativo 1 -->
         <div class="registration-list-card">
             <div class="registration-list-card__image-wrapper">
@@ -71,7 +84,11 @@
                     <p>🎒 Kit VIP</p>
                 </div>
                 <div class="registration-list-card__actions">
-                    <a href="#" class="btn-primary-small">Pagar Agora</a>
+                    <form action="{{ route('event-pay') }}" method="POST" style="display: inline-block;">
+                        @csrf
+                        <input type="hidden" name="subscription_id" value="1">
+                        <button type="submit" class="btn-primary-small" style="border: none; cursor: pointer;">Pagar Agora</button>
+                    </form>
                     <a href="#" class="btn-secondary">Ver Detalhes</a>
                 </div>
             </div>
@@ -107,7 +124,7 @@
 
       </div>
 
-      {{-- 
+      {{--
       Futuro loop com dados dinâmicos:
       @foreach($registrations as $registration)
         ...

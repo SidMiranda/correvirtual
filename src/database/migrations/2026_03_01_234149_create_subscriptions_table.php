@@ -38,7 +38,7 @@ return new class extends Migration
             // status da inscrição
             $table->enum('status', [
                 'pending',   // aguardando pagamento
-                'confirmed', // pago
+                'paid',      // pago
                 'cancelled'
             ])->default('pending');
 

@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Subscriptions\SubscribeController;
 use App\Http\Controllers\Events\EventsController;
+use App\Http\Controllers\Subscriptions\PixController;
 
 use App\Services\MercadoPagoService;
 
@@ -44,7 +45,7 @@ Route::post('/verify-email', [VerifyEmailController::class, 'verifyEmail']);
 
 /*
 |--------------------------------------------------------------------------
-| Teste PIX
+| PIX
 |--------------------------------------------------------------------------
 */
 
@@ -58,6 +59,8 @@ Route::get('/teste-pix', function () {
     return view('teste-pix', compact('pix'));
 
 });
+
+Route::post('/event-pay', [PixController::class, 'generatePix'])->name('event-pay');
 
 /*
 |--------------------------------------------------------------------------
@@ -74,3 +77,6 @@ Route::get('/subscribe/event/{event_id}', [SubscribeController::class, 'showSubs
     ->name('subscribe');
 
 Route::post('/subscribe/event/{event_id}', [SubscribeController::class, 'subscribe']);
+
+Route::get('/subscriptions/{id}/success', [App\Http\Controllers\Subscriptions\PixController::class, 'success'])->name('subscriptions.success');
+

@@ -8,22 +8,27 @@ use MercadoPago\Exceptions\MPApiException;
 
 class MercadoPagoService
 {
-    public static function createPixPayment($amount, $email)
+    public static function createPixPayment($amount, $email, $externalReference = null)
     {
         MercadoPagoConfig::setAccessToken(config('services.mercadopago.token'));
 
         $client = new PaymentClient();
 
         try {
-
-            $payment = $client->create([
+            $request = [
                 "transaction_amount" => (float) $amount,
                 "description" => "Teste inscrição",
                 "payment_method_id" => "pix",
                 "payer" => [
                     "email" => $email
                 ]
-            ]);
+            ];
+
+            if ($externalReference) {
+                $request["external_reference"] = (string) $externalReference;
+            }
+
+            $payment = $client->create($request);
 
             return $payment;
 
@@ -35,5 +40,13 @@ class MercadoPagoService
             ]);
 
         }
+    }
+
+    public static function getPayment($id)
+    {
+        MercadoPagoConfig::setAccessToken(config('services.mercadopago.token'));
+
+        $client = new PaymentClient();
+        return $client->get($id);
     }
 }
