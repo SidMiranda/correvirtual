@@ -8,7 +8,7 @@
 
 <div class="modal text-left">
 
-<form method="POST" action="/registrations/1" class="form-container">
+<form method="POST" action="/subscribe/event/1" class="form-container">
 
 @csrf
 

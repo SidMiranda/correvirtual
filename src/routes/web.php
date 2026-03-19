@@ -1,33 +1,23 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\Subscriptions\SubscribeController;
+use App\Http\Controllers\Events\EventsController;
+
 use App\Services\MercadoPagoService;
-use App\Http\Controllers\RegistrationController;
-use App\Models\Event;
 
 /*
 |--------------------------------------------------------------------------
-| Views
+| Index
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', function () {
-    return view('index');
-    // Busca apenas eventos ativos e ordena pela data (mais próximos primeiro)
-    // $events = Event::where('active', true)
-    //                ->orderBy('event_date', 'asc')
-    //                ->get();
+Route::get('/', function () { return view('index'); })->name('home');
 
-    // return view('index', compact('events'));
-})->name('home');
-
-
-
-
-Route::get('/evento', function () {
-    return view('info-evento');
-})->name('evento');
+Route::get('/event/{event_id}', [EventsController::class, 'show'])->name('event.show');
 
 /*
 |--------------------------------------------------------------------------
@@ -35,15 +25,13 @@ Route::get('/evento', function () {
 |--------------------------------------------------------------------------
 */
 
-Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [LoginController::class, 'login']);
 
-Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
-Route::post('/register', [AuthController::class, 'register']);
+Route::get('/register', [RegisterController::class, 'showRegisterForm'])->name('register');
+Route::post('/register', [RegisterController::class, 'register']);
 
-Route::post('/logout', [AuthController::class, 'logout'])
-    ->middleware('auth')
-    ->name('logout');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 /*
 |--------------------------------------------------------------------------
@@ -51,12 +39,8 @@ Route::post('/logout', [AuthController::class, 'logout'])
 |--------------------------------------------------------------------------
 */
 
-Route::get('/verify-email', function () {
-    return view('auth.verify-email');
-})->name('verify.email.form');
-
-Route::post('/verify-email', [AuthController::class, 'verifyEmail'])
-    ->name('verify.email');
+Route::get('/verify-email', [VerifyEmailController::class, 'showVerifyInputCode'])->name('verify-email.show');
+Route::post('/verify-email', [VerifyEmailController::class, 'verifyEmail']);
 
 /*
 |--------------------------------------------------------------------------
@@ -68,7 +52,7 @@ Route::get('/teste-pix', function () {
 
     $pix = MercadoPagoService::createPixPayment(
         1.00,
-        'teste@email.com'
+        'sidney.miranda2013@gmail.com'
     );
 
     return view('teste-pix', compact('pix'));
@@ -77,18 +61,16 @@ Route::get('/teste-pix', function () {
 
 /*
 |--------------------------------------------------------------------------
-| Pagamento inscrição
+| Inscrição
 |--------------------------------------------------------------------------
 */
 
-Route::get('/registrations/{event_id}/register', [RegistrationController::class, 'register'])
+Route::get('/my-subscriptions', [SubscribeController::class, 'mySubscriptions'])
     ->middleware('auth')
-    ->name('registrations.register');
+    ->name('subscriptions.my');
 
-Route::post('/registrations/{event_id}', [RegistrationController::class, 'store'])
+Route::get('/subscribe/event/{event_id}', [SubscribeController::class, 'showSubscribeForm'])
     ->middleware('auth')
-    ->name('registrations.store');
+    ->name('subscribe');
 
-Route::get('/my-registrations', [RegistrationController::class, 'myRegistrations'])
-    ->middleware('auth')
-    ->name('registrations.my');
+Route::post('/subscribe/event/{event_id}', [SubscribeController::class, 'subscribe']);

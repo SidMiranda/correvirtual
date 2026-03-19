@@ -21,6 +21,14 @@ class Event extends Model
         'active',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'event_date' => 'datetime',
+            'registration_deadline' => 'datetime',
+        ];
+    }
+
     public function kits() {
         return $this->hasMany(EventKit::class);
     }

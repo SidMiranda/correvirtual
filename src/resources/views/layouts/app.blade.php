@@ -18,7 +18,7 @@
                     👤 {{ Auth::user()->name }}
                 </span>
 
-                <a href="/my-registrations" class="top-link">
+                <a href="/my-subscriptions" class="top-link">
                     Minhas inscrições
                 </a>
 

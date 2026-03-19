@@ -20,8 +20,12 @@ echo "[3/7] Subindo containers..."
 docker compose up -d
 
 echo ""
-echo "[4/7] Aguardando MySQL inicializar..."
-sleep 15
+echo "[4/7] Aguardando MySQL inicializar (pode demorar na primeira vez)..."
+until docker exec corre_mysql mysqladmin ping -h localhost -uroot -proot --silent; do
+    echo "O banco de dados ainda não está pronto. Aguardando..."
+    sleep 4
+done
+sleep 5 # Dá um tempinho extra de segurança após o serviço responder
 
 echo ""
 echo "[5/7] Ajustando permissões e pastas..."

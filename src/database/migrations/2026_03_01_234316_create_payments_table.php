@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('registration_id')->constrained('registrations')->cascadeOnDelete();
+            $table->foreignId('subscription_id')->constrained('subscriptions')->cascadeOnDelete();
 
             $table->string('provider')->default('mercadopago');
             $table->string('transaction_id')->nullable();

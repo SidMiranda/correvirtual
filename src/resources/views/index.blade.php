@@ -20,7 +20,7 @@
   <div class="container">
     <div class="cards-grid">
 
-      <a class="event-card" href="{{ url('/evento') }}">
+      <a class="event-card" href="{{ url('/event/1') }}">
         <div class="event-card__image-wrapper">
           <img src="{{ asset('img/carnarun-2025.jpg') }}" class="event-card__image" alt="CarnaRun">
           <div class="event-card__share">🔗</div>
