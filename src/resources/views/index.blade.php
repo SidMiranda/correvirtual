@@ -8,15 +8,39 @@
 
 @section('content')
 
-<x-app.main-banner />
+    <x-app.main-banner />
 
-  <div class="container">
-    <div class="cards-grid">
+    <div class="container">
+        <h2 class="block-header-title">
+            CALENDÁRIO <span> EVENTOS </span> 2026
+        </h2>
 
-    @foreach($events as $event)
-        <x-app.event-card :event="$event" />
-    @endforeach
+        <div class="cards-grid">
+            @foreach($events as $event)
+                <x-app.event-card :event="$event" />
+            @endforeach
+        </div>
+    </div>
+
+    <div class="container">
+        <h2 class="block-header-title">
+            SOBRE <span> NOS </span>
+        </h2>
+
+        <x-app.move />
+    </div>
+
+
+
+    <div class="container">
+        <h2 class="block-header-title">
+
+        </h2>
+
+        <x-app.sponsors />
 
     </div>
-  </div>
+
+    <x-app.foot />
+
 @endsection
