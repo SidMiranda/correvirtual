@@ -4,15 +4,16 @@
     <ul class="navbar-nav align-items-center ml-auto">
         <li class="nav-item dropdown no-caret mr-3">
             <a class="nav-link dropdown-toggle" id="navbarDropdownDocs" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <div class="d-none d-md-inline font-weight-500">
+                <div class="d-inline font-weight-500">
                     @auth
                         <span>
                             <a href="/my-subscriptions">
-                                Minhas inscrições
+
+                                <span class="d-none d-md-inline">Minhas inscrições</span>
                             </a>
                         </span>
                     @else
-                        <a href="{{ route('login') }}">
+                        <a href="{{ route('login') }}" class="d-none d-md-inline">
                             Login
                         </a>
                     @endauth
@@ -21,6 +22,11 @@
 
         </li>
         @auth
+            <li class="nav-item mr-3 d-md-none">
+                <a class="btn btn-icon btn-transparent-dark" href="/my-subscriptions" title="Minhas Inscrições">
+                    <i data-feather="check-square"></i>
+                </a>
+            </li>
             <li class="nav-item dropdown no-caret mr-3 dropdown-notifications">
                 <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownAlerts" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i data-feather="bell"></i></a>
                 <div class="dropdown-menu dropdown-menu-right border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownAlerts">
@@ -90,6 +96,12 @@
                 </h6>
                 @auth
                     <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="/my-subscriptions">
+                        <div class="dropdown-item-icon">
+                            <i data-feather="check-square"></i>
+                        </div>
+                        Minhas inscrições
+                    </a>
                     <a class="dropdown-item" href="#!">
                         <div class="dropdown-item-icon">
                             <i data-feather="settings"></i>

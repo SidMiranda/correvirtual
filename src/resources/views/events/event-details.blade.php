@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Descrição do Evento - Corre Virtual')
+@section('title', $event->title . ' - Corre Virtual')
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/top-bar.css') }}">
@@ -11,24 +11,28 @@
   <div class="banner-wrap">
     <a class="back-button" href="{{ url('/') }}">← Voltar</a>
     <section class="event-banner">
-      <img src="{{ asset('img/banner-evento.jpg') }}" alt="Banner do evento" class="banner-img">
+      <img src="{{ asset('images/events/' . $event->id . '/banner-' . $event->banner_url) }}" alt="Banner do evento {{ $event->title }}" class="banner-img">
     </section>
   </div>
+
+    <h2 class="block-header-title">
+        {{ $event->title }}
+    </h2>
 
   <section class="event-content">
 
     <aside class="event-side">
       <div class="event-info-box">
         <h3>Data</h3>
-        <p>03 de Março de 2026</p>
+        <p>{{ \Carbon\Carbon::parse($event->event_date)->format('d/m/Y \à\s H:i') }}</p>
       </div>
 
       <div class="event-info-box">
         <h3>Local</h3>
-        <p>Av. 9 de Abril<br>Mogi Guaçu - SP</p>
+        <p>{{ $event->location }}</p>
       </div>
 
-      <a href="/subscribe/event/1" class="cta-button">
+      <a href="/subscribe/event/{{ $event->id }}" class="cta-button">
         Inscreva-se
       </a>
 
@@ -38,7 +42,26 @@
 
       <div class="info-block">
         <h2>Descrição</h2>
-        <p>O CarnaRun do Quarteto - 2025 é uma experiência completa que vai além da corrida.</p>
+        <p>{{ $event->description }}</p>
+      </div>
+
+      <div class="info-block">
+        <h2>Kits</h2>
+        @if($event->kits && $event->kits->count() > 0)
+          <div class="kits-list">
+            @foreach($event->kits as $kit)
+              <div class="kit-card" style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 16px; margin-bottom: 16px; background-color: #fafafa;">
+                <h3 style="margin-top: 0; margin-bottom: 8px; color: #333;">{{ $kit->name }}</h3>
+                <p style="margin-top: 0; margin-bottom: 12px; color: #666;">{{ $kit->description }}</p>
+                <p style="font-size: 1.5em; font-weight: bold; margin: 0; color: #111;">
+                  R$ {{ number_format($kit->price, 2, ',', '.') }}
+                </p>
+              </div>
+            @endforeach
+          </div>
+        @else
+          <p>Nenhum kit disponível ainda.</p>
+        @endif
       </div>
 
       <div class="info-block">
@@ -54,8 +77,11 @@
       <div class="info-block">
         <h2>Inscrição</h2>
         <p>A inscrição dá direito ao kit exclusivo do evento.</p>
+        <p><strong>Encerramento das inscrições:</strong> {{ \Carbon\Carbon::parse($event->registration_deadline)->format('d/m/Y \à\s H:i') }}</p>
       </div>
 
     </div>
   </section>
+
+  <x-app.foot />
 @endsection

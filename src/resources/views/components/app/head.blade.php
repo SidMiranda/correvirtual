@@ -5,6 +5,17 @@
     <meta name="description" content="" />
     <meta name="author" content="" />
 
+    <!-- Ícone padrão para a aba do navegador (Favicon) -->
+    <link rel="icon" type="image/jpeg" href="{{ asset('images/logo.png') }}">
+
+    <!-- Ícone para quando o usuário adicionar o site à tela inicial no Android e iOS -->
+    <link rel="apple-touch-icon" href="{{ asset('images/logo.jpg') }}">
+    <link rel="icon" sizes="192x192" href="{{ asset('images/logo.jpg') }}">
+
+    <!-- Cor do tema da barra de status do navegador no celular (opcional, mude o #ffffff para a cor da sua marca) -->
+    <meta name="theme-color" content="#ffffff">
+
+
     {{-- <link href="css/styles.css" rel="stylesheet" /> --}}
     <link rel="stylesheet" href="{{ asset('css/app/top-bar.css') }}">
 

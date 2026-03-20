@@ -1,4 +1,4 @@
-/* TOPBAR */
+/* TOPBAR
 .topbar {
     width: 100%;
     background: #111;
@@ -46,7 +46,7 @@
     background: #18a148;
 }
 
-/* RESPONSIVO */
+/* RESPONSIVO 
 
 @media (max-width: 600px) {
 
@@ -55,4 +55,4 @@
         font-size: 13px;
     }
 
-}
+} */

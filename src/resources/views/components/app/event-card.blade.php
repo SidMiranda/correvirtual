@@ -3,7 +3,7 @@
 <a class="event-card" href="{{ url('/event/' . $event->id) }}">
     <div class="event-card__image-wrapper">
         @php
-            $bannerPath = $event->banner_url ? asset('images/event-cards/' . $event->id . '/' . $event->banner_url) : asset('img/default-banner.jpg');
+            $bannerPath = $event->banner_url ? asset('images/events/' . $event->id . '/card-' . $event->banner_url) : asset('images/events/default-card.jpg');
         @endphp
         <img src="{{ $bannerPath }}" class="event-card__image" alt="{{ $event->title }}">
         <div class="event-card__share">🔗</div>

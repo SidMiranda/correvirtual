@@ -48,6 +48,20 @@ class DatabaseSeeder extends Seeder
             'description' => 'Medalha em MDF + Café Comunitário pós-treino'
         ]);
 
+        EventKit::factory()->create([
+            'event_id' => $event1->id,
+            'name' => 'Kit Bebaço',
+            'price' => 59.90,
+            'description' => 'Medalha em MDF + Caneca de Chopp + Café Comunitário pós-treino'
+        ]);
+
+        EventKit::factory()->create([
+            'event_id' => $event1->id,
+            'name' => 'Kit Nóis Capota Mas Não Breca',
+            'price' => 79.90,
+            'description' => 'Medalha em MDF + Camiseta Exclusiva + Café Comunitário pós-treino'
+        ]);
+
         // --- EVENTO 2: 1º Corre que a bruxa vem ai - 30 de outubro as 8h ---
         $event2 = Event::create([
             'organizer_id' => $organizer->id,
@@ -57,7 +71,7 @@ class DatabaseSeeder extends Seeder
             'location' => 'Saindo do Pastelícia Campo da Brahma, Mogi Guaçu, SP',
             'event_date' => '2025-10-30 08:00:00',
             'registration_deadline' => '2025-10-28 23:59:59',
-            'banner_url' => 'halloween.jpg',
+            'banner_url' => 'halloween-2025.jpg',
             'active' => true,
         ]);
 
@@ -81,7 +95,7 @@ class DatabaseSeeder extends Seeder
             'location' => 'Mogi Guaçu, SP - Virtual',
             'event_date' => '2025-07-31 23:59:59',
             'registration_deadline' => '2025-06-30 23:59:59',
-            'banner_url' => 'desafio-virtual-25.jpg',
+            'banner_url' => 'desafio-virtual-2025.jpg',
             'active' => true,
         ]);
 

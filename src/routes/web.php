@@ -81,5 +81,5 @@ Route::get('/subscribe/event/{event_id}', [SubscribeController::class, 'showSubs
 
 Route::post('/subscribe/event/{event_id}', [SubscribeController::class, 'subscribe']);
 
-Route::get('/subscriptions/{id}/success', [App\Http\Controllers\Subscriptions\PixController::class, 'success'])->name('subscriptions.success');
+Route::get('/subscriptions/{id}/success', [PixController::class, 'success'])->name('subscriptions.success');
 
