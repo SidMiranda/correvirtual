@@ -3,19 +3,12 @@
 @section('title', 'Eventos - Corre Virtual')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/top-bar.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/main-banner.css') }}">
     <link rel="stylesheet" href="{{ asset('css/event-cards.css') }}">
 @endpush
 
 @section('content')
-  <div class="main-banner">
-    <img src="{{ asset('img/banner.jpg') }}" class="main-banner__image" alt="Banner Principal">
-  </div>
 
-  <div class="events-header">
-    <h2 class="events-header__title">CALENDÁRIO DE EVENTOS 2026</h2>
-  </div>
+<x-app.main-banner />
 
   <div class="container">
     <div class="cards-grid">
