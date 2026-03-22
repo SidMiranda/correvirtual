@@ -27,7 +27,7 @@
             SOBRE <span> NOS </span>
         </h2>
 
-        <x-app.move />
+        <x-app.about />
     </div>
 
 

@@ -1,9 +1,15 @@
 <nav class="topnav navbar navbar-expand shadow navbar-light bg-white" id="sidenavAccordion">
-    <a class="navbar-brand" href="/">Corre Virtual</a>
+    <a class="navbar-brand" href="/">{{ $organizerName }}</a>
 
     <ul class="navbar-nav align-items-center ml-auto">
         <li class="nav-item dropdown no-caret mr-3">
-            <a class="nav-link dropdown-toggle" id="navbarDropdownDocs" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <a class="nav-link dropdown-toggle"
+                id="navbarDropdownDocs"
+                href="javascript:void(0);"
+                role="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false">
                 <div class="d-inline font-weight-500">
                     @auth
                         <span>
@@ -28,9 +34,21 @@
                 </a>
             </li>
             <li class="nav-item dropdown no-caret mr-3 dropdown-notifications">
-                <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownAlerts" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i data-feather="bell"></i></a>
-                <div class="dropdown-menu dropdown-menu-right border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownAlerts">
-                    <h6 class="dropdown-header dropdown-notifications-header"><i class="mr-2" data-feather="bell"></i>Notificações</h6>
+                <a class="btn btn-icon btn-transparent-dark dropdown-toggle"
+                    id="navbarDropdownAlerts"
+                    href="javascript:void(0);"
+                    role="button"
+                    data-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false">
+                    <i data-feather="bell"></i>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right border-0 shadow animated--fade-in-up"
+                    aria-labelledby="navbarDropdownAlerts">
+                    <h6 class="dropdown-header dropdown-notifications-header">
+                        <i class="mr-2" data-feather="bell"></i>
+                        Notificações
+                    </h6>
                     {{-- <a class="dropdown-item dropdown-notifications-item" href="#!"
                         ><div class="dropdown-notifications-item-icon bg-warning"><i data-feather="activity"></i></div>
                         <div class="dropdown-notifications-item-content">
@@ -68,11 +86,11 @@
                 data-toggle="dropdown"
                 aria-haspopup="true"
                 aria-expanded="false">
-                <img class="img-fluid" src="{{ asset('img/user.jpg') }}" />
+                <img class="img-fluid" src="{{ asset('images/default/user.jpg') }}" />
             </a>
             <div class="dropdown-menu dropdown-menu-right border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownUserImage">
                 <h6 class="dropdown-header d-flex align-items-center">
-                    <img class="dropdown-user-img" src="{{ asset('img/user.jpg') }}" />
+                    <img class="dropdown-user-img" src="{{ asset('images/default/user.jpg') }}" />
                     <div class="dropdown-user-details">
                         <div class="dropdown-user-details-name">
                             @auth

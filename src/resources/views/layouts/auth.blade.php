@@ -1,19 +1,18 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <x-app.head />
+
 <body>
 
-<x-app.top-bar />
+    <x-app.top-bar />
+    <x-app.response-message />
 
-<x-app.response-message />
+    <main>
+        @yield('content')
+    </main>
 
-<main>
-
-@yield('content')
-
-</main>
-
-@stack('scripts')
+    @stack('scripts')
 
 </body>
+
 </html>

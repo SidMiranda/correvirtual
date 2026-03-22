@@ -160,7 +160,8 @@
 
     <div class="cv-video-card">
         <div class="cv-video-wrapper">
-            <img src="{{ asset('images/sobre-nos.jpg') }}" alt="Vídeo de Apresentação" style="width: 100%; height: 100%; object-fit: cover;">
+            <img src="{{ asset('images/organizers/'.$organizerId.'/sobre-nos.jpg') }}"
+            alt="Vídeo de Apresentação" style="width: 100%; height: 100%; object-fit: cover;">
         </div>
     </div>
 

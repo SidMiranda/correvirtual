@@ -2,9 +2,8 @@
 <html lang="pt-BR">
 <x-app.head />
 <x-app.top-bar />
-<body>
 
-    {{-- <x-app.old-top-bar /> --}}
+<body>
 
     <x-app.response-message />
 
@@ -15,4 +14,5 @@
     <x-app.scripts />
     @stack('scripts')
 </body>
+
 </html>

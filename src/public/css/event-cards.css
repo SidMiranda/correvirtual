@@ -135,6 +135,30 @@
   padding-top: 14px;
 }
 
+.default-card-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.2); /* Fundo sutil para destacar a fonte */
+}
+
+.event-card-overlay-title {
+    font-size: 1.5rem; /* Fonte menor que a do banner principal (3rem) */
+    font-weight: 800;
+    color: #ffffff;
+    text-transform: uppercase;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.6);
+    margin: 0;
+}
+
 /* MOBILE */
 @media (max-width: 768px) {
   .event-card {

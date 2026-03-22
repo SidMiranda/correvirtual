@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('slug')->unique();
+            $table->string('domain')->unique();
             $table->string('email');
             $table->string('cnpj')->nullable();
             $table->boolean('active')->default(true);
@@ -19,11 +20,11 @@ return new class extends Migration
         });
     }
 
-    
+
 
     public function down(): void
     {
         Schema::dropIfExists('organizers');
     }
-    
+
 };

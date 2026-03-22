@@ -3,9 +3,19 @@
 <a class="event-card" href="{{ url('/event/' . $event->id) }}">
     <div class="event-card__image-wrapper">
         @php
-            $bannerPath = $event->banner_url ? asset('images/events/' . $event->id . '/card-' . $event->banner_url) : asset('images/events/default-card.jpg');
+            $imageRelativePath = 'images/events/' . $event->id . '/card-' . $event->banner_url;
+            $hasImage = $event->banner_url && file_exists(public_path($imageRelativePath));
         @endphp
-        <img src="{{ $bannerPath }}" class="event-card__image" alt="{{ $event->title }}">
+
+        @if($hasImage)
+            <img src="{{ asset($imageRelativePath) }}" class="event-card__image" alt="{{ $event->title }}">
+        @else
+            <img src="{{ asset('images/default/card.jpg') }}" class="event-card__image" alt="{{ $event->title }}">
+            <div class="default-card-overlay">
+                <h3 class="event-card-overlay-title">{{ $event->title }}</h3>
+            </div>
+        @endif
+
         <div class="event-card__share">🔗</div>
     </div>
     <div class="event-card__date">

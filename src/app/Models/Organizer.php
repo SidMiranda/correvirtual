@@ -11,6 +11,8 @@ class Organizer extends Model
 
     protected $fillable = [
         'name',
+        'domain',
+        'cnpj',
         'email',
         'slug',
     ];
