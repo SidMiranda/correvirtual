@@ -1,6 +1,6 @@
 #!/bin/bash
 # Navega até a pasta do projeto
-cd /caminho/do/seu/projeto
+cd /home/correvirtual
 
 echo "🚀 Iniciando Deploy..."
 
