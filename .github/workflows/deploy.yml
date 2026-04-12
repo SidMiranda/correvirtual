@@ -19,9 +19,19 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
           script: |
-            # Cria ou recria o .env no servidor com os dados do GitHub Secrets
+
+            echo "🔄️ Criando .env.."
             cat << 'EOF' > /home/correvirtual/.env
-            ${{ secrets.PRODUCTION_ENV }}
+              ${{ secrets.PRODUCTION_ENV }}
             EOF
-            cd /home
-            ./deploy.sh
+
+            cd /home/correvirtual
+
+            echo "🚀 Iniciando Deploy..."
+            git pull origin main
+            docker-compose up -d --build
+            
+            docker exec corre_app php artisan migrate --force
+            docker exec corre_app php artisan optimize
+
+            echo "✅ Deploy finalizado com sucesso!"
