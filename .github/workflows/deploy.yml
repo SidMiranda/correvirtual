@@ -21,7 +21,7 @@ jobs:
           script: |
 
             echo "🔄️ Criando .env.."
-            cat << 'EOF' > /home/correvirtual/.env
+            cat << 'EOF' > /home/correvirtual/src/.env
               ${{ secrets.APP_ENV }}
             EOF
 
