@@ -19,5 +19,9 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
           script: |
+            # Cria ou recria o .env no servidor com os dados do GitHub Secrets
+            cat << 'EOF' > /home/correvirtual/.env
+            ${{ secrets.PRODUCTION_ENV }}
+            EOF
             cd /home
             ./deploy.sh
