@@ -19,8 +19,5 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
           script: |
-            cd /caminho/do/seu/projeto
-            git pull origin main
-            docker-compose up -d --build
-            docker exec laravel_app_container php artisan migrate --force
-            docker exec laravel_app_container php artisan optimize
+            cd /home
+            ./deploy.sh
