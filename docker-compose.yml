@@ -21,9 +21,6 @@ services:
     volumes:
       - ./src:/var/www
       - laravel_storage:/var/www/storage
-    depends_on:
-      - mysql
-
 
   nginx:
     image: nginx:stable-alpine
