@@ -81,5 +81,8 @@ Route::get('/subscribe/event/{event_id}', [SubscribeController::class, 'showSubs
 
 Route::post('/subscribe/event/{event_id}', [SubscribeController::class, 'subscribe']);
 
-Route::get('/subscriptions/{id}/success', [PixController::class, 'success'])->name('subscriptions.success');
+Route::post('/subscription/cancel', [SubscribeController::class, 'cancel'])
+    ->middleware('auth')
+    ->name('subscriptions.cancel');
 
+Route::get('/subscriptions/{id}/success', [PixController::class, 'success'])->name('subscriptions.success');

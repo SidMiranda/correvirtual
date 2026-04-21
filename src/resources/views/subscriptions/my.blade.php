@@ -50,6 +50,14 @@
                     {{-- Usamos o explode para pegar apenas o primeiro nome do atleta --}}
                     <h3>Parabéns, {{ explode(' ', session('user_name', 'Atleta'))[0] }}!</h3>
                     <p>Sua inscrição no evento <br><strong>{{ session('event_title') }}</strong><br> foi realizada com sucesso!</p>
+                @elseif(session('modal_type') === 'cancel')
+                    <svg class="anim-icon cancel-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                        <circle class="anim-circle" cx="26" cy="26" r="25" fill="none"/>
+                        <path class="anim-cross" d="M16 16 L36 36" fill="none"/>
+                        <path class="anim-cross" d="M36 16 L16 36" fill="none"/>
+                    </svg>
+                    <h3>Inscrição Cancelada</h3>
+                    <p>Sua inscrição no evento <br><strong>{{ session('event_title') }}</strong><br> foi excluída.</p>
                 @else
                     <svg class="anim-icon info-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
                         <circle class="anim-circle" cx="26" cy="26" r="25" fill="none"/>
@@ -92,6 +100,12 @@
             .success-icon .anim-circle, .success-icon .anim-check { stroke: #10b981; }
             .anim-check {
                 stroke-width: 4; stroke-dasharray: 48; stroke-dashoffset: 48; stroke-linecap: round; stroke-linejoin: round;
+                animation: dashCheck 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.6s forwards;
+            }
+            /* Cancel Theme */
+            .cancel-icon .anim-circle, .cancel-icon .anim-cross { stroke: #ef4444; }
+            .anim-cross {
+                stroke-width: 4; stroke-dasharray: 30; stroke-dashoffset: 30; stroke-linecap: round;
                 animation: dashCheck 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.6s forwards;
             }
             /* Info Theme */

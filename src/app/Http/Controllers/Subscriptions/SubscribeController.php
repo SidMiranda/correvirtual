@@ -102,14 +102,29 @@ class SubscribeController extends Controller
             'subscription_id' => 'required|integer',
         ]);
 
-        $subscription = Subscription::where('id', $request->subscription_id)
+        $subscription = Subscription::with('event')->where('id', $request->subscription_id)
             ->where('user_id', auth()->id())
             ->firstOrFail();
 
+        // Guarda o título do evento para exibir no modal após a exclusão
+        $eventTitle = $subscription->event->title ?? 'Evento';
+
         // Só permite o cancelamento se a inscrição ainda estiver pendente de pagamento
         if ($subscription->status === 'pending') {
-            $subscription->update(['status' => 'canceled']);
-            return redirect()->back()->with('success', 'Sua inscrição foi cancelada com sucesso.');
+            
+            // Apaga possíveis registros de pagamento pendentes atrelados a esta inscrição para não gerar lixo na base
+            if (class_exists(\App\Models\Payment::class)) {
+                \App\Models\Payment::where('subscription_id', $subscription->id)->delete();
+            }
+
+            // Apaga fisicamente o registro de inscrição
+            $subscription->delete();
+
+            return redirect()->back()->with([
+                'modal_type'  => 'cancel',
+                'user_name'   => auth()->user()->name,
+                'event_title' => $eventTitle,
+            ]);
         }
 
         return redirect()->back()->with('error', 'Apenas inscrições pendentes podem ser canceladas.');

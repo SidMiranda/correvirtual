@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
         // 1. Criar um Organizador Padrão
         $organizer1 = Organizer::create([
             'name' => 'Corre Virtual Eventos',
-            'domain' => 'correvirtual.local',
+            'domain' => 'eventos.correvirtual.com.br',
             'email' => 'falecom@correvirtual.com.br',
             'slug'  => 'corre-virtual-organizadora',
             'cnpj' => '12.345.678/0001-90',
@@ -26,7 +26,7 @@ class DatabaseSeeder extends Seeder
 
         $organizer2 = Organizer::create([
             'name' => 'Borafitness Eventos',
-            'domain' => 'borafitness.local',
+            'domain' => 'borafitness.mobspot.com.br',
             'email' => 'falecom@borafitness.com.br',
             'slug'  => 'borafitness-organizadora',
             'cnpj' => '98.765.432/0001-09',
