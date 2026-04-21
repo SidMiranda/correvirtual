@@ -45,7 +45,7 @@ class SubscribeController extends Controller
             'user_id'     => auth()->id(),
             'modality_id' => $modalityInput,
             'kit_id'      => $kitInput,
-            'price'       => 0.05,
+            'price'       => 0.04,
             'status'      => 'pending',
             'bib_number'  => null,
         ]);
