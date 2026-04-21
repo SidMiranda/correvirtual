@@ -18,10 +18,6 @@ echo [3/7] Subindo containers...
 docker compose up -d
 
 echo.
-echo [4/7] Aguardando MySQL inicializar...
-timeout /t 15 > nul
-
-echo.
 echo [5/7] Instalando dependencias e ajustando permissoes (Root)...
 
 REM Cria a estrutura de pastas forcadamente caso nao exista
