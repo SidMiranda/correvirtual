@@ -46,16 +46,6 @@ class Subscription extends Model
         return $this->hasMany(Payment::class);
     }
 
-    public function modality()
-    {
-        return $this->belongsTo(EventModality::class);
-    }
-
-    public function kit()
-    {
-        return $this->belongsTo(EventKit::class);
-    }
-
     /*
     |--------------------------------------------------------------------------
     | Helpers

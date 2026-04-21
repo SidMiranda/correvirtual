@@ -16,7 +16,13 @@
             </div>
         @endif
 
-        <div class="event-card__share">🔗</div>
+        @php
+            $shareMessage = "Confira este evento: *" . $event->title . "*\n📍 " . $event->location . "\n\n" . url('/event/' . $event->id);
+            $whatsappUrl = "https://api.whatsapp.com/send?text=" . urlencode($shareMessage);
+        @endphp
+        <div class="event-card__share" onclick="event.preventDefault(); window.open('{{ $whatsappUrl }}', '_blank');" title="Compartilhar no WhatsApp">
+            <i data-feather="share-2"></i>
+        </div>
     </div>
     <div class="event-card__date">
         <span class="event-card__date-day">{{ \Carbon\Carbon::parse($event->event_date)->format('d') }}</span>

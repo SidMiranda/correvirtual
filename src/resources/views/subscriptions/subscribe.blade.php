@@ -1,74 +1,56 @@
 @extends('layouts.auth')
 
-@section('title','Inscrição')
+@section('title', 'Inscrição')
 
 @section('content')
 
-<div class="modal-overlay">
+    <div class="modal-overlay">
 
-<div class="modal text-left">
+        <div class="modal text-left">
 
-<form method="POST" action="/subscribe/event/1" class="form-container">
+            <form method="POST" action="/subscribe/event/{{ $event->id }}" class="form-container">
 
-@csrf
+                @csrf
 
-<h2 class="event-title">
-CarnaRun do Quarteto - 2025
-</h2>
+                <h2 class="event-title">
+                    {{ $event->title }}
+                </h2>
 
-<div class="athlete-info">
-    <span>👤 Atleta:</span>
-    <strong>{{ Auth::user()->name }}</strong>
-</div>
-<p><hr></p>
-<select name="modality_id" required>
+                <div class="athlete-info">
+                    <span>👤 Atleta:</span>
+                    <strong>{{ Auth::user()->name }}</strong>
+                </div>
+                <p>
+                    <hr>
+                </p>
+                <select name="modality_id" required>
 
-<option value="">Modalidade</option>
+                    <option value="">Modalidade</option>
+                    @foreach($event->modalities as $modality)
+                        <option value="{{ $modality->id }}">
+                            {{ $modality->name }}
+                        </option>
+                    @endforeach
+                </select>
 
-<option value="1">
-3km Caminhada
-</option>
+                <select name="kit_id" required>
 
-<option value="2">
-5km Caminhada
-</option>
+                    <option value="">kit</option>
+                    @foreach($event->kits as $kit)
+                        <option value="{{ $kit->id }}">
+                            {{ $kit->name }}
+                        </option>
+                    @endforeach
+                </select>
 
-<option value="3">
-5km Corrida
-</option>
+                <button type="submit" class="btn-primary">
+                    Confirmar inscrição
+                </button>
 
-<option value="4">
-10km Corrida
-</option>
+            </form>
 
-</select>
+        </div>
 
-<select name="kit_id" required>
-
-<option value="">kit</option>
-
-<option value="1">
-Kit Básico
-</option>
-
-<option value="2">
-Só medalha
-</option>
-
-<option value="3">
-Kit PCD
-</option>
-
-</select>
-
-<button type="submit" class="btn-primary">
-Confirmar inscrição
-</button>
-
-</form>
-
-</div>
-
-</div>
+    </div>
 
 @endsection

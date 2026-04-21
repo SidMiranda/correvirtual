@@ -18,8 +18,6 @@ use App\Services\MercadoPagoService;
 
 Route::get('/', [EventsController::class, 'index'])->name('home');
 
-// Route::get('/event/{id}', [EventsController::class, 'show'])->name('events.show');
-
 Route::get('/event/{event_id}', [EventsController::class, 'show'])->name('event.show');
 
 /*
