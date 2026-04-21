@@ -62,12 +62,31 @@
 
 <div class="main-banner-container">
     <div class="main-banner">
-        @if(file_exists(public_path('images/organizers/'.$organizerId.'/banner.jpg')))
-            <img src="{{ asset('images/organizers/'.$organizerId.'/banner.jpg') }}"
-            class="main-banner__image" alt="Banner Principal">
+        @php
+            $desktopBanner = 'images/organizers/'.$organizerId.'/banner.jpg';
+            $mobileBanner = 'images/organizers/'.$organizerId.'/banner-mobile.jpg';
+            $hasDesktop = file_exists(public_path($desktopBanner));
+            $hasMobile = file_exists(public_path($mobileBanner));
+            
+            $defaultDesktop = 'images/default/banner.jpg';
+            $defaultMobile = 'images/default/banner-mobile.jpg';
+            $hasDefaultMobile = file_exists(public_path($defaultMobile));
+        @endphp
+
+        @if($hasDesktop || $hasMobile)
+            <picture>
+                @if($hasMobile)
+                    <source media="(max-width: 1024px)" srcset="{{ asset($mobileBanner) }}">
+                @endif
+                <img src="{{ asset($hasDesktop ? $desktopBanner : $mobileBanner) }}" class="main-banner__image" alt="Banner Principal">
+            </picture>
         @else
-            <img src="{{ asset('images/default/banner.jpg') }}"
-            class="main-banner__image" alt="Banner Principal">
+            <picture>
+                @if($hasDefaultMobile)
+                    <source media="(max-width: 1024px)" srcset="{{ asset($defaultMobile) }}">
+                @endif
+                <img src="{{ asset($defaultDesktop) }}" class="main-banner__image" alt="Banner Principal">
+            </picture>
             <div class="default-banner-overlay">
                 <h1 class="organizer-banner-title">{{ $organizerName }}</h1>
                 <p class="organizer-banner-email">{{ $organizerEmail }}</p>
