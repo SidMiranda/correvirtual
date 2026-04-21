@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Services\MercadoPagoService;
 use App\Models\Subscription;
 use App\Models\Payment;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class PixController extends Controller
@@ -32,7 +33,7 @@ class PixController extends Controller
             'qr_code' => $pix->point_of_interaction->transaction_data->qr_code,
             'qr_code_base64' => $pix->point_of_interaction->transaction_data->qr_code_base64,
             'ticket_url' => $pix->point_of_interaction->transaction_data->ticket_url,
-            'expires_at' => $pix->date_of_expiration,
+            'expires_at' => !empty($pix->date_of_expiration) ? Carbon::parse($pix->date_of_expiration)->format('Y-m-d H:i:s') : null,
             'payload' => json_encode($pix)
         ]);
 
