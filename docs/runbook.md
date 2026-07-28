@@ -32,7 +32,7 @@ Dois arquivos `.env` diferentes, que precisam concordar entre si:
 
 | Arquivo | Para quê | Variáveis-chave |
 |---|---|---|
-| `.env` (raiz) | Bootstrap do container Postgres | `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD` |
+| `.env` (raiz) | Bootstrap do container Postgres (+ tunnel, se usado) | `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `CLOUDFLARE_TUNNEL_TOKEN` |
 | `src/.env` | Configuração do Laravel | `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` (devem ser **iguais** aos `POSTGRES_*` acima), `DB_HOST=db`, `DB_PORT=5432`, `MERCADOPAGO_ACCESS_TOKEN`, `APP_URL` |
 
 Se os dois arquivos ficarem dessincronizados, o Postgres sobe com uma senha e o Laravel tenta conectar com outra — o container `app` fica em loop de erro de conexão. Se isso acontecer: `docker compose down -v` (apaga o volume do Postgres) e suba de novo com os dois `.env` corrigidos.
@@ -44,6 +44,20 @@ A porta 5432 não é publicada no host de propósito. Para usar um client (DBeav
 ```bash
 docker exec -it corre_db psql -U corre_virtual -d corre_virtual
 ```
+
+### Expor o ambiente local na internet (Cloudflare Tunnel)
+
+Pra testar em outro dispositivo, mandar link de revisão pro organizador, etc. — sem isso ser o deploy de produção. Setup (uma vez, no [painel Zero Trust da Cloudflare](https://one.dash.cloudflare.com/) → Networks → Tunnels): criar um tunnel, tipo "Cloudflared", copiar o token, e configurar um Public Hostname apontando pra `http://nginx:80` (nome do serviço no docker-compose — não `localhost`, o cloudflared roda dentro da mesma rede Docker). Cole o token em `CLOUDFLARE_TUNNEL_TOKEN` no `.env` da raiz, depois:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.local.yml -f docker-compose.tunnel.yml up -d
+```
+
+`docker-compose.tunnel.yml` é 100% opt-in — só sobe se você incluir esse `-f` explicitamente.
+
+### Verificação visual (Playwright MCP)
+
+Pra tirar screenshot/navegar na aplicação de verdade (não só `curl`), o projeto usa o servidor MCP do Playwright, registrado em `.mcp.json` (raiz, versionado). Exige Node.js instalado no host — se `claude mcp list` não mostrar `playwright` conectado, rode `/mcp` numa sessão do Claude Code pra aprovar/depurar.
 
 ## Deploy
 

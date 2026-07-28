@@ -1,0 +1,20 @@
+# Overlay opcional pra expor o ambiente local na internet via Cloudflare Tunnel —
+# util pra testar em outro dispositivo, mandar link pro organizador revisar, etc.
+# Nao substitui nada de producao; e so mais um container que sobe junto.
+#
+# Setup (uma vez, no painel da Cloudflare):
+#   1. Zero Trust > Networks > Tunnels > Create a tunnel > Cloudflared.
+#   2. Copie o token do tunnel (comeca com "ey...").
+#   3. Configure um "Public Hostname" apontando pra http://nginx:80 (o nome do
+#      servico no docker-compose, no mesmo network — nao "localhost").
+#   4. Cole o token em CLOUDFLARE_TUNNEL_TOKEN no .env da raiz.
+#
+# Uso: docker compose -f docker-compose.yml -f docker-compose.local.yml -f docker-compose.tunnel.yml up -d
+services:
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: corre_cloudflared
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN}
+    depends_on:
+      - nginx
