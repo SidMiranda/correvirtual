@@ -25,7 +25,7 @@ Use o modo de planejamento do Claude Code para isso. Se a tarefa for realmente t
 
 ## Estágio atual do projeto
 
-MVP em revitalização. Um único organizador ativo, poucos eventos, **boa parte dos eventos é mocado via seeder e isso é aceitável por enquanto** — o objetivo agora é ter algo bonito, funcional e correto no fluxo de dinheiro, não um catálogo real completo. Não invente escopo além do que foi pedido; prefira a solução mais simples que resolve o problema atual. Veja `docs/backlog.md` para o que é MVP vs. fase 2 (painel admin com template SB Admin 2, em `TEMPLATES/admin-sbadmin2/` quando chegar) vs. fase 3.
+MVP em revitalização. Um único organizador ativo, poucos eventos, **boa parte dos eventos é mocado via seeder e isso é aceitável por enquanto** — o objetivo agora é ter algo bonito, funcional e correto no fluxo de dinheiro, não um catálogo real completo. Não invente escopo além do que foi pedido; prefira a solução mais simples que resolve o problema atual. Veja `docs/backlog.md` para o que é MVP vs. fase 2 (painel admin com o template em `TEMPLATES/Painel-Admin/`, já recebido) vs. fase 3.
 
 ## Mapa rápido da documentação
 

@@ -15,7 +15,7 @@ Objetivo: site público bonito e funcional, um organizador, fluxo de inscrição
 
 ## Fase 2 (depois do MVP no ar)
 
-- [ ] Painel administrativo para o organizador (cadastrar evento, modalidade, kit, ver inscritos) usando o template SB Admin 2, que vai para `TEMPLATES/admin-sbadmin2/`
+- [ ] Painel administrativo para o organizador (cadastrar evento, modalidade, kit, ver inscritos) usando o template SB Admin Pro, já recebido em `TEMPLATES/Painel-Admin/` (inclui telas prontas de seleção/criação de tenant)
 - [ ] Geração de número de peito (`bib_number`) após pagamento confirmado
 - [ ] BUG-007 (throttle em login/registro/verificação)
 - [ ] Papéis `organizer_admin` / `super_admin` (hoje só `athlete` é usado de fato)
