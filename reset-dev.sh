@@ -8,20 +8,24 @@ echo "   RESET COMPLETO DO AMBIENTE (LINUX/WSL)"
 echo "=========================================="
 echo ""
 
+# Overlay local troca o nginx para HTTP puro (produção exige certificado Let's Encrypt
+# real e nunca sobe numa máquina de dev). Ver docker-compose.local.yml e docs/runbook.md.
+COMPOSE="docker compose -f docker-compose.yml -f docker-compose.local.yml"
+
 echo "[1/7] Derrubando containers e volumes..."
-docker compose down -v
+$COMPOSE down -v
 
 echo ""
 echo "[2/7] Rebuildando imagens..."
-docker compose build --no-cache
+$COMPOSE build --no-cache
 
 echo ""
 echo "[3/7] Subindo containers..."
-docker compose up -d
+$COMPOSE up -d
 
 echo ""
-echo "[4/7] Aguardando MySQL inicializar (pode demorar na primeira vez)..."
-until docker exec corre_mysql mysqladmin ping -h localhost -uroot -proot --silent; do
+echo "[4/7] Aguardando Postgres inicializar (pode demorar na primeira vez)..."
+until docker exec corre_db pg_isready -U "${POSTGRES_USER:-corre_virtual}" -d "${POSTGRES_DB:-corre_virtual}" >/dev/null 2>&1; do
     echo "O banco de dados ainda não está pronto. Aguardando..."
     sleep 4
 done

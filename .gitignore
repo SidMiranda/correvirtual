@@ -1,0 +1,9 @@
+# Credenciais de bootstrap do Postgres usadas pelo docker-compose (ver .env.example)
+.env
+
+# SO / editor
+.DS_Store
+Thumbs.db
+
+# Vai ganhar o conteúdo do template externo (landing / SB Admin 2) — ver TEMPLATE/README.md
+TEMPLATE/**/node_modules/

@@ -6,16 +6,20 @@ echo   RESET COMPLETO DO AMBIENTE LARAVEL
 echo ==========================================
 echo.
 
+REM Overlay local troca o nginx para HTTP puro (producao exige certificado Let's
+REM Encrypt real e nunca sobe numa maquina de dev). Ver docker-compose.local.yml.
+set COMPOSE=docker compose -f docker-compose.yml -f docker-compose.local.yml
+
 echo [1/7] Derrubando containers e volumes...
-docker compose down -v
+%COMPOSE% down -v
 
 echo.
 echo [2/7] Rebuildando imagens...
-docker compose build --no-cache
+%COMPOSE% build --no-cache
 
 echo.
 echo [3/7] Subindo containers...
-docker compose up -d
+%COMPOSE% up -d
 
 echo.
 echo [5/7] Instalando dependencias e ajustando permissoes (Root)...
