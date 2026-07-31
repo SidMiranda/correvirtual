@@ -22,18 +22,19 @@ A tela de QR code consulta `GET /api/subscriptions/{id}/status` (`PixController:
 ### Confirmação via webhook
 Mercado Pago notifica `POST /api/webhooks/mercadopago` → `MercadoPagoWebhookController::handle`:
 1. Loga o payload recebido.
-2. Extrai o ID do pagamento (`data.id` ou `id`, dependendo do formato da notificação).
-3. Consulta a API do Mercado Pago pra confirmar o status real do pagamento (`MercadoPagoService::getPayment`) — **não confia cegamente no payload da notificação**, isso está correto.
-4. Se `status === 'approved'`, usa `external_reference` (que é o `subscription_id` enviado na criação) pra marcar `Subscription.status = paid` e o `Payment` correspondente (por `transaction_id`) como `approved`.
-5. Sempre responde `200` pro Mercado Pago parar de reenviar.
+2. **Valida a assinatura** (`App\Services\MercadoPagoWebhookSignature::isValid`, corrigido em 2026-07-30 — BUG-004): lê os headers `x-signature`/`x-request-id` e o `data.id` da query string crua da notificação (via `Symfony\Component\HttpFoundation\HeaderUtils::parseQuery`, não `$request->query()` — PHP converte pontos em nome de query param pra underscore, então `data.id` viraria `data_id` se lido do jeito ingênuo), monta o manifest `id:{data.id};request-id:{x-request-id};ts:{ts};` e compara o HMAC-SHA256 (usando `MERCADOPAGO_WEBHOOK_SECRET`) com o `v1` do header. Se a assinatura for inválida ou o secret não estiver configurado, responde `401` e não processa nada — **falha fechada**.
+3. Extrai o ID do pagamento (`data.id` ou `id`, dependendo do formato da notificação).
+4. Consulta a API do Mercado Pago pra confirmar o status real do pagamento (`MercadoPagoService::getPayment`) — **não confia cegamente no payload da notificação**, isso está correto.
+5. Se `status === 'approved'`, usa `external_reference` (que é o `subscription_id` enviado na criação) pra marcar `Subscription.status = paid` e o `Payment` correspondente (por `transaction_id`) como `approved`.
+6. Sempre responde `200` pro Mercado Pago parar de reenviar (exceto quando a assinatura falha — nesse caso é `401`, de propósito, pra não confirmar recebimento de uma notificação não autenticada).
 
 ### Tela de sucesso
 `GET /subscriptions/{id}/success` → `PixController::success`, puramente informativa.
 
 ## Bugs conhecidos nesta área
 
-- **BUG-004 (webhook sem validação de assinatura):** o endpoint `/api/webhooks/mercadopago` não valida nenhum segredo/assinatura do Mercado Pago antes de consultar o pagamento e marcar como pago. Como o passo 3 acima *consulta a API real* antes de confirmar, o impacto prático é menor do que "aceitar qualquer POST cegamente" — mas ainda é possível forjar uma notificação apontando pra um `transaction_id`/pagamento real de outra pessoa se o atacante souber o ID. Validar a assinatura do webhook (o Mercado Pago fornece um jeito de fazer isso) fecha essa brecha.
-- **BUG-001 (herdado):** o valor cobrado no Pix é o `Subscription.price`, que hoje é sempre `0.05` — corrigir isso é pré-requisito pra esta área funcionar corretamente com dinheiro real.
+- **BUG-004 (corrigido em 2026-07-30):** o endpoint `/api/webhooks/mercadopago` não validava nenhum segredo/assinatura do Mercado Pago antes de consultar o pagamento e marcar como pago. Corrigido com validação de assinatura HMAC-SHA256 (ver "Confirmação via webhook" acima) — requer `MERCADOPAGO_WEBHOOK_SECRET` configurado, senão o webhook falha fechado.
+- **BUG-001 (herdado, ainda aberto):** o valor cobrado no Pix é o `Subscription.price`, que hoje é sempre `0.05` — corrigir isso é pré-requisito pra esta área funcionar corretamente com dinheiro real.
 - **DEBT-005:** `MercadoPagoService::createPixPayment` usa `dd()` no `catch` de erro da API — derruba a request com uma tela de debug em vez de tratar o erro (ex.: devolver mensagem amigável e logar).
 - `PaymentsController::pay()` é um stub vazio sem rota — código morto (DEBT-001).
 
@@ -43,10 +44,14 @@ Mercado Pago notifica `POST /api/webhooks/mercadopago` → `MercadoPagoWebhookCo
 - Reembolso/estorno — o status `refunded` existe na coluna mas nada no código o define.
 - Expiração automática de cobrança Pix vencida (`expires_at` é gravado mas nada limpa/expira a inscrição `pending` associada).
 
-## Plano de testes (a escrever ao corrigir os bugs desta área)
+## Plano de testes
 
+Cobertos:
+- `App\Services\MercadoPagoWebhookSignature::isValid` — assinatura válida aceita, `v1`/`data.id`/secret errados ou ausentes rejeitados (`tests/Unit/MercadoPagoWebhookSignatureTest.php`).
+- Webhook rejeita notificação sem assinatura válida ou sem secret configurado, sem alterar a `Subscription` (`tests/Feature/MercadoPagoWebhookControllerTest.php`).
+
+Ainda por escrever:
 - `PixController@generatePix` cobra o valor do `EventKit`, não um valor fixo (depende de BUG-001 corrigido).
-- Webhook rejeita notificação sem assinatura válida (depende de BUG-004 corrigido).
-- Webhook marca `Subscription` e `Payment` corretos quando o pagamento consultado é `approved`.
+- Webhook marca `Subscription` e `Payment` corretos quando o pagamento consultado é `approved` — hoje não dá pra testar sem bater na API real do Mercado Pago (`MercadoPagoService` não é mockável, ver DEBT-008 em `docs/backlog.md`).
 - Webhook não quebra (responde 200 e loga) quando o `subscription_id`/`transaction_id` não existe.
 - Falha da API do Mercado Pago ao criar o Pix não derruba a request com `dd()` (depende de DEBT-005 corrigido).

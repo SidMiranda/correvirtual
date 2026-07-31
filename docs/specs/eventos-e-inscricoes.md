@@ -24,19 +24,17 @@ Um atleta precisa conseguir ver os eventos de um organizador, escolher uma modal
 ### Formulário de inscrição
 `GET /subscribe/event/{event_id}` (autenticado) → `SubscribeController::showSubscribeForm`. **Bug (BUG-005):** busca o evento só por ID (`Event::findOrFail`), sem filtrar por organizador do domínio atual — diferente do endpoint de detalhe acima.
 
-### Criar/reativar inscrição
+### Criar inscrição
 `POST /subscribe/event/{event_id}` (autenticado) → `SubscribeController::subscribe`.
 
 Comportamento atual:
-1. Valida que `modality_id` e `kit_id` vieram no request (só presença, não que existam/pertençam ao evento).
-2. Busca o evento por ID (mesmo problema de escopo do item anterior).
-3. Se já existe uma `Subscription` do usuário pra esse evento:
-   - Se o status **não** é `'canceled'` (string com 1 L — **bug**, o enum real é `cancelled` com 2 L, então esta condição é sempre verdadeira) → redireciona pra "minhas inscrições" avisando que já está inscrito.
-   - Caso contrário (nunca acontece na prática hoje) → reativaria a inscrição existente.
-4. Se não existe, cria uma nova `Subscription` com `status = pending`, `price = 0.05` **fixo (BUG-001 — deveria ser o preço do `EventKit` escolhido)**, `bib_number = null`.
+1. Busca o evento por ID (mesmo problema de escopo do item anterior — **BUG-005**, ainda aberto).
+2. Valida que `modality_id` e `kit_id` vieram no request **e** que existem em `event_modalities`/`event_kits` pertencendo a este `event_id` (`Rule::exists(...)->where('event_id', ...)`) — corrigido em 2026-07-30 (BUG-002). As colunas `subscriptions.modality_id`/`kit_id` agora são `foreignId` de verdade, com `restrictOnDelete()` (não dá pra apagar um kit/modalidade que já tem inscrição).
+3. Se já existe uma `Subscription` do usuário pra esse evento (só pode estar `pending` ou `paid` — ver "Cancelar inscrição" abaixo, cancelar apaga a linha) → redireciona pra "minhas inscrições" avisando que já está inscrito.
+4. Se não existe, cria uma nova `Subscription` com `status = pending`, `price = 0.05` **fixo (BUG-001 — deveria ser o preço do `EventKit` escolhido, ainda aberto)**, `bib_number = null`.
 5. Redireciona pra "minhas inscrições".
 
-Não há verificação de `registration_deadline`, de `max_participants` da modalidade, nem de que `modality_id`/`kit_id` de fato pertencem ao `event_id` informado (BUG-002, BUG-005).
+Não há verificação de `registration_deadline` nem de `max_participants` da modalidade (BUG-005, ainda aberto).
 
 ### Minhas inscrições
 `GET /my-subscriptions` (autenticado) → `SubscribeController::mySubscriptions`. Lista inscrições do usuário logado, filtradas pelas que pertencem a eventos do organizador do domínio atual (`whereHas('event', ...)`) — este endpoint escopa por tenant corretamente.
@@ -46,7 +44,7 @@ Não há verificação de `registration_deadline`, de `max_participants` da moda
 
 ## Bugs conhecidos nesta área
 
-Ver `docs/backlog.md`: BUG-001 (preço fixo), BUG-002 (FK ausente em modality_id/kit_id), BUG-003 (`canceled` vs `cancelled`), BUG-005 (sem escopo de tenant/prazo/capacidade no fluxo de inscrição).
+Ver `docs/backlog.md`: BUG-001 (preço fixo, aberto), BUG-005 (sem escopo de tenant/prazo/capacidade no fluxo de inscrição, aberto). BUG-002 (FK ausente em modality_id/kit_id) e BUG-003 (`canceled` vs `cancelled`) corrigidos em 2026-07-30.
 
 ## Fora de escopo hoje
 
@@ -54,11 +52,16 @@ Ver `docs/backlog.md`: BUG-001 (preço fixo), BUG-002 (FK ausente em modality_id
 - Não há painel para o organizador cadastrar evento/modalidade/kit — entra via seeder/banco direto (fase 2 do backlog).
 - `registered_count` em `EventModality` existe na tabela mas não é incrementado por nenhum código atual.
 
-## Plano de testes (a escrever ao corrigir os bugs desta área)
+## Plano de testes
 
+Cobertos em `tests/Feature/SubscribeControllerTest.php`:
+- `SubscribeController@subscribe` rejeita `modality_id`/`kit_id` que não pertencem ao `event_id`.
+- `SubscribeController@subscribe` cria a inscrição com `modality_id`/`kit_id` válidos.
+- `SubscribeController@subscribe` rejeita segunda inscrição ativa pro mesmo evento.
+- Depois de cancelar (linha apagada), o usuário consegue se inscrever de novo sem erro de unique constraint.
+
+Ainda por escrever (dependem de BUG-001/BUG-005 corrigidos):
 - `EventsController@index` só retorna eventos do organizador do domínio atual.
 - `SubscribeController@subscribe` grava `price` igual ao `EventKit.price` do kit escolhido, não um valor fixo.
-- `SubscribeController@subscribe` rejeita `modality_id`/`kit_id` que não pertencem ao `event_id`.
 - `SubscribeController@subscribe` rejeita inscrição após `registration_deadline`.
 - `SubscribeController@subscribe` rejeita inscrição num evento de outro organizador.
-- `SubscribeController@subscribe` rejeita segunda inscrição ativa pro mesmo evento (unique já existe no banco — falta teste de que o comportamento de aplicação é o esperado).

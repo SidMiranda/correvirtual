@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Subscriptions;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use App\Models\Subscription;
 use App\Models\Event;
 
@@ -36,58 +37,48 @@ class SubscribeController extends Controller
 
     public function subscribe(Request $request)
     {
-        // Valida se o usuário preencheu a modalidade e o kit
-        $request->validate([
-            'modality_id' => 'required',
-            'kit_id'      => 'required',
-        ], [
-            'required' => 'Por favor, selecione as opções de modalidade e kit.'
-        ]);
-
-        $modalityInput = $request->input('modality_id');
-        $kitInput      = $request->input('kit_id');
-
         $eventId = $request->route('event_id');
 
         // Valida se o evento realmente existe no banco antes de criar a inscrição.
         // Se não existir, retorna um erro 404 automaticamente.
         $event = Event::findOrFail($eventId);
 
-        // Busca a inscrição existente para este usuário neste evento
+        // Valida que a modalidade e o kit foram preenchidos e que de fato pertencem a este evento
+        $request->validate([
+            'modality_id' => ['required', 'integer', Rule::exists('event_modalities', 'id')->where('event_id', $event->id)],
+            'kit_id'      => ['required', 'integer', Rule::exists('event_kits', 'id')->where('event_id', $event->id)],
+        ], [
+            'required' => 'Por favor, selecione as opções de modalidade e kit.',
+            'exists'   => 'A modalidade ou o kit selecionado não é válido para este evento.',
+        ]);
+
+        $modalityInput = $request->input('modality_id');
+        $kitInput      = $request->input('kit_id');
+
+        // Busca a inscrição existente para este usuário neste evento.
+        // Cancelar uma inscrição apaga a linha (ver cancel()), então uma inscrição
+        // encontrada aqui só pode estar pending ou paid — nunca cancelled.
         $existingSubscription = Subscription::where('event_id', $event->id)
             ->where('user_id', auth()->id())
             ->first();
 
         if ($existingSubscription) {
-            // Se já existe e NÃO está cancelada, avisa que já está inscrito
-            if ($existingSubscription->status !== 'canceled') {
-                return redirect('/my-subscriptions')->with([
-                    'modal_type'  => 'info',
-                    'user_name'   => auth()->user()->name,
-                    'event_title' => $event->title,
-                ]);
-            }
-
-            // Se estava cancelada, reativamos ela (Reaproveita a linha e evita erro de Unique no DB!)
-            $existingSubscription->update([
-                'modality_id' => $modalityInput,
-                'kit_id'      => $kitInput,
-                'price'       => 0.05, // Atualize futuramente se os kits tiverem preços variados
-                'status'      => 'pending',
-                'bib_number'  => null,
-            ]);
-        } else {
-            // Se não encontrou nenhuma inscrição anterior, cria uma nova
-            Subscription::create([
-                'event_id'    => $event->id,
-                'user_id'     => auth()->id(),
-                'modality_id' => $modalityInput,
-                'kit_id'      => $kitInput,
-                'price'       => 0.05,
-                'status'      => 'pending',
-                'bib_number'  => null,
+            return redirect('/my-subscriptions')->with([
+                'modal_type'  => 'info',
+                'user_name'   => auth()->user()->name,
+                'event_title' => $event->title,
             ]);
         }
+
+        Subscription::create([
+            'event_id'    => $event->id,
+            'user_id'     => auth()->id(),
+            'modality_id' => $modalityInput,
+            'kit_id'      => $kitInput,
+            'price'       => 0.05,
+            'status'      => 'pending',
+            'bib_number'  => null,
+        ]);
 
         return redirect('/my-subscriptions')->with([
             'modal_type'  => 'success',

@@ -9,7 +9,7 @@ Levantado na auditoria inicial de revitalização (2026-07-28). Nenhum destes it
 Objetivo: site público bonito e funcional, um organizador, fluxo de inscrição + Pix correto e seguro, mesmo com poucos eventos e boa parte deles mocada via seeder.
 
 - [ ] Frontend público reconstruído a partir do template em `TEMPLATES/Front-End/` (já recebido — falta escrever `docs/specs/frontend-publico.md` e planejar a adaptação)
-- [ ] BUG-001 a BUG-005 corrigidos (todos os P0 abaixo — envolvem dinheiro e segurança de pagamento)
+- [ ] BUG-001 e BUG-005 corrigidos (P0 restantes — envolvem dinheiro e segurança de pagamento). BUG-002, BUG-003 e BUG-004 já corrigidos (2026-07-30).
 - [ ] BUG-006 corrigido (P1 — integridade multi-tenant básica)
 - [ ] Deploy validado em produção com Postgres (esta rodada de trabalho)
 
@@ -42,14 +42,14 @@ Objetivo: site público bonito e funcional, um organizador, fluxo de inscrição
 `SubscribeController::subscribe()` (`src/app/Http/Controllers/Subscriptions/SubscribeController.php`) grava `'price' => 0.05` tanto ao criar quanto ao reativar uma inscrição, ignorando o preço do `EventKit` escolhido. Esse é o valor que a `PixController` depois cobra de verdade via Mercado Pago. Qualquer inscrição paga hoje cobraria 5 centavos, não o preço do kit.
 *Spec relacionado:* `specs/eventos-e-inscricoes.md`, `specs/pagamentos-pix.md`.
 
-**BUG-002 — `modality_id`/`kit_id` sem integridade referencial**
-`subscriptions.modality_id` e `subscriptions.kit_id` são colunas `string` soltas (migration `2026_03_01_234149_create_subscriptions_table.php`), sem foreign key — mesmo `EventModality`/`EventKit` sendo tabelas com PK numérica e o model `Subscription` declarar `belongsTo(EventModality::class)` / `belongsTo(EventKit::class)`. Hoje os relacionamentos só "funcionam" porque o ID numérico vira string por coincidência de tipo do PHP; não há garantia de que o valor gravado exista ou pertença ao evento certo.
+**BUG-002 — ~~`modality_id`/`kit_id` sem integridade referencial~~ (corrigido em 2026-07-30)**
+`subscriptions.modality_id` e `subscriptions.kit_id` eram colunas `string` soltas, sem foreign key — mesmo `EventModality`/`EventKit` sendo tabelas com PK numérica e o model `Subscription` declarar `belongsTo(EventModality::class)` / `belongsTo(EventKit::class)`. Corrigido pela migration `2026_07_30_000000_fix_subscriptions_modality_kit_foreign_keys.php` (colunas agora são `foreignId` com `restrictOnDelete()`) + validação em `SubscribeController::subscribe()` (`Rule::exists` checando que a modalidade/kit pertence ao `event_id`). Teste: `tests/Feature/SubscribeControllerTest.php`.
 
-**BUG-003 — Status `canceled` vs `cancelled` inconsistente**
-A migration define o enum como `pending|paid|cancelled` (2 L's). `SubscribeController::subscribe()` compara com `'canceled'` (1 L) para decidir se reativa uma inscrição — uma comparação que nunca é verdadeira, porque `cancel()` **deleta** a linha em vez de mudar o status. Decidir um comportamento único (deletar ao cancelar, ou marcar como `cancelled`?) e corrigir a inconsistência.
+**BUG-003 — ~~Status `canceled` vs `cancelled` inconsistente~~ (corrigido em 2026-07-30)**
+A migration define o enum como `pending|paid|cancelled` (2 L's), mas `SubscribeController::subscribe()` comparava com `'canceled'` (1 L) — comparação sempre verdadeira, e o branch de reativação nunca era executado. Decisão: manter o comportamento já implementado em `cancel()` (deleta a linha em vez de marcar `cancelled`); removido o branch morto de reativação. Teste: `tests/Feature/SubscribeControllerTest.php`.
 
-**BUG-004 — Webhook do Mercado Pago sem validação de assinatura**
-`MercadoPagoWebhookController::handle()` (`src/app/Http/Controllers/Subscriptions/MercadoPagoWebhookController.php`) aceita qualquer POST em `/api/webhooks/mercadopago` e marca a inscrição correspondente como paga, sem validar a assinatura/segredo que o Mercado Pago envia. Qualquer pessoa que descubra a URL e um `subscription_id` válido pode forjar a confirmação de pagamento.
+**BUG-004 — ~~Webhook do Mercado Pago sem validação de assinatura~~ (corrigido em 2026-07-30)**
+`MercadoPagoWebhookController::handle()` aceitava qualquer POST em `/api/webhooks/mercadopago` sem validar a assinatura/segredo que o Mercado Pago envia. Corrigido com `App\Services\MercadoPagoWebhookSignature` (valida o header `x-signature` via HMAC-SHA256, conforme algoritmo documentado pelo Mercado Pago) — requer `MERCADOPAGO_WEBHOOK_SECRET` configurado (`src/config/services.php` / `.env`); sem o secret, o webhook falha fechado (401). Testes: `tests/Unit/MercadoPagoWebhookSignatureTest.php`, `tests/Feature/MercadoPagoWebhookControllerTest.php`.
 
 **BUG-005 — Sem validação de prazo, capacidade ou tenant na inscrição**
 `SubscribeController::showSubscribeForm`/`subscribe` buscam o `Event` só pelo ID (`Event::findOrFail($eventId)`), sem checar: (a) se o evento pertence ao organizador do domínio atual, (b) se `registration_deadline` já passou, (c) se a modalidade atingiu `max_participants`. Um usuário logado no domínio do organizador A consegue se inscrever num evento do organizador B só sabendo o ID.
@@ -72,7 +72,9 @@ A migration define o enum como `pending|paid|cancelled` (2 L's). `SubscribeContr
 
 ### P3 — infraestrutura / qualidade
 
-**DEBT-004** — Cobertura de teste é zero, e o único teste que existe está **quebrado**: `tests/Feature/ExampleTest.php` faz `GET /`, que passa pelo `IdentifyOrganizerByDomain` (middleware global) e consulta a tabela `organizers` — mas `use RefreshDatabase` está comentado nesse teste, então as migrations nunca rodam no sqlite em memória e a query falha com `no such table: organizers`. Confirmado rodando `php artisan test` (`docs/runbook.md`) — pré-existente, não relacionado à troca pra Postgres. Prioridade: escrever testes de verdade junto com a correção de cada BUG-00X acima (o que inclui descomentar/consertar esse `RefreshDatabase`), não como projeto separado.
+**DEBT-004** — ~~Cobertura de teste é zero, e o único teste que existe está quebrado~~ (parcialmente corrigido em 2026-07-30). `RefreshDatabase` foi religado em `tests/Feature/ExampleTest.php` (precisava de um `Organizer` com `domain = 'localhost'`, já que `IdentifyOrganizerByDomain` roda em toda request e o host default de teste é `localhost`) e testes reais foram escritos junto da correção de BUG-002/003/004. Ainda falta cobertura para BUG-001 e BUG-005 quando forem corrigidos, e para os fluxos de auth/Pix em geral.
+
+**DEBT-008** — `MercadoPagoService::getPayment`/`createPixPayment` são métodos estáticos que chamam o SDK do Mercado Pago direto, sem nenhum seam pra mock. Isso impede testar o caminho feliz do webhook (assinatura válida + pagamento aprovado) sem bater na API real — hoje só o caminho de rejeição (assinatura inválida) tem teste automatizado (`tests/Feature/MercadoPagoWebhookControllerTest.php`). Resolver exigiria transformar `MercadoPagoService` em algo injetável (classe com métodos de instância + binding no container, ou uma interface).
 
 **DEBT-007** — Primeira subida do container `app` sem passar pelo `reset-dev.sh`/`reset-dev.bat` falha com HTTP 500: `storage/framework/{cache,sessions,views}` e `storage/logs` não existem no repo (diretórios vazios não vão pro git) e o container não os recria sozinho. Os scripts de reset já contornam isso manualmente (`mkdir -p` + `chmod`/`chown`); avaliar mover essa criação para um entrypoint do `docker/php/Dockerfile` pra não depender de rodar o script primeiro.
 

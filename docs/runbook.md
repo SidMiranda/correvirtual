@@ -33,7 +33,7 @@ Dois arquivos `.env` diferentes, que precisam concordar entre si:
 | Arquivo | Para quê | Variáveis-chave |
 |---|---|---|
 | `.env` (raiz) | Bootstrap do container Postgres (+ tunnel, se usado) | `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `CLOUDFLARE_TUNNEL_TOKEN` |
-| `src/.env` | Configuração do Laravel | `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` (devem ser **iguais** aos `POSTGRES_*` acima), `DB_HOST=db`, `DB_PORT=5432`, `MERCADOPAGO_ACCESS_TOKEN`, `APP_URL` |
+| `src/.env` | Configuração do Laravel | `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` (devem ser **iguais** aos `POSTGRES_*` acima), `DB_HOST=db`, `DB_PORT=5432`, `MERCADOPAGO_ACCESS_TOKEN`, `MERCADOPAGO_WEBHOOK_SECRET`, `APP_URL` |
 
 Se os dois arquivos ficarem dessincronizados, o Postgres sobe com uma senha e o Laravel tenta conectar com outra — o container `app` fica em loop de erro de conexão. Se isso acontecer: `docker compose down -v` (apaga o volume do Postgres) e suba de novo com os dois `.env` corrigidos.
 
@@ -54,6 +54,8 @@ docker compose -f docker-compose.yml -f docker-compose.local.yml -f docker-compo
 ```
 
 `docker-compose.tunnel.yml` é 100% opt-in — só sobe se você incluir esse `-f` explicitamente.
+
+Pra testar o Pix de ponta a ponta com esse tunnel (webhook do Mercado Pago batendo no seu ambiente local), configure a URL pública do tunnel como "URL de notificação" no [painel do Mercado Pago](https://www.mercadopago.com.br/developers/panel) e copie o secret que ele gera pra `MERCADOPAGO_WEBHOOK_SECRET` em `src/.env`. Sem esse secret configurado, `/api/webhooks/mercadopago` rejeita toda notificação com `401` (falha fechada — ver `docs/specs/pagamentos-pix.md`).
 
 ### Verificação visual (Playwright MCP)
 
