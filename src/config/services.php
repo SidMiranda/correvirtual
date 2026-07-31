@@ -40,4 +40,8 @@ return [
         'webhook_secret' => env('MERCADOPAGO_WEBHOOK_SECRET'),
     ],
 
+    'gemini' => [
+        'api_key' => env('GEMINI_API_KEY'),
+    ],
+
 ];

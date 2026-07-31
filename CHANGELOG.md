@@ -6,6 +6,12 @@ Histórico anterior a este arquivo (todo o desenvolvimento inicial do projeto) p
 
 ## [Unreleased]
 
+### Home v2 (branch `feature/home-v2-design`, aguardando revisão visual — não mergeada)
+- Redesign da Home (`/`): menu de duas camadas (barra utilitária + navegação principal, sticky) e banner rotativo com CTAs, inspirados em `TEMPLATES/Front-End/` e recoloridos pra azul escuro/claro (`--cv-navy` `#0d1b2a` + `--cv-blue` `#1a71b2`, já usados no projeto). Detalhes em `docs/specs/frontend-publico.md`.
+- Novos arquivos: `layouts/app-v2.blade.php`, `components/app/nav-v2.blade.php`, `components/app/banner-v2.blade.php`, `public/css/home-v2.css`, `public/js/home-v2.js` (vanilla, sem jQuery/Bootstrap/Swiper novos). Só `index.blade.php` usa o layout novo — todas as outras páginas continuam em `layouts/app.blade.php`, intocado.
+- `php artisan images:generate-gemini`: comando pra gerar as imagens do banner via Gemini (offline, uma vez só — nunca em runtime). Não executado ainda por falta de `GEMINI_API_KEY`.
+- Corrigido de passagem (achado testando a v2, afeta o site todo): `.block-header-title` sem `flex-wrap` estourava a largura da tela em mobile; `--navy` era usada em `global.css` mas nunca definida.
+
 ### Fixed
 - **BUG-002**: `subscriptions.modality_id`/`kit_id` agora são foreign keys de verdade (`event_modalities`/`event_kits`, com `restrictOnDelete()`), e `SubscribeController::subscribe()` valida que a modalidade/kit escolhido pertence ao evento antes de criar a inscrição.
 - **BUG-003**: removida a comparação `status !== 'canceled'` (nunca era verdadeira) e o branch morto de "reativar inscrição cancelada" em `SubscribeController::subscribe()` — cancelar continua apagando a linha (`SubscribeController::cancel()`), então uma inscrição encontrada só pode estar `pending` ou `paid`.
