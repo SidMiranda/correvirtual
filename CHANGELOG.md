@@ -9,7 +9,8 @@ Histórico anterior a este arquivo (todo o desenvolvimento inicial do projeto) p
 ### Home v2 (branch `feature/home-v2-design`, aguardando revisão visual — não mergeada)
 - Redesign da Home (`/`): menu de duas camadas (barra utilitária + navegação principal, sticky) e banner rotativo com CTAs, inspirados em `TEMPLATES/Front-End/` e recoloridos pra azul escuro/claro (`--cv-navy` `#0d1b2a` + `--cv-blue` `#1a71b2`, já usados no projeto). Detalhes em `docs/specs/frontend-publico.md`.
 - Novos arquivos: `layouts/app-v2.blade.php`, `components/app/nav-v2.blade.php`, `components/app/banner-v2.blade.php`, `public/css/home-v2.css`, `public/js/home-v2.js` (vanilla, sem jQuery/Bootstrap/Swiper novos). Só `index.blade.php` usa o layout novo — todas as outras páginas continuam em `layouts/app.blade.php`, intocado.
-- `php artisan images:generate-gemini`: comando pra gerar as imagens do banner via Gemini (offline, uma vez só — nunca em runtime). Não executado ainda por falta de `GEMINI_API_KEY`.
+- `php artisan images:generate-gemini`: gera as imagens do banner via Gemini (offline, uma vez só — nunca em runtime). Executado com sucesso — `public/images/home-v2/banner-{1,2,3}.jpg` gerados e já usados nos slides 2 e 3 do banner (slide 1 continua priorizando o banner real do organizador quando existe).
+- Ajuste após 1ª revisão visual do organizador: nome do organizador e botões de autenticação estavam duplicados nas duas barras do menu — barra utilitária virou só tagline + ícones sociais pequenos; toda a autenticação (Entrar/Criar conta/Minhas inscrições/Sair) passou a viver só na barra principal, que trocou o fundo branco por um tom azul claro (`--cv-blue-pale`) pra combinar com o resto da paleta.
 - Corrigido de passagem (achado testando a v2, afeta o site todo): `.block-header-title` sem `flex-wrap` estourava a largura da tela em mobile; `--navy` era usada em `global.css` mas nunca definida.
 
 ### Fixed

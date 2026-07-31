@@ -1,24 +1,23 @@
 <header class="cv-nav" id="cv-nav">
     <div class="cv-nav__utility">
         <div class="cv-nav__utility-inner">
-            <span class="cv-nav__utility-brand">{{ $organizerName }}</span>
+            <span class="cv-nav__utility-tagline">Provas presenciais e virtuais</span>
 
-            <ul class="cv-nav__utility-links">
-                @auth
-                    <li><a href="/my-subscriptions">Minhas inscrições</a></li>
-                    <li>
-                        <span class="cv-nav__utility-user">{{ Auth::user()->name }}</span>
-                    </li>
-                    <li>
-                        <form method="POST" action="/logout" class="cv-nav__logout-form">
-                            @csrf
-                            <button type="submit">Sair</button>
-                        </form>
-                    </li>
-                @else
-                    <li><a href="{{ route('login') }}">Entrar</a></li>
-                    <li><a href="{{ route('register') }}" class="cv-nav__utility-cta">Criar conta</a></li>
-                @endauth
+            <ul class="cv-nav__utility-social">
+                <li>
+                    <a href="https://www.instagram.com/corre_virtual" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="14" height="14" fill="currentColor">
+                            <path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12.2 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/>
+                        </svg>
+                    </a>
+                </li>
+                <li>
+                    <a href="http://www.correvirtual.com.br/" target="_blank" rel="noopener noreferrer" aria-label="Site oficial">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="14" height="14" fill="currentColor">
+                            <path d="M352 256c0 22.2-1.2 43.6-3.3 64H163.3c-2.2-20.4-3.3-41.8-3.3-64s1.2-43.6 3.3-64h185.4c2.2 20.4 3.3 41.8 3.3 64zm28.8-64h123.1c5.3 20.5 8.1 41.9 8.1 64s-2.8 43.5-8.1 64H380.8c2.1-20.6 3.2-42 3.2-64s-1.1-43.4-3.2-64zm112.6-32H376.7c-10-63.9-29.8-117.4-55.3-151.6c78.3 20.7 142 77.5 171.9 151.6zm-149.1 0H167.7c6.1-36.4 15.5-68.6 27-94.7c10.5-23.6 22.2-40.7 33.5-51.5C239.4 3.2 248.7 0 256 0s16.6 3.2 27.8 13.8c11.3 10.8 23 27.9 33.5 51.5c11.6 26 21 58.2 27 94.7zm-209 0H18.6C48.6 85.9 112.2 29.1 190.6 8.4C165.1 42.6 145.3 96.1 135.3 160zM8.1 192H131.2c-2.1 20.6-3.2 42-3.2 64s1.1 43.4 3.2 64H8.1C2.8 299.5 0 278.1 0 256s2.8-43.5 8.1-64zM194.7 446.6c-11.6-26-21-58.2-27-94.6H344.3c-6.1 36.4-15.5 68.6-27 94.6c-10.5 23.6-22.2 40.7-33.5 51.5C272.6 508.8 263.3 512 256 512s-16.6-3.2-27.8-13.8c-11.3-10.8-23-27.9-33.5-51.5zM135.3 352c10 63.9 29.8 117.4 55.3 151.6C112.2 482.9 48.6 426.1 18.6 352H135.3zm358.1 0c-30 74.1-93.6 130.9-171.9 151.6c25.5-34.2 45.2-87.7 55.3-151.6H493.4z"/>
+                        </svg>
+                    </a>
+                </li>
             </ul>
         </div>
     </div>
@@ -35,11 +34,20 @@
                 <a href="#eventos">Eventos</a>
                 <a href="#sobre">Sobre</a>
                 <a href="#patrocinadores">Patrocinadores</a>
-                @auth
-                    <a href="/my-subscriptions" class="cv-nav__links-cta">Minhas inscrições</a>
-                @else
-                    <a href="{{ route('login') }}" class="cv-nav__links-cta">Entrar</a>
-                @endauth
+
+                <div class="cv-nav__auth">
+                    @auth
+                        <a href="/my-subscriptions">Minhas inscrições</a>
+                        <span class="cv-nav__auth-user">{{ Auth::user()->name }}</span>
+                        <form method="POST" action="/logout" class="cv-nav__logout-form">
+                            @csrf
+                            <button type="submit">Sair</button>
+                        </form>
+                    @else
+                        <a href="{{ route('login') }}" class="cv-nav__auth-ghost">Entrar</a>
+                        <a href="{{ route('register') }}" class="cv-nav__links-cta">Criar conta</a>
+                    @endauth
+                </div>
             </nav>
         </div>
     </div>

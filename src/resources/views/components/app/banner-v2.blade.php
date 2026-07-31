@@ -3,8 +3,11 @@
     $mobileBanner = 'images/organizers/' . $organizerId . '/banner-mobile.jpg';
     $hasOrganizerBanner = file_exists(public_path($desktopBanner));
 
-    // Fase 1 (v2): slides 2 e 3 usam gradiente até as imagens do Gemini serem geradas
-    // (ver docs/specs/frontend-publico.md — "Geração de imagens (Gemini)").
+    // Imagens geradas via `php artisan images:generate-gemini` (ver docs/specs/frontend-publico.md).
+    // Slide 1 prioriza o banner real do organizador (autêntico); 2 e 3 usam as imagens do Gemini.
+    $geminiBanner2 = 'images/home-v2/banner-2.jpg';
+    $geminiBanner3 = 'images/home-v2/banner-3.jpg';
+
     $slides = [
         [
             'eyebrow' => 'Corre Virtual',
@@ -12,7 +15,7 @@
             'text' => 'Provas presenciais e virtuais, no seu ritmo, na sua rota. Escolha um evento e comece hoje.',
             'cta_label' => 'Ver Eventos',
             'cta_href' => '#eventos',
-            'image' => $hasOrganizerBanner ? asset($desktopBanner) : null,
+            'image' => $hasOrganizerBanner ? asset($desktopBanner) : (file_exists(public_path('images/home-v2/banner-1.jpg')) ? asset('images/home-v2/banner-1.jpg') : null),
         ],
         [
             'eyebrow' => 'Todos os níveis',
@@ -20,7 +23,7 @@
             'text' => 'Modalidades e kits pra cada perfil de atleta, do iniciante ao competitivo.',
             'cta_label' => 'Inscreva-se Já',
             'cta_href' => '#eventos',
-            'image' => null,
+            'image' => file_exists(public_path($geminiBanner2)) ? asset($geminiBanner2) : null,
         ],
         [
             'eyebrow' => 'Comunidade',
@@ -28,7 +31,7 @@
             'text' => 'Convide amigos e família. Medalhas exclusivas te esperam na chegada.',
             'cta_label' => 'Sobre a Plataforma',
             'cta_href' => '#sobre',
-            'image' => null,
+            'image' => file_exists(public_path($geminiBanner3)) ? asset($geminiBanner3) : null,
         ],
     ];
 @endphp

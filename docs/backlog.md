@@ -8,7 +8,7 @@ Levantado na auditoria inicial de revitalização (2026-07-28). Nenhum destes it
 
 Objetivo: site público bonito e funcional, um organizador, fluxo de inscrição + Pix correto e seguro, mesmo com poucos eventos e boa parte deles mocada via seeder.
 
-- [x] Home v2 (nav de duas camadas + banner rotativo, cores do template recolorido em azul) — ver `docs/specs/frontend-publico.md`. Implementado em `feature/home-v2-design`, **aguardando revisão visual do organizador** antes de: (a) mergear, (b) gerar as imagens do banner via Gemini (falta `GEMINI_API_KEY`), (c) replicar pras outras páginas.
+- [x] Home v2 (nav de duas camadas + banner rotativo com imagens do Gemini, cores do template recolorido em azul) — ver `docs/specs/frontend-publico.md`. Implementado em `feature/home-v2-design`, ajustado após 1ª revisão visual (menu duplicado corrigido, fundo da barra principal recolorido). **Aguardando aprovação final do organizador** antes de: (a) mergear, (b) replicar pras outras páginas.
 - [ ] Replicar o redesign da Home v2 pras outras páginas públicas (login, detalhe de evento, inscrição) — só depois do organizador aprovar a v2
 - [ ] BUG-001 e BUG-005 corrigidos (P0 restantes — envolvem dinheiro e segurança de pagamento). BUG-002, BUG-003 e BUG-004 já corrigidos (2026-07-30).
 - [ ] BUG-006 corrigido (P1 — integridade multi-tenant básica)

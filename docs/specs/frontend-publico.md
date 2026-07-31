@@ -24,7 +24,6 @@ A paleta de cores do template (vermelho/escuro genérico) não bate com a identi
 ## Fora de escopo (nesta fase)
 
 - Aplicar o redesign nas outras páginas (login, detalhe de evento, inscrição, minhas inscrições) — só acontece se o organizador aprovar a v2 da Home.
-- Geração de imagens via Gemini — a integração ficou pronta como comando artesão (`php artisan images:generate-gemini`, ver `app/Console/Commands/GenerateGeminiImages.php`) mas não rodou ainda porque não há `GEMINI_API_KEY` configurada. Até lá, o banner usa gradientes/placeholders no lugar de fotos.
 - Qualquer mudança de comportamento (regras de inscrição, pagamento, etc.) — só design.
 - Reescrever `top-bar.blade.php`/`layouts/app.blade.php` originais — ficam intocados, servindo todas as páginas exceto a Home.
 
@@ -55,18 +54,20 @@ A paleta de cores do template (vermelho/escuro genérico) não bate com a identi
 
 ### Menu de duas camadas (`nav-v2.blade.php`)
 
-- **Barra utilitária** (`--cv-navy`, ~36px de altura): nome do organizador à esquerda, links de "Login" / "Minhas inscrições" / usuário logado à direita — mesma lógica de `@auth`/`@else` que já existia em `top-bar.blade.php`, só reposicionada.
-- **Barra principal** (branca, sticky ao rolar): logo/nome do organizador + navegação (`Eventos`, `Sobre`, `Patrocinadores`, `Contato` — âncoras pra seções da própria Home). Em telas pequenas vira menu hambúguer (JS vanilla, só adiciona/remove uma classe).
+Revisado depois do primeiro round de feedback visual (o organizador viu nome do organizador e botões "Entrar"/"Criar conta" duplicados nas duas barras — corrigido):
+
+- **Barra utilitária** (`--cv-navy`, ~36px de altura): só uma frase curta (tagline) à esquerda + ícones pequenos de rede social (Instagram, site oficial) à direita. Nada de marca ou autenticação aqui — é só um detalhe fino em cima.
+- **Barra principal** (fundo `--cv-blue-pale`, tonalidade azul clara em vez de branco puro, sticky ao rolar): logo/nome do organizador à esquerda, navegação (`Eventos`, `Sobre`, `Patrocinadores`) no centro, e a área de autenticação (Entrar/Criar conta, ou Minhas inscrições/usuário/Sair quando logado) à direita, separada por uma linha divisória sutil. **Toda a autenticação mora só aqui agora** — antes estava duplicada nas duas barras. Em telas pequenas vira menu hambúguer (JS vanilla, só adiciona/remove uma classe), com a área de auth empilhada junto do resto do menu.
 
 ### Banner rotativo (`banner-v2.blade.php`)
 
-3 slides com crossfade por CSS (`opacity` + `transition`, sem `transform3d` pesado), avançando a cada 6s, com setas prev/next e indicadores (dots) clicáveis. Cada slide: fundo (gradiente `--cv-navy` → `--cv-blue` por enquanto, foto quando o Gemini rodar), título grande, subtítulo, 1-2 botões CTA (ex.: "Ver Eventos", "Inscreva-se Já") apontando pra âncoras/rotas reais da Home.
+3 slides com crossfade por CSS (`opacity` + `transition`, sem `transform3d` pesado), avançando a cada 6s, com setas prev/next e indicadores (dots) clicáveis. Cada slide: fundo com foto (ver "Geração de imagens" abaixo) + gradiente escuro por cima pra garantir contraste do texto, título grande, subtítulo, 1-2 botões CTA (ex.: "Ver Eventos", "Inscreva-se Já") apontando pra âncoras/rotas reais da Home.
 
-Se o organizador tiver banner customizado (`images/organizers/{id}/banner.jpg`, já suportado hoje), ele vira o slide único — a lógica de fallback de `main-banner.blade.php` original foi preservada, só a apresentação (rotação/CTA) é nova quando não há banner customizado.
+Se o organizador tiver banner customizado (`images/organizers/{id}/banner.jpg`, já suportado hoje), ele vira o slide 1 (prioridade sobre a imagem do Gemini, por autenticidade) — a lógica de fallback de `main-banner.blade.php` original foi preservada, só a apresentação (rotação/CTA) é nova.
 
-### Geração de imagens (Gemini) — pronta, não executada
+### Geração de imagens (Gemini) — executado
 
-`app/Console/Commands/GenerateGeminiImages.php`: comando artisan que chama a API REST do Gemini (`generativelanguage.googleapis.com`, via `Http` facade — sem SDK novo) pedindo 3 imagens de esporte/corrida, decodifica o base64 retornado e salva em `public/images/home-v2/banner-{1,2,3}.jpg`. Roda **uma vez**, offline — a Home nunca chama o Gemini em tempo de request (decisão tomada com o organizador: manter leve, sem novo ponto de falha numa página pública). Precisa de `GEMINI_API_KEY` em `src/.env` (adicionar diretamente lá, não commitar).
+`app/Console/Commands/GenerateGeminiImages.php` rodou com sucesso (`GEMINI_API_KEY` configurada em `src/.env`, não commitada) e gerou `public/images/home-v2/banner-{1,2,3}.jpg` (corredores em grupo, pernas em movimento, comemoração na chegada com medalha — prompts sem texto/logo, pra não competir com o texto sobreposto do banner). Slide 1 usa o banner real do organizador quando existe (com fallback pra `banner-1.jpg` se não existir); slides 2 e 3 usam `banner-2.jpg`/`banner-3.jpg`. Pra gerar de novo (trocar as imagens): `docker exec corre_app php artisan images:generate-gemini --force`.
 
 ## Plano de testes
 
