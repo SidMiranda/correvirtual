@@ -1,12 +1,25 @@
 @php
     $desktopBanner = 'images/organizers/' . $organizerId . '/banner.jpg';
-    $mobileBanner = 'images/organizers/' . $organizerId . '/banner-mobile.jpg';
     $hasOrganizerBanner = file_exists(public_path($desktopBanner));
 
+    // Versão recortada do banner.jpg do organizador (remove o bloco de logo à esquerda,
+    // mantém a ponte de Mogi Guaçu — pedido do organizador depois de ver o slide 1 com a
+    // logo cortando mal). Gerada uma vez via script, não em runtime. Se não existir, cai
+    // pro banner cru e depois pra imagem do Gemini.
+    $organizerBannerCropped = 'images/home-v2/banner-1-organizer-cropped.jpg';
+    $hasCroppedBanner = file_exists(public_path($organizerBannerCropped));
+
     // Imagens geradas via `php artisan images:generate-gemini` (ver docs/specs/frontend-publico.md).
-    // Slide 1 prioriza o banner real do organizador (autêntico); 2 e 3 usam as imagens do Gemini.
+    $geminiBanner1 = 'images/home-v2/banner-1.jpg';
     $geminiBanner2 = 'images/home-v2/banner-2.jpg';
     $geminiBanner3 = 'images/home-v2/banner-3.jpg';
+
+    $slide1Image = match (true) {
+        $hasCroppedBanner => asset($organizerBannerCropped),
+        $hasOrganizerBanner => asset($desktopBanner),
+        file_exists(public_path($geminiBanner1)) => asset($geminiBanner1),
+        default => null,
+    };
 
     $slides = [
         [
@@ -15,7 +28,7 @@
             'text' => 'Provas presenciais e virtuais, no seu ritmo, na sua rota. Escolha um evento e comece hoje.',
             'cta_label' => 'Ver Eventos',
             'cta_href' => '#eventos',
-            'image' => $hasOrganizerBanner ? asset($desktopBanner) : (file_exists(public_path('images/home-v2/banner-1.jpg')) ? asset('images/home-v2/banner-1.jpg') : null),
+            'image' => $slide1Image,
         ],
         [
             'eyebrow' => 'Todos os níveis',

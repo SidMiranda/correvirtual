@@ -36,7 +36,6 @@ body {
   min-height: 36px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   font-size: 13px;
 }
 
@@ -47,24 +46,6 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.cv-nav__utility-social {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  list-style: none;
-  flex-shrink: 0;
-}
-
-.cv-nav__utility-social a {
-  color: #fff;
-  opacity: .8;
-  display: flex;
-}
-
-.cv-nav__utility-social a:hover {
-  opacity: 1;
 }
 
 .cv-nav__main {

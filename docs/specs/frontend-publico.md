@@ -41,6 +41,8 @@ A paleta de cores do template (vermelho/escuro genérico) não bate com a identi
 
 `index.blade.php` passou a estender `layouts.app-v2` em vez de `layouts.app`. Todas as outras views continuam em `layouts.app` sem nenhuma alteração.
 
+`layouts/app-v2.blade.php` carrega `home-v2.css`/`home-v2.js` com `?v={{ filemtime(...) }}` na URL — cache-busting automático. Sem isso, o navegador do organizador ficou preso numa versão em cache do CSS mesmo depois de um refresh normal (aconteceu comigo testando também) — com o timestamp do arquivo na query string, toda edição força o navegador a buscar a versão nova, sem depender de hard refresh manual.
+
 ### Paleta de cores (`public/css/home-v2.css`, `:root`)
 
 | Token | Valor | Origem | Uso |
@@ -56,14 +58,14 @@ A paleta de cores do template (vermelho/escuro genérico) não bate com a identi
 
 Revisado depois do primeiro round de feedback visual (o organizador viu nome do organizador e botões "Entrar"/"Criar conta" duplicados nas duas barras — corrigido):
 
-- **Barra utilitária** (`--cv-navy`, ~36px de altura): só uma frase curta (tagline) à esquerda + ícones pequenos de rede social (Instagram, site oficial) à direita. Nada de marca ou autenticação aqui — é só um detalhe fino em cima.
+- **Barra utilitária** (`--cv-navy`, ~36px de altura): só uma frase curta (tagline) à esquerda. Nada de marca ou autenticação aqui — é só um detalhe fino em cima. Chegou a ter ícones pequenos de rede social (Instagram, site oficial) à direita, mas foram removidos: o organizador reportou os ícones colados sem espaço e o texto centralizado, em uma sessão que persistia mesmo depois de limpar cache. Não foi possível reproduzir (medição direta via `getBoundingClientRect` mostrou 14px de gap e texto alinhado à esquerda, em qualquer largura testada) nem achar uma regra CSS que explicasse — removidos por segurança em vez de continuar investigando algo não reprodutível. Se quiser reintroduzir ícones sociais no futuro, considerar `<img>` normais em vez de SVG inline como primeira tentativa de isolar a causa.
 - **Barra principal** (fundo `--cv-blue-pale`, tonalidade azul clara em vez de branco puro, sticky ao rolar): logo/nome do organizador à esquerda, navegação (`Eventos`, `Sobre`, `Patrocinadores`) no centro, e a área de autenticação (Entrar/Criar conta, ou Minhas inscrições/usuário/Sair quando logado) à direita, separada por uma linha divisória sutil. **Toda a autenticação mora só aqui agora** — antes estava duplicada nas duas barras. Em telas pequenas vira menu hambúguer (JS vanilla, só adiciona/remove uma classe), com a área de auth empilhada junto do resto do menu.
 
 ### Banner rotativo (`banner-v2.blade.php`)
 
 3 slides com crossfade por CSS (`opacity` + `transition`, sem `transform3d` pesado), avançando a cada 6s, com setas prev/next e indicadores (dots) clicáveis. Cada slide: fundo com foto (ver "Geração de imagens" abaixo) + gradiente escuro por cima pra garantir contraste do texto, título grande, subtítulo, 1-2 botões CTA (ex.: "Ver Eventos", "Inscreva-se Já") apontando pra âncoras/rotas reais da Home.
 
-Se o organizador tiver banner customizado (`images/organizers/{id}/banner.jpg`, já suportado hoje), ele vira o slide 1 (prioridade sobre a imagem do Gemini, por autenticidade) — a lógica de fallback de `main-banner.blade.php` original foi preservada, só a apresentação (rotação/CTA) é nova.
+Se o organizador tiver banner customizado (`images/organizers/{id}/banner.jpg`, já suportado hoje), uma versão **recortada** dele vira o slide 1 (prioridade sobre a imagem do Gemini, por autenticidade) — `public/images/home-v2/banner-1-organizer-cropped.jpg`, recorte de `[520,0,980,500]` do banner original (1500×500) feito uma vez via script (`System.Drawing`, não versionado), removendo o bloco de logo/texto à esquerda e mantendo a ponte de Mogi Guaçu (referência da cidade) que ocupa a maior parte da imagem. Cadeia de fallback em `banner-v2.blade.php`: recorte → banner cru do organizador (se o recorte não existir) → `banner-1.jpg` do Gemini → gradiente. A lógica de fallback de `main-banner.blade.php` original foi preservada, só a apresentação (rotação/CTA) é nova.
 
 ### Geração de imagens (Gemini) — executado
 
