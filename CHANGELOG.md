@@ -6,12 +6,13 @@ Histórico anterior a este arquivo (todo o desenvolvimento inicial do projeto) p
 
 ## [Unreleased]
 
-### Infraestrutura de produção (2026-08-02)
-- **Decisão**: banco de produção e desenvolvimento migram pra MySQL gerenciado na Hostgator (nada de banco local) — ver `docs/decisoes/0005-banco-producao-hostgator-mysql.md`.
+### Infraestrutura de produção (2026-08-02) — site no ar
+- **`https://eventos.correvirtual.com.br` está em produção.** VPS (Hostgator, `143.95.218.62`) provisionada do zero: Docker + Docker Compose instalados, repositório clonado, `.env` de produção configurado (banco, Mercado Pago real, `APP_DEBUG=false`, `APP_KEY` novo), certificado TLS real emitido via certbot (Let's Encrypt, renovação automática agendada, expira 2026-10-31).
+- **Decisão**: banco de produção e desenvolvimento migram pra MySQL gerenciado na Hostgator (nada de banco local) — ver `docs/decisoes/0005-banco-producao-hostgator-mysql.md`. Migrations + seed rodados com sucesso em `webcit29_eventos_prod` e `webcit29_eventos_dev`.
 - `docker/php/Dockerfile`: adiciona `pdo_mysql` (mantém `pdo_pgsql` por enquanto).
-- VPS de produção (`143.95.218.62`, Hostgator) recebeu Docker + Docker Compose pela primeira vez — nada estava instalado lá antes.
-- Local (`src/.env`) e dev remoto (`webcit29_eventos_dev`) migrados e populados via seeder; validado com `php artisan test` (17/17) e checagem visual.
-- Primeiro deploy real de produção nesta rodada — ver "Known issues" abaixo pro que ainda falta (DNS, TLS, webhook).
+- Secrets do GitHub Actions (`HOST`, `PORT`, `USERNAME`, `PASSWORD`, `APP_ENV`) atualizados — o deploy automático (`.github/workflows/deploy.yml`, dispara em push pra `main`) está funcional pra próximas atualizações.
+- Fluxo completo validado via Playwright contra o ambiente real (banco remoto): cadastro → verificação de e-mail → login automático → escolha de evento/modalidade/kit → inscrição criada com o preço correto do kit (R$59,90, não o antigo valor fixo). Não testado o passo de gerar o Pix em si, de propósito — evitar chamar a API real do Mercado Pago numa sessão de teste.
+- Único pendente conhecido: `MERCADOPAGO_WEBHOOK_SECRET` de produção ainda não configurado — ver "Known issues".
 
 ### Home v2
 - Redesign da Home (`/`): menu de duas camadas (barra utilitária + navegação principal, sticky) e banner rotativo com CTAs, inspirados em `TEMPLATES/Front-End/` e recoloridos pra azul escuro/claro (`--cv-navy` `#0d1b2a` + `--cv-blue` `#1a71b2`, já usados no projeto). Detalhes em `docs/specs/frontend-publico.md`.
@@ -47,4 +48,4 @@ Histórico anterior a este arquivo (todo o desenvolvimento inicial do projeto) p
 Stack local validada de ponta a ponta com os containers reais (`docker compose up -d --build`): migrations rodam limpas em Postgres 16, seeders populam 2 organizadores / 6 eventos / 17 modalidades / 9 kits, e a home carrega os eventos via nginx (`http://localhost`, HTTP 200). Detalhes e comandos em `docs/runbook.md`.
 
 ### Known issues
-Ver `docs/backlog.md` para a lista completa. BUG-001 a BUG-004 corrigidos; seguem abertos BUG-005 (sem validação de prazo/capacidade/tenant na inscrição) e BUG-006 (`organizer_id` não preenchido no cadastro). Pendências do primeiro deploy de produção (2026-08-02): DNS de `eventos.correvirtual.com.br` ainda aponta pra hospedagem antiga, não pra VPS nova; sem DNS não dá pra emitir certificado TLS, então produção está rodando em HTTP puro por enquanto; IP da VPS de produção ainda não liberado no Remote MySQL da Hostgator; `MERCADOPAGO_WEBHOOK_SECRET` de produção ainda não configurado (webhook do Pix rejeita tudo até isso ser feito).
+Ver `docs/backlog.md` para a lista completa. BUG-001 a BUG-004 corrigidos; seguem abertos BUG-005 (sem validação de prazo/capacidade/tenant na inscrição) e BUG-006 (`organizer_id` não preenchido no cadastro). Do primeiro deploy de produção (2026-08-02): `MERCADOPAGO_WEBHOOK_SECRET` ainda não configurado (webhook do Pix rejeita tudo até isso ser feito — único bloqueador pra pagamento funcionar de ponta a ponta); rotina de backup do banco de produção ainda não definida.

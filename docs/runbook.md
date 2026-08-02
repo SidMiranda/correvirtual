@@ -63,6 +63,8 @@ ssh <usuario>@<host>
 docker exec corre_app php artisan db:seed --force
 ```
 
+**Status atual**: `https://eventos.correvirtual.com.br` está no ar (VPS `143.95.218.62`, Hostgator) desde 2026-08-02. Certificado emitido via `certbot certonly --webroot -w src/public -d eventos.correvirtual.com.br` diretamente no host (não em container) — o container `nginx` só consome os certs que já existem em `/etc/letsencrypt`, montados read-only. Renovação automática já agendada pelo certbot (`systemctl list-timers | grep certbot`).
+
 ### Branches
 
 `main` (protegida, deploy automático) ← PR ← `develop` (integração, sem deploy automático) ← PR ← `feature/*` / `fix/*`. Ver ADR 0004.
@@ -81,4 +83,4 @@ Ainda não existe painel para isso (fase 2 — ver `backlog.md`). Hoje é manual
 - **`app` não sobe / erro de conexão com banco:** ver seção de variáveis de ambiente acima.
 - **Mudança em `.env` não é refletida:** Laravel cacheia config em produção. Rode `docker exec corre_app php artisan config:clear` (ou `optimize`, que já roda no deploy).
 - **Erro 404 "Organizador não encontrado":** o host da requisição não bate com nenhum `organizers.domain` no banco — confira o seeder ou o registro manual.
-- **Testes:** `docker exec corre_app php artisan test`. Rodam contra sqlite em memória (`phpunit.xml`), não tocam no Postgres — não precisa de setup extra.
+- **Testes:** `docker exec corre_app php artisan test`. Rodam contra sqlite em memória (`phpunit.xml`), não tocam no banco real (Hostgator) — não precisa de setup extra.

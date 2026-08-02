@@ -12,15 +12,17 @@ Objetivo: site público bonito e funcional, um organizador, fluxo de inscrição
 - [ ] Replicar o redesign da Home v2 pras outras páginas públicas (login, detalhe de evento, inscrição)
 - [ ] BUG-005 corrigido (P0 restante — envolve segurança de pagamento). BUG-001, BUG-002, BUG-003 e BUG-004 já corrigidos.
 - [ ] BUG-006 corrigido (P1 — integridade multi-tenant básica)
-- [x] Deploy validado em produção — primeira rodada em 2026-08-02 (VPS + Hostgator MySQL). Pendências: DNS, TLS e webhook do Mercado Pago, ver seção abaixo.
+- [x] Deploy de produção no ar — `https://eventos.correvirtual.com.br` (2026-08-02): VPS + Docker + Hostgator MySQL + TLS real (Let's Encrypt, renovação automática). Único pendente: webhook do Mercado Pago, ver abaixo.
 
 ## Antes do deploy de produção real
 
 - [x] **Decidir onde mora o banco de produção de verdade** — resolvido em 2026-08-02: MySQL/MariaDB gerenciado na Hostgator (`webcit29_eventos_prod` / `webcit29_eventos_dev`), não Postgres. Ver `docs/decisoes/0005-banco-producao-hostgator-mysql.md`.
-- [ ] Atualizar o secret `APP_ENV` no GitHub com credenciais do banco de produção real.
-- [ ] Liberar o IP da VPS de produção (`143.95.218.62`) no Remote MySQL da Hostgator — sem isso o app não conecta no banco prod.
-- [ ] Apontar o DNS de `eventos.correvirtual.com.br` pra `143.95.218.62` (hoje aponta pra `108.167.132.97`, hospedagem antiga) — bloqueia certificado TLS e acesso pelo domínio real.
-- [ ] Configurar `MERCADOPAGO_WEBHOOK_SECRET` de produção no painel do Mercado Pago (URL `https://eventos.correvirtual.com.br/api/webhooks/mercadopago`) — sem isso, webhooks de pagamento são rejeitados (falha fechada, ver BUG-004).
+- [x] Atualizar o secret `APP_ENV` no GitHub com credenciais do banco de produção real.
+- [x] Liberar o IP da VPS de produção (`143.95.218.62`) no Remote MySQL da Hostgator.
+- [x] Apontar o DNS de `eventos.correvirtual.com.br` pra `143.95.218.62` e emitir certificado TLS real (Let's Encrypt via certbot, webroot, renovação automática já agendada — expira 2026-10-31).
+- [ ] Configurar `MERCADOPAGO_WEBHOOK_SECRET` de produção no painel do Mercado Pago (URL `https://eventos.correvirtual.com.br/api/webhooks/mercadopago`) — sem isso, webhooks de pagamento são rejeitados (falha fechada, ver BUG-004). **Único bloqueador restante pra Pix funcionar de ponta a ponta em produção.**
+- [ ] Definir rotina de backup do banco de produção (Hostgator ou `mysqldump` agendado a partir do VPS) — ainda não implementado, ver nota de risco no ADR 0005.
+- [ ] Trocar `docker/nginx/default.conf`: `server_name` do bloco HTTP ainda lista um IP antigo (`129.121.37.184`, de um VPS anterior) — inofensivo mas vale limpar.
 
 ## Fase 2 (depois do MVP no ar)
 
