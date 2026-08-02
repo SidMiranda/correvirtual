@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Models\Subscription;
 use App\Models\Event;
+use App\Models\EventKit;
 
 use App\Http\Controllers\Controller;
 
@@ -55,6 +56,9 @@ class SubscribeController extends Controller
         $modalityInput = $request->input('modality_id');
         $kitInput      = $request->input('kit_id');
 
+        // Já validado acima que este kit pertence ao evento (Rule::exists)
+        $kit = EventKit::findOrFail($kitInput);
+
         // Busca a inscrição existente para este usuário neste evento.
         // Cancelar uma inscrição apaga a linha (ver cancel()), então uma inscrição
         // encontrada aqui só pode estar pending ou paid — nunca cancelled.
@@ -75,7 +79,7 @@ class SubscribeController extends Controller
             'user_id'     => auth()->id(),
             'modality_id' => $modalityInput,
             'kit_id'      => $kitInput,
-            'price'       => 0.05,
+            'price'       => $kit->price,
             'status'      => 'pending',
             'bib_number'  => null,
         ]);

@@ -98,6 +98,24 @@ class SubscribeControllerTest extends TestCase
         ]);
     }
 
+    public function test_subscribe_charges_the_kit_price_not_a_fixed_value(): void
+    {
+        [$event, $modality, $kit] = $this->createEventWithModalityAndKit();
+        $kit->update(['price' => 149.90]);
+        $user = User::factory()->create();
+
+        $this->actingAs($user)->post("/subscribe/event/{$event->id}", [
+            'modality_id' => $modality->id,
+            'kit_id' => $kit->id,
+        ]);
+
+        $this->assertDatabaseHas('subscriptions', [
+            'event_id' => $event->id,
+            'user_id' => $user->id,
+            'price' => 149.90,
+        ]);
+    }
+
     public function test_subscribe_blocks_second_attempt_when_already_subscribed(): void
     {
         [$event, $modality, $kit] = $this->createEventWithModalityAndKit();

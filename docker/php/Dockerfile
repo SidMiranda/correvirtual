@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     libxml2-dev \
     libpq-dev \
-    && docker-php-ext-install pdo_pgsql mbstring bcmath zip
+    && docker-php-ext-install pdo_pgsql pdo_mysql mbstring bcmath zip
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 

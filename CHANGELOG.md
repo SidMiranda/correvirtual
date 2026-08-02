@@ -6,7 +6,14 @@ Histórico anterior a este arquivo (todo o desenvolvimento inicial do projeto) p
 
 ## [Unreleased]
 
+### Infraestrutura de produção (2026-08-02)
+- **Decisão**: banco de produção e desenvolvimento migram pra MySQL gerenciado na Hostgator (nada de banco local) — ver `docs/decisoes/0005-banco-producao-hostgator-mysql.md`.
+- `docker/php/Dockerfile`: adiciona `pdo_mysql` (mantém `pdo_pgsql` por enquanto).
+- VPS de produção (`143.95.218.62`, Hostgator) recebeu Docker + Docker Compose pela primeira vez — nada estava instalado lá antes.
+- Local (`src/.env`) e dev remoto (`webcit29_eventos_dev`) migrados e populados via seeder; validado com `php artisan test` (17/17) e checagem visual.
+
 ### Fixed
+- **BUG-001**: `SubscribeController::subscribe()` gravava `price => 0.05` fixo em toda inscrição, ignorando o preço do `EventKit` escolhido — agora usa `$kit->price`. Teste: `tests/Feature/SubscribeControllerTest.php`.
 - **BUG-002**: `subscriptions.modality_id`/`kit_id` agora são foreign keys de verdade (`event_modalities`/`event_kits`, com `restrictOnDelete()`), e `SubscribeController::subscribe()` valida que a modalidade/kit escolhido pertence ao evento antes de criar a inscrição.
 - **BUG-003**: removida a comparação `status !== 'canceled'` (nunca era verdadeira) e o branch morto de "reativar inscrição cancelada" em `SubscribeController::subscribe()` — cancelar continua apagando a linha (`SubscribeController::cancel()`), então uma inscrição encontrada só pode estar `pending` ou `paid`.
 - **BUG-004**: `POST /api/webhooks/mercadopago` agora valida a assinatura HMAC-SHA256 do Mercado Pago (`App\Services\MercadoPagoWebhookSignature`) antes de processar qualquer notificação; rejeita com `401` se a assinatura for inválida ou `MERCADOPAGO_WEBHOOK_SECRET` não estiver configurado.

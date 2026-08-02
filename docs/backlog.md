@@ -9,14 +9,17 @@ Levantado na auditoria inicial de revitalização (2026-07-28). Nenhum destes it
 Objetivo: site público bonito e funcional, um organizador, fluxo de inscrição + Pix correto e seguro, mesmo com poucos eventos e boa parte deles mocada via seeder.
 
 - [ ] Frontend público reconstruído a partir do template em `TEMPLATES/Front-End/` (já recebido — falta escrever `docs/specs/frontend-publico.md` e planejar a adaptação)
-- [ ] BUG-001 e BUG-005 corrigidos (P0 restantes — envolvem dinheiro e segurança de pagamento). BUG-002, BUG-003 e BUG-004 já corrigidos (2026-07-30).
+- [ ] BUG-005 corrigido (P0 restante — envolve segurança de pagamento). BUG-001, BUG-002, BUG-003 e BUG-004 já corrigidos.
 - [ ] BUG-006 corrigido (P1 — integridade multi-tenant básica)
 - [ ] Deploy validado em produção com Postgres (esta rodada de trabalho)
 
 ## Antes do deploy de produção real
 
-- [ ] **Decidir onde mora o banco de produção de verdade** — Postgres em container no VPS (ADR 0001/0004, o que está implementado) ou algo gerenciado na Hostgator (mencionado como possível, não confirmado — "se não me engano"). Se for Hostgator, provavelmente é MySQL/MariaDB, não Postgres — registrar numa ADR nova antes de mudar. A conexão já é 100% via `.env` dos dois lados (app e docker-compose), então o código não muda; só a configuração. Ver nota em `docs/decisoes/0004-deploy-vps-docker-git-flow.md`.
-- [ ] Atualizar o secret `APP_ENV` no GitHub com credenciais do banco de produção real (qualquer que seja o destino acima).
+- [x] **Decidir onde mora o banco de produção de verdade** — resolvido em 2026-08-02: MySQL/MariaDB gerenciado na Hostgator (`webcit29_eventos_prod` / `webcit29_eventos_dev`), não Postgres. Ver `docs/decisoes/0005-banco-producao-hostgator-mysql.md`.
+- [ ] Atualizar o secret `APP_ENV` no GitHub com credenciais do banco de produção real.
+- [ ] Liberar o IP da VPS de produção (`143.95.218.62`) no Remote MySQL da Hostgator — sem isso o app não conecta no banco prod.
+- [ ] Apontar o DNS de `eventos.correvirtual.com.br` pra `143.95.218.62` (hoje aponta pra `108.167.132.97`, hospedagem antiga) — bloqueia certificado TLS e acesso pelo domínio real.
+- [ ] Configurar `MERCADOPAGO_WEBHOOK_SECRET` de produção no painel do Mercado Pago (URL `https://eventos.correvirtual.com.br/api/webhooks/mercadopago`) — sem isso, webhooks de pagamento são rejeitados (falha fechada, ver BUG-004).
 
 ## Fase 2 (depois do MVP no ar)
 
@@ -38,8 +41,8 @@ Objetivo: site público bonito e funcional, um organizador, fluxo de inscrição
 
 ### P0 — dinheiro e segurança de pagamento
 
-**BUG-001 — Preço da inscrição hardcoded em R$ 0,05**
-`SubscribeController::subscribe()` (`src/app/Http/Controllers/Subscriptions/SubscribeController.php`) grava `'price' => 0.05` tanto ao criar quanto ao reativar uma inscrição, ignorando o preço do `EventKit` escolhido. Esse é o valor que a `PixController` depois cobra de verdade via Mercado Pago. Qualquer inscrição paga hoje cobraria 5 centavos, não o preço do kit.
+**BUG-001 — ~~Preço da inscrição hardcoded em R$ 0,05~~ (corrigido em 2026-08-02)**
+`SubscribeController::subscribe()` gravava `'price' => 0.05` fixo, ignorando o preço do `EventKit` escolhido — o valor que a `PixController` cobra de verdade via Mercado Pago. Corrigido: busca o `EventKit` (já validado que pertence ao evento) e usa `$kit->price`. Teste: `tests/Feature/SubscribeControllerTest.php` (`test_subscribe_charges_the_kit_price_not_a_fixed_value`).
 *Spec relacionado:* `specs/eventos-e-inscricoes.md`, `specs/pagamentos-pix.md`.
 
 **BUG-002 — ~~`modality_id`/`kit_id` sem integridade referencial~~ (corrigido em 2026-07-30)**

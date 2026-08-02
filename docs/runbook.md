@@ -28,22 +28,11 @@ Scripts `reset-dev.sh` (Linux/WSL) e `reset-dev.bat` (Windows) automatizam todo 
 
 ### Variáveis de ambiente
 
-Dois arquivos `.env` diferentes, que precisam concordar entre si:
+Desde o ADR 0005, o banco (dev e prod) é MySQL gerenciado na Hostgator — não há mais container de banco local, então `.env` (raiz) só importa se for usar o Cloudflare Tunnel (`CLOUDFLARE_TUNNEL_TOKEN`, opcional). O que de fato configura a conexão é `src/.env`:
 
-| Arquivo | Para quê | Variáveis-chave |
-|---|---|---|
-| `.env` (raiz) | Bootstrap do container Postgres (+ tunnel, se usado) | `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `CLOUDFLARE_TUNNEL_TOKEN` |
-| `src/.env` | Configuração do Laravel | `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` (devem ser **iguais** aos `POSTGRES_*` acima), `DB_HOST=db`, `DB_PORT=5432`, `MERCADOPAGO_ACCESS_TOKEN`, `MERCADOPAGO_WEBHOOK_SECRET`, `APP_URL` |
+`DB_CONNECTION=mysql`, `DB_HOST=srv238.prodns.com.br`, `DB_PORT=3306`, `DB_DATABASE=webcit29_eventos_dev` (local) `/webcit29_eventos_prod` (produção, só no secret `APP_ENV`), `DB_USERNAME`, `DB_PASSWORD`, `MERCADOPAGO_ACCESS_TOKEN`, `MERCADOPAGO_WEBHOOK_SECRET`, `APP_URL`.
 
-Se os dois arquivos ficarem dessincronizados, o Postgres sobe com uma senha e o Laravel tenta conectar com outra — o container `app` fica em loop de erro de conexão. Se isso acontecer: `docker compose down -v` (apaga o volume do Postgres) e suba de novo com os dois `.env` corrigidos.
-
-### Acessar o Postgres diretamente
-
-A porta 5432 não é publicada no host de propósito. Para usar um client (DBeaver, psql, etc.) localmente:
-
-```bash
-docker exec -it corre_db psql -U corre_virtual -d corre_virtual
-```
+**Acesso ao banco remoto**: a Hostgator só libera conexão de IPs cadastrados em cPanel → Remote MySQL. Se der "Access denied" mesmo com usuário/senha corretos, é isso — falta liberar o IP de quem está conectando (sua máquina local, ou a VPS de produção).
 
 ### Expor o ambiente local na internet (Cloudflare Tunnel)
 
@@ -63,11 +52,11 @@ Pra tirar screenshot/navegar na aplicação de verdade (não só `curl`), o proj
 
 ## Deploy
 
-`main` tem deploy automático via `.github/workflows/deploy.yml`: a cada push, o workflow conecta por SSH no VPS, escreve `src/.env` a partir do secret `APP_ENV`, deriva o `.env` da raiz (credenciais do Postgres) a partir dos valores `DB_DATABASE`/`DB_USERNAME`/`DB_PASSWORD` que estiverem nesse `.env`, e roda `docker-compose up -d --build` + `migrate --force` + `optimize`.
+`main` tem deploy automático via `.github/workflows/deploy.yml`: a cada push, o workflow conecta por SSH no VPS, escreve `src/.env` a partir do secret `APP_ENV`, e roda `docker-compose up -d --build` + `migrate --force` + `optimize`.
 
-**Ação necessária uma única vez:** garanta que o secret `APP_ENV` no GitHub tenha `DB_DATABASE`, `DB_USERNAME` e `DB_PASSWORD` apontando para credenciais Postgres válidas (não as antigas do MySQL/provedor perdido) — é a partir dele que tanto o Laravel quanto o container do Postgres em produção são configurados.
+**Banco de produção**: MySQL gerenciado na Hostgator (`webcit29_eventos_prod`), não um container local — ver `docs/decisoes/0005-banco-producao-hostgator-mysql.md`. O `docker-compose.yml` não sobe mais nenhum serviço de banco; o secret `APP_ENV` precisa ter `DB_CONNECTION=mysql`, `DB_HOST`, `DB_PORT=3306`, `DB_DATABASE=webcit29_eventos_prod`, `DB_USERNAME`, `DB_PASSWORD` apontando pra Hostgator. **Pré-requisito**: o IP da VPS de produção precisa estar liberado no Remote MySQL da Hostgator (cPanel → Remote MySQL) — sem isso a conexão cai com "Access denied".
 
-**Primeiro deploy depois da retomada:** como o banco de produção foi perdido, depois do primeiro deploy bem-sucedido é preciso popular o banco manualmente uma vez (o deploy só roda `migrate`, não `seed`, de propósito — pra não duplicar dados em deploys seguintes):
+**Primeiro deploy**: depois do primeiro deploy bem-sucedido, popule o banco manualmente uma vez (o deploy só roda `migrate`, não `seed`, de propósito — pra não duplicar dados em deploys seguintes):
 
 ```bash
 ssh <usuario>@<host>

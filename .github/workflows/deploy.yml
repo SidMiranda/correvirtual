@@ -27,12 +27,6 @@ jobs:
 
             cd /home/correvirtual
 
-            echo "🔄️ Sincronizando .env do Postgres (docker-compose) a partir do .env do Laravel..."
-            grep -E '^DB_(DATABASE|USERNAME|PASSWORD)=' src/.env | sed \
-              -e 's/^DB_DATABASE=/POSTGRES_DB=/' \
-              -e 's/^DB_USERNAME=/POSTGRES_USER=/' \
-              -e 's/^DB_PASSWORD=/POSTGRES_PASSWORD=/' > .env
-
             echo "🚀 Iniciando Deploy..."
             git pull origin main
             docker-compose up -d --build

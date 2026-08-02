@@ -4,29 +4,9 @@ services:
       context: .
       dockerfile: docker/php/Dockerfile
     container_name: corre_app
-    depends_on:
-      db:
-        condition: service_healthy
     volumes:
       - ./src:/var/www
       - laravel_storage:/var/www/storage
-
-  db:
-    image: postgres:16-alpine
-    container_name: corre_db
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-    # Porta 5432 não é publicada no host de propósito (produção fica mais segura).
-    # Para acessar localmente: docker exec -it corre_db psql -U ${POSTGRES_USER} -d ${POSTGRES_DB}
 
   nginx:
     image: nginx:stable-alpine
@@ -43,4 +23,3 @@ services:
 
 volumes:
   laravel_storage:
-  pgdata:
