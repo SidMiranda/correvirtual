@@ -13,6 +13,7 @@ a {
 body {
   background: #f3f3f3;
   color: #222;
+  overflow-x: hidden;
 }
 
 :root {
@@ -21,7 +22,7 @@ body {
 
 
 .block-header-title {
-    margin: 3rem;
+    margin: 3rem 1rem;
     font-size: clamp(28px, 3.2vw + 12px, 42px);
     line-height: 1.12;
     font-weight: 800;
@@ -29,6 +30,7 @@ body {
     letter-spacing: -.02em;
     text-align: center;
     display:flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: center;
     gap: 0.25em;

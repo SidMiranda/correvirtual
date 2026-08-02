@@ -1,0 +1,368 @@
+:root {
+  --cv-navy: #0d1b2a;
+  --cv-blue: #1a71b2;
+  --cv-blue-light: #4fa3d8;
+  --cv-blue-pale: #eaf4fb;
+  --cv-ink: #1a1a1a;
+  --cv-muted: #666666;
+
+  /* Alias pro global.css, que já usa var(--navy) em .block-header-title
+     mas nunca definia essa variável em lugar nenhum. */
+  --navy: var(--cv-navy);
+}
+
+body {
+  padding-top: 0;
+}
+
+/* ============ NAV (duas camadas) ============ */
+
+.cv-nav {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  font-family: 'Montserrat', 'Segoe UI', Roboto, Helvetica, sans-serif;
+}
+
+.cv-nav__utility {
+  background: var(--cv-navy);
+  color: #fff;
+}
+
+.cv-nav__utility-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+}
+
+.cv-nav__utility-tagline {
+  font-weight: 600;
+  letter-spacing: .02em;
+  opacity: .8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cv-nav__main {
+  background: var(--cv-blue-pale);
+  box-shadow: 0 2px 12px rgba(13, 27, 42, .08);
+}
+
+.cv-nav__main-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cv-nav__brand {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--cv-navy);
+  text-decoration: none;
+  letter-spacing: -.01em;
+}
+
+.cv-nav__links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.cv-nav__links a {
+  color: var(--cv-ink);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.cv-nav__links a:hover {
+  color: var(--cv-blue);
+}
+
+.cv-nav__links-cta {
+  background: var(--cv-blue);
+  color: #fff !important;
+  padding: 10px 20px;
+  border-radius: 999px;
+}
+
+.cv-nav__links-cta:hover {
+  background: var(--cv-navy);
+  color: #fff !important;
+}
+
+.cv-nav__auth {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-left: 16px;
+  border-left: 1px solid rgba(13, 27, 42, .15);
+}
+
+.cv-nav__auth-user {
+  color: var(--cv-navy);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.cv-nav__logout-form {
+  display: inline;
+}
+
+.cv-nav__logout-form button {
+  background: none;
+  border: none;
+  color: var(--cv-ink);
+  opacity: .75;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 0;
+  font-family: inherit;
+}
+
+.cv-nav__logout-form button:hover {
+  opacity: 1;
+  color: var(--cv-blue);
+}
+
+.cv-nav__toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.cv-nav__toggle span {
+  width: 24px;
+  height: 2px;
+  background: var(--cv-navy);
+  display: block;
+}
+
+@media (max-width: 860px) {
+  .cv-nav__utility-tagline {
+    font-size: 11px;
+    max-width: 55vw;
+  }
+
+  .cv-nav__toggle {
+    display: flex;
+  }
+
+  .cv-nav__links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--cv-blue-pale);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    max-height: 0;
+    overflow: hidden;
+    box-shadow: 0 12px 20px rgba(13, 27, 42, .1);
+    transition: max-height .3s ease;
+  }
+
+  .cv-nav__links.is-open {
+    max-height: 420px;
+    overflow-y: auto;
+  }
+
+  .cv-nav__links a {
+    width: 100%;
+    padding: 14px 20px;
+    border-top: 1px solid rgba(13, 27, 42, .1);
+  }
+
+  .cv-nav__links-cta {
+    border-radius: 0;
+    text-align: center;
+  }
+
+  .cv-nav__auth {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    width: 100%;
+    padding-left: 0;
+    border-left: none;
+  }
+
+  .cv-nav__auth .cv-nav__logout-form button,
+  .cv-nav__auth-user {
+    width: 100%;
+    padding: 14px 20px;
+    text-align: left;
+    border-top: 1px solid rgba(13, 27, 42, .1);
+    display: block;
+  }
+}
+
+@media (max-width: 480px) {
+  .cv-nav__utility-tagline {
+    display: none;
+  }
+}
+
+/* ============ BANNER rotativo ============ */
+
+.cv-banner {
+  position: relative;
+  height: min(72vh, 620px);
+  min-height: 420px;
+  overflow: hidden;
+  background: var(--cv-navy);
+}
+
+.cv-banner__track {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.cv-banner__slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, var(--cv-navy) 0%, var(--cv-blue) 100%);
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .8s ease;
+}
+
+.cv-banner__slide.is-active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.cv-banner__content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  width: 100%;
+  color: #fff;
+  text-align: center;
+}
+
+.cv-banner__eyebrow {
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: .15em;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--cv-blue-light);
+  margin-bottom: 16px;
+}
+
+.cv-banner__title {
+  font-size: clamp(32px, 5vw, 56px);
+  font-weight: 800;
+  line-height: 1.1;
+  margin: 0 0 18px;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, .5);
+}
+
+.cv-banner__text {
+  font-size: clamp(15px, 1.6vw, 19px);
+  max-width: 620px;
+  margin: 0 auto 30px;
+  opacity: .92;
+}
+
+.cv-banner__cta {
+  display: inline-block;
+  background: var(--cv-blue-light);
+  color: var(--cv-navy);
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 14px;
+  letter-spacing: .03em;
+  text-decoration: none;
+  padding: 16px 34px;
+  border-radius: 999px;
+  transition: transform .2s ease, background .2s ease;
+}
+
+.cv-banner__cta:hover {
+  background: #fff;
+  transform: translateY(-2px);
+}
+
+.cv-banner__arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, .15);
+  color: #fff;
+  border: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  z-index: 2;
+  transition: background .2s ease;
+}
+
+.cv-banner__arrow:hover {
+  background: rgba(255, 255, 255, .3);
+}
+
+.cv-banner__arrow--prev {
+  left: 20px;
+}
+
+.cv-banner__arrow--next {
+  right: 20px;
+}
+
+.cv-banner__dots {
+  position: absolute;
+  bottom: 24px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  z-index: 2;
+}
+
+.cv-banner__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .4);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: background .2s ease, transform .2s ease;
+}
+
+.cv-banner__dot.is-active {
+  background: #fff;
+  transform: scale(1.2);
+}
+
+@media (max-width: 640px) {
+  .cv-banner__arrow {
+    display: none;
+  }
+}

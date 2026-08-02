@@ -8,10 +8,11 @@ Levantado na auditoria inicial de revitalização (2026-07-28). Nenhum destes it
 
 Objetivo: site público bonito e funcional, um organizador, fluxo de inscrição + Pix correto e seguro, mesmo com poucos eventos e boa parte deles mocada via seeder.
 
-- [ ] Frontend público reconstruído a partir do template em `TEMPLATES/Front-End/` (já recebido — falta escrever `docs/specs/frontend-publico.md` e planejar a adaptação)
+- [x] Home v2 (nav de duas camadas + banner rotativo com imagens do Gemini, cores do template recolorido em azul) — ver `docs/specs/frontend-publico.md`. Mergeada em `develop`/`main` em 2026-08-02 junto com o primeiro deploy de produção.
+- [ ] Replicar o redesign da Home v2 pras outras páginas públicas (login, detalhe de evento, inscrição)
 - [ ] BUG-005 corrigido (P0 restante — envolve segurança de pagamento). BUG-001, BUG-002, BUG-003 e BUG-004 já corrigidos.
 - [ ] BUG-006 corrigido (P1 — integridade multi-tenant básica)
-- [ ] Deploy validado em produção com Postgres (esta rodada de trabalho)
+- [x] Deploy validado em produção — primeira rodada em 2026-08-02 (VPS + Hostgator MySQL). Pendências: DNS, TLS e webhook do Mercado Pago, ver seção abaixo.
 
 ## Antes do deploy de produção real
 
@@ -83,4 +84,6 @@ A migration define o enum como `pending|paid|cancelled` (2 L's), mas `SubscribeC
 
 **DEBT-005** — `MercadoPagoService::createPixPayment` (`src/app/Services/MercadoPagoService.php`) chama `dd()` dentro do `catch` quando a API do Mercado Pago falha — isso interrompe a request com uma tela de debug, inclusive em produção. Deveria logar e devolver um erro tratável.
 
-**DEBT-006** — Frontend inconsistente: Tailwind + Vite instalados mas o estilo real está em CSS solto por página (`src/public/css/*.css`). Vai ser endereçado pela reconstrução com o template (ver escopo do MVP).
+**DEBT-006** — Frontend inconsistente: Tailwind + Vite instalados mas o estilo real está em CSS solto por página (`src/public/css/*.css`). Endereçado parcialmente pela Home v2 (ver escopo do MVP); as outras páginas continuam nesse padrão até o redesign ser replicado.
+
+**DEBT-009** — `head.blade.php` monta o caminho do favicon como `'images/organizers/'.$organizerId.'logo.png'` — falta uma barra entre o ID e `logo.png` (vira `images/organizers/1logo.png`, sempre 404). Achado navegando a Home v2 (console do navegador). Pré-existente em todas as páginas, não relacionado à Home v2 — não corrigido nesta rodada por estar fora do escopo (só design da Home).

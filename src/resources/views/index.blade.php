@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app-v2')
 
 @section('title', 'Eventos - Corre Virtual')
 
@@ -8,9 +8,9 @@
 
 @section('content')
 
-    <x-app.main-banner />
+    <x-app.banner-v2 />
 
-    <div class="container">
+    <div class="container" id="eventos">
         <h2 class="block-header-title">
             CALENDÁRIO <span> EVENTOS </span> 2026
         </h2>
@@ -22,7 +22,7 @@
         </div>
     </div>
 
-    <div class="container">
+    <div class="container" id="sobre">
         <h2 class="block-header-title">
             SOBRE <span> NOS </span>
         </h2>
@@ -30,11 +30,9 @@
         <x-app.about />
     </div>
 
-
-
-    <div class="container">
+    <div class="container" id="patrocinadores">
         <h2 class="block-header-title">
-
+            NOSSOS <span> PATROCINADORES </span>
         </h2>
 
         <x-app.sponsors />
