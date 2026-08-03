@@ -24,7 +24,7 @@ Objetivo: site público bonito e funcional, um organizador, fluxo de inscrição
 - [ ] Definir rotina de backup do banco de produção (Hostgator ou `mysqldump` agendado a partir do VPS) — ainda não implementado, ver nota de risco no ADR 0005.
 - [ ] Trocar `docker/nginx/default.conf`: `server_name` do bloco HTTP ainda lista um IP antigo (`129.121.37.184`, de um VPS anterior) — inofensivo mas vale limpar.
 - [ ] **Reverter o preço de teste de R$ 0,05 para o preço real do kit quando a fase de teste acabar** — `MERCADOPAGO_TEST_PRICE_ENABLED=true` está ligado em produção e dev desde 2026-08-02 (decisão do Sidney: encher a plataforma de inscrições de teste sem cobrar valor cheio). Reverter é só trocar essa variável para `false` no secret `APP_ENV` do GitHub e no `.env` da VPS — não mexe em código. Ver `PixAmountResolver`, `PixController::generatePix`.
-- [ ] **Credencial Mercado Pago trocada pra conta do Uéslei em 2026-08-02** (era do Sidney) — a antiga ficou comentada em `src/.env` (não apagada), pode reativar se precisar. Webhook secret ainda não configurado pra essa conta nova (ver item acima).
+- [x] **Credencial Mercado Pago trocada pra conta do Uéslei em 2026-08-02/03** (era do Sidney) — as tentativas anteriores ficaram comentadas em `src/.env` (não apagadas), dá pra reativar se precisar.
 
 ## Fase 2 (depois do MVP no ar)
 
@@ -37,7 +37,7 @@ Objetivo: site público bonito e funcional, um organizador, fluxo de inscrição
 
 - Check-in / retirada de kit no dia do evento
 - Lotes de preço por data (preço sobe conforme se aproxima do evento)
-- E-mail transacional de confirmação de inscrição/pagamento (hoje só existe e-mail de verificação de cadastro)
+- ~~E-mail transacional de confirmação de inscrição/pagamento~~ (implementado em 2026-08-03) — ver `App\Mail\SubscriptionConfirmed`, `docs/specs/pagamentos-pix.md`.
 - Relatório/exportação de inscritos para o organizador
 
 ---
@@ -93,3 +93,5 @@ A migration define o enum como `pending|paid|cancelled` (2 L's), mas `SubscribeC
 **DEBT-006** — Frontend inconsistente: Tailwind + Vite instalados mas o estilo real está em CSS solto por página (`src/public/css/*.css`). Endereçado parcialmente pela Home v2 (ver escopo do MVP); as outras páginas continuam nesse padrão até o redesign ser replicado.
 
 **DEBT-009** — `head.blade.php` monta o caminho do favicon como `'images/organizers/'.$organizerId.'logo.png'` — falta uma barra entre o ID e `logo.png` (vira `images/organizers/1logo.png`, sempre 404). Achado navegando a Home v2 (console do navegador). Pré-existente em todas as páginas, não relacionado à Home v2 — não corrigido nesta rodada por estar fora do escopo (só design da Home).
+
+**DEBT-010** — Não existe worker de fila (`queue:work`) rodando em nenhum ambiente, apesar de `QUEUE_CONNECTION=database` estar configurado — jobs despachados pra fila de verdade (`->queue()`) nunca seriam processados, ficariam parados na tabela `jobs` pra sempre. É por isso que `VerifyEmailCode` (cadastro) envia e-mail de forma síncrona e demora — e por isso que o e-mail de confirmação de inscrição (`SubscriptionConfirmed`) usa `dispatch(...)->afterResponse()` em vez de `->queue()`, que roda logo após a resposta HTTP sem precisar de worker. Resolver de verdade (subir um `queue:work` gerenciado por supervisor no container `app`) é uma melhoria futura — não bloqueia nada hoje, mas se o volume de e-mails crescer, `afterResponse()` ainda deixa a conexão do PHP-FPM ocupada até o e-mail terminar de enviar (só não trava a resposta ao cliente).

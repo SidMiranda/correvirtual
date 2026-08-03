@@ -6,6 +6,13 @@ Histórico anterior a este arquivo (todo o desenvolvimento inicial do projeto) p
 
 ## [Unreleased]
 
+### E-mail de confirmação de inscrição (2026-08-03)
+- **`App\Mail\SubscriptionConfirmed`** (novo): enviado quando o webhook do Mercado Pago confirma o pagamento — traz evento, data, local, modalidade, kit, botão "Ver minha inscrição" e botão "Adicionar à agenda" (link pro Google Calendar como evento de dia inteiro, sem inventar horário de término).
+- **`MercadoPagoWebhookController::handle()`**: o update de `Subscription.status` pra `paid` agora é atômico e condicional (`where('status', '!=', 'paid')`) — evita e-mail duplicado se o Mercado Pago reenviar a notificação (retry). O e-mail só é enviado quando esse update afeta 1 linha.
+- Envio via `dispatch(fn () => ...)->afterResponse()` — roda depois da resposta HTTP já ter sido enviada ao Mercado Pago (hook `terminate()` do Laravel, funciona com PHP-FPM), sem precisar de worker de fila (não há um rodando neste projeto — ver DEBT-010). Evita segurar o webhook esperando o SMTP, que é lento.
+- Testes novos em `tests/Feature/MercadoPagoWebhookControllerTest.php`: webhook aprovado envia o e-mail certo (`Mail::fake()` + `Mockery::mock('alias:...')` no `MercadoPagoService::getPayment`); retry pra inscrição já paga não reenvia.
+- `docs/specs/pagamentos-pix.md` atualizado com o fluxo completo.
+
 ### Fase de teste em produção (2026-08-02/03)
 - **Preço de teste temporário (R$0,05)**: `PixAmountResolver` sobrepõe o valor cobrado no Pix pra qualquer evento/kit enquanto `MERCADOPAGO_TEST_PRICE_ENABLED=true` — decisão do Sidney pra encher a plataforma de testes sem cobrar valor cheio. Não mexe em `Subscription::price` (continua o preço real do kit). Reverter é só trocar a env var pra `false`. Ver `docs/backlog.md`.
 - **Credencial Mercado Pago trocada pra conta do Uéslei** (era a do Sidney) — a antiga ficou comentada em `src/.env`, não apagada.
