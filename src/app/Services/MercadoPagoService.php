@@ -5,9 +5,15 @@ namespace App\Services;
 use MercadoPago\Client\Payment\PaymentClient;
 use MercadoPago\MercadoPagoConfig;
 use MercadoPago\Exceptions\MPApiException;
+use Illuminate\Support\Facades\Log;
 
 class MercadoPagoService
 {
+    /**
+     * @return object|null O pagamento criado, ou null se a API do Mercado Pago recusar/falhar
+     *                      (credencial inválida, instabilidade, etc.) — quem chama decide o
+     *                      que mostrar ao usuário.
+     */
     public static function createPixPayment($amount, $email, $externalReference = null)
     {
         MercadoPagoConfig::setAccessToken(config('services.mercadopago.token'));
@@ -28,17 +34,16 @@ class MercadoPagoService
                 $request["external_reference"] = (string) $externalReference;
             }
 
-            $payment = $client->create($request);
-
-            return $payment;
+            return $client->create($request);
 
         } catch (MPApiException $e) {
-
-            dd([
-                'status' => $e->getApiResponse()->getStatusCode(),
-                'content' => $e->getApiResponse()->getContent()
+            Log::error('Falha ao criar pagamento Pix no Mercado Pago', [
+                'status' => $e->getApiResponse()?->getStatusCode(),
+                'content' => $e->getApiResponse()?->getContent(),
+                'external_reference' => $externalReference,
             ]);
 
+            return null;
         }
     }
 

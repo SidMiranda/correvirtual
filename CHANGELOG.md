@@ -6,6 +6,11 @@ Histórico anterior a este arquivo (todo o desenvolvimento inicial do projeto) p
 
 ## [Unreleased]
 
+### Fase de teste em produção (2026-08-02/03)
+- **Preço de teste temporário (R$0,05)**: `PixAmountResolver` sobrepõe o valor cobrado no Pix pra qualquer evento/kit enquanto `MERCADOPAGO_TEST_PRICE_ENABLED=true` — decisão do Sidney pra encher a plataforma de testes sem cobrar valor cheio. Não mexe em `Subscription::price` (continua o preço real do kit). Reverter é só trocar a env var pra `false`. Ver `docs/backlog.md`.
+- **Credencial Mercado Pago trocada pra conta do Uéslei** (era a do Sidney) — a antiga ficou comentada em `src/.env`, não apagada.
+- **DEBT-005 corrigido**: `MercadoPagoService::createPixPayment` não faz mais `dd()` quando a API do Mercado Pago falha — loga o erro e devolve `null`; `PixController::generatePix` mostra "Estamos com instabilidade no pagamento no momento. Tente novamente mais tarde." em vez de derrubar a request com uma tela de debug. Achado ao vivo testando com a credencial nova (ver BUG-008 no backlog — a conta do Uéslei ainda não está liberada pro Mercado Pago processar pagamentos live).
+
 ### Infraestrutura de produção (2026-08-02) — site no ar
 - **`https://eventos.correvirtual.com.br` está em produção.** VPS (Hostgator, `143.95.218.62`) provisionada do zero: Docker + Docker Compose instalados, repositório clonado, `.env` de produção configurado (banco, Mercado Pago real, `APP_DEBUG=false`, `APP_KEY` novo), certificado TLS real emitido via certbot (Let's Encrypt, renovação automática agendada, expira 2026-10-31).
 - **Decisão**: banco de produção e desenvolvimento migram pra MySQL gerenciado na Hostgator (nada de banco local) — ver `docs/decisoes/0005-banco-producao-hostgator-mysql.md`. Migrations + seed rodados com sucesso em `webcit29_eventos_prod` e `webcit29_eventos_dev`.

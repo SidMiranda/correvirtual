@@ -25,6 +25,12 @@ class PixController extends Controller
             $subscriptionId // Enviando o ID da inscrição como referência externa
         );
 
+        if (!$pix) {
+            return redirect('/my-subscriptions')->withErrors([
+                'pix' => 'Estamos com instabilidade no pagamento no momento. Tente novamente mais tarde.',
+            ]);
+        }
+
         Payment::create([
             'subscription_id' => $subscriptionId,
             'provider' => 'mercadopago',
