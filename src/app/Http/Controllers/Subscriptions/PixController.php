@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Subscriptions;
 
 use App\Http\Controllers\Controller;
 use App\Services\MercadoPagoService;
+use App\Services\PixAmountResolver;
 use App\Models\Subscription;
 use App\Models\Payment;
 use Carbon\Carbon;
@@ -19,7 +20,7 @@ class PixController extends Controller
         $subscription = Subscription::find($subscriptionId);
 
         $pix = MercadoPagoService::createPixPayment(
-            (float) $subscription->price,
+            PixAmountResolver::resolve($subscription),
             auth()->user()->email,
             $subscriptionId // Enviando o ID da inscrição como referência externa
         );

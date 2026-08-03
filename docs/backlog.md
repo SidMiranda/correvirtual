@@ -20,9 +20,11 @@ Objetivo: site público bonito e funcional, um organizador, fluxo de inscrição
 - [x] Atualizar o secret `APP_ENV` no GitHub com credenciais do banco de produção real.
 - [x] Liberar o IP da VPS de produção (`143.95.218.62`) no Remote MySQL da Hostgator.
 - [x] Apontar o DNS de `eventos.correvirtual.com.br` pra `143.95.218.62` e emitir certificado TLS real (Let's Encrypt via certbot, webroot, renovação automática já agendada — expira 2026-10-31).
-- [ ] Configurar `MERCADOPAGO_WEBHOOK_SECRET` de produção no painel do Mercado Pago (URL `https://eventos.correvirtual.com.br/api/webhooks/mercadopago`) — sem isso, webhooks de pagamento são rejeitados (falha fechada, ver BUG-004). **Único bloqueador restante pra Pix funcionar de ponta a ponta em produção.**
+- [ ] Configurar `MERCADOPAGO_WEBHOOK_SECRET` de produção no painel do Mercado Pago (URL `https://eventos.correvirtual.com.br/api/webhooks/mercadopago`, conta do Uéslei) — sem isso, webhooks de pagamento são rejeitados (falha fechada, ver BUG-004). **Único bloqueador restante pra Pix funcionar de ponta a ponta em produção.**
 - [ ] Definir rotina de backup do banco de produção (Hostgator ou `mysqldump` agendado a partir do VPS) — ainda não implementado, ver nota de risco no ADR 0005.
 - [ ] Trocar `docker/nginx/default.conf`: `server_name` do bloco HTTP ainda lista um IP antigo (`129.121.37.184`, de um VPS anterior) — inofensivo mas vale limpar.
+- [ ] **Reverter o preço de teste de R$ 0,05 para o preço real do kit quando a fase de teste acabar** — `MERCADOPAGO_TEST_PRICE_ENABLED=true` está ligado em produção e dev desde 2026-08-02 (decisão do Sidney: encher a plataforma de inscrições de teste sem cobrar valor cheio). Reverter é só trocar essa variável para `false` no secret `APP_ENV` do GitHub e no `.env` da VPS — não mexe em código. Ver `PixAmountResolver`, `PixController::generatePix`.
+- [ ] **Credencial Mercado Pago trocada pra conta do Uéslei em 2026-08-02** (era do Sidney) — a antiga ficou comentada em `src/.env` (não apagada), pode reativar se precisar. Webhook secret ainda não configurado pra essa conta nova (ver item acima).
 
 ## Fase 2 (depois do MVP no ar)
 
