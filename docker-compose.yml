@@ -4,6 +4,11 @@ services:
       context: .
       dockerfile: docker/php/Dockerfile
     container_name: corre_app
+    # Sem isso os containers não voltam depois de um reboot do servidor — foi
+    # exatamente o que derrubou a produção por 9 dias (20/08 a 29/08/2026),
+    # quando a VPS reiniciou por atualização de kernel. Aplicar por
+    # `docker update` não resolve: qualquer recreate zera a política de volta.
+    restart: unless-stopped
     volumes:
       - ./src:/var/www
       - laravel_storage:/var/www/storage
@@ -11,6 +16,7 @@ services:
   nginx:
     image: nginx:stable-alpine
     container_name: corre_nginx
+    restart: unless-stopped
     ports:
       - "80:80"
       - "443:443"

@@ -47,6 +47,18 @@ flowchart LR
 
 **Isolamento atual é parcial** — `EventsController` filtra eventos por `organizer_id` corretamente, mas `SubscribeController` busca o `Event` só pelo ID (sem checar se pertence ao organizador do domínio atual), e `User.organizer_id` nunca é preenchido no cadastro. Detalhes e prioridade em `backlog.md` e `specs/multi-tenancy-e-autenticacao.md`.
 
+## Painel administrativo: escopo pelo usuário, não pelo domínio
+
+O painel (`/admin`) é a exceção deliberada ao modelo acima. Enquanto o site público descobre o organizador pelo **domínio da requisição**, dentro do painel o organizador é o do **usuário logado** (`users.organizer_id`) — o painel precisa funcionar tanto em `admin.correvirtual.com.br` quanto em `/admin` do domínio do organizador, e em ambos o organizador correto é o do usuário.
+
+Duas travas na entrada, ambas obrigatórias: `auth` (logado) e `EnsureOrganizerAdmin` (papel `organizer_admin` **e** `organizer_id` preenchido — o papel sozinho não basta, porque sem organizador as consultas ficariam sem filtro).
+
+Por causa dessa exceção, `IdentifyOrganizerByDomain` deixa passar sem 404 as rotas `admin`, `admin/*`, `login` e `logout` quando o domínio não pertence a nenhum organizador. Fora dessas rotas o comportamento continua o mesmo: domínio desconhecido → 404.
+
+Todos os controllers do painel herdam de `App\Http\Controllers\Admin\AdminController`, que expõe `organizerId()`. A regra que vale em todos: buscar registro específico **já filtrando** pelo organizador e devolver 404 se não achar — nunca buscar por ID solto e conferir depois. Para modalidade e kit, que não têm `organizer_id` próprio, o filtro passa pelo evento.
+
+Detalhes em `docs/specs/painel-admin.md`; a decisão de construir aqui em vez de no Cubo está no ADR 0006.
+
 ## Fluxo de inscrição + pagamento
 
 ```mermaid

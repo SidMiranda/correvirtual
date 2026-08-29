@@ -2,15 +2,15 @@
 
 <a class="event-card" href="{{ url('/event/' . $event->id) }}">
     <div class="event-card__image-wrapper">
-        @php
-            $imageRelativePath = 'images/events/' . $event->id . '/card-' . $event->banner_url;
-            $hasImage = $event->banner_url && file_exists(public_path($imageRelativePath));
-        @endphp
-
-        @if($hasImage)
-            <img src="{{ asset($imageRelativePath) }}" class="event-card__image" alt="{{ $event->title }}">
+        @if($event->banner_url)
+            {{-- onerror: a existência é decidida pelo banco, não pelo disco (o
+                 arquivo pode estar no CDN). Se mesmo assim faltar, o navegador
+                 troca pela imagem padrão em vez de mostrar ícone quebrado. --}}
+            <img src="{{ \App\Support\Arquivos::cardDoEvento($event) }}"
+                 onerror="this.onerror=null;this.src='{{ \App\Support\Arquivos::cardPadrao() }}';"
+                 class="event-card__image" alt="{{ $event->title }}">
         @else
-            <img src="{{ asset('images/default/card.jpg') }}" class="event-card__image" alt="{{ $event->title }}">
+            <img src="{{ \App\Support\Arquivos::cardPadrao() }}" class="event-card__image" alt="{{ $event->title }}">
             <div class="default-card-overlay">
                 <h3 class="event-card-overlay-title">{{ $event->title }}</h3>
             </div>

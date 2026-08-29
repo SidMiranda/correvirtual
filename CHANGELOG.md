@@ -6,6 +6,59 @@ Histórico anterior a este arquivo (todo o desenvolvimento inicial do projeto) p
 
 ## [Unreleased]
 
+### Produção fora do ar por 9 dias — religada e protegida (2026-08-29)
+- **`eventos.correvirtual.com.br` ficou fora do ar de 20/08 a 29/08.** Causa: a VPS reiniciou sozinha em 20/08 05:24 (atualização de kernel, `6.8.0-111` → `6.8.0-136`) e os containers não voltaram, porque subiam com `RestartPolicy=no`. Nenhum dado foi perdido — o banco fica na Hostgator, fora da VPS.
+- Containers religados e com `restart=unless-stopped` aplicado (`docker update`), então o próximo reboot traz o site de volta sozinho. **Falta ainda** levar o `restart: unless-stopped` para o `docker-compose.yml` do repositório, senão um `up -d --build` do deploy recria os containers sem a política.
+
+### Rotina de backup do banco (2026-08-29)
+- **`/usr/local/bin/corre-backup.sh` na VPS**, agendado no cron para 03:20 todo dia. Faz `mysqldump` de `webcit29_eventos_prod` e `webcit29_eventos_dev`, comprime, e guarda em `/opt/backups/corre/` com retenção de 14 dias. Resolve a pendência aberta desde 2026-08-02 (ADR 0005).
+- Roda na VPS, que é máquina diferente do banco (Hostgator) — a cópia já nasce fora do servidor de origem.
+- **Valida antes de aceitar**: o dump só vira backup se tiver mais de 1KB e contiver `CREATE TABLE`; senão vira `.SUSPEITO` e a rotação é suspensa. Um dump ruim nunca sobrescreve um backup bom — foi por falta disso que este projeto já perdeu um banco inteiro.
+- **Testado restaurando de verdade**, não só rodando: o dump de produção foi restaurado num MySQL 5.7 temporário e conferido linha a linha (2 organizadores, 6 eventos, 17 modalidades, 9 kits, 4 usuários, 8 inscrições, 7 pagamentos — bate com produção).
+- Credenciais lidas do `.env` da aplicação, nunca escritas no script; `MYSQL_PWD` evita a senha aparecer na lista de processos do servidor.
+
+### Arquivos saem do container: bucket R2 criado e populado (2026-08-29)
+- **Bucket `correvirtual-arquivos`** criado na conta Cloudflare R2 já usada pelo Cubo. Os outros quatro buckets da conta (`cubo-arquivos`, `cubo-backups`, `mia-documentos`, `mobspot-backups`) são de outros projetos e **não foram tocados** — contagem conferida antes e depois.
+- Estrutura com `publico/` e `privado/` separados na raiz, e `organizer_id` como primeiro segmento dentro de cada um (isolamento entre organizadores é o ponto fraco conhecido do projeto — BUG-005). Detalhes e o porquê de cada escolha em `docs/specs/armazenamento-r2.md`.
+- **Os 18 arquivos de `src/public/images/` foram copiados** (6,03 MB) com `Content-Type` e `Cache-Control: max-age=31536000, immutable`. Download conferido byte a byte.
+- **Nada foi apagado e nenhum código foi alterado** — o site continua servindo tudo do disco local, exatamente como antes. A cópia no R2 está parada esperando a migração de código.
+- Levantado no processo: três views (`event-card`, `my-subscriptions`, `main-banner`) decidem se mostram imagem ou fallback com `file_exists(public_path(...))`. Com o arquivo no R2 isso responde `false` sempre e **todo mundo cai no fallback em silêncio** — é o bloqueio real da migração, e o motivo de ela exigir mudança de código e não só de configuração.
+
+### CDN no ar e painel com domínio próprio (2026-08-29)
+- **`https://cdncorrevirtual.mobspot.com.br`** ligado ao bucket `correvirtual-arquivos`, certificado da Cloudflare ativo, cache confirmado (`cf-cache-status: HIT`). O site local já serve todas as imagens de lá — validado no navegador. `cdn.correvirtual.com.br` não era possível: domínio próprio no R2 exige a zona na Cloudflare, e `correvirtual.com.br` está na WebCit.
+- **🔴 Corrigido um erro de desenho do dia anterior: `publico/` e `privado/` como prefixos do mesmo bucket não protegiam nada.** Um domínio público do R2 expõe o **bucket inteiro** — com o domínio ligado, `https://<cdn>/privado/...` respondeu **200**. Prefixo não é fronteira de segurança. Nada vazou (só havia marcadores vazios), mas documento de atleta ali seria legível por qualquer um. Agora são **dois buckets**: `correvirtual-arquivos` (com domínio) e `correvirtual-privado` (sem domínio nenhum, só com credencial). O prefixo `privado/` foi apagado do bucket público e agora dá 404.
+- **`admin.correvirtual.com.br` no ar**: DNS apontado pelo Sidney, certificado Let's Encrypt emitido (vence 2026-11-27, renovação automática) e bloco próprio no nginx, com a raiz do domínio redirecionando para `/admin`. O painel em si só aparece quando o código subir — produção ainda roda `182c56a`.
+- `docker/nginx/default.conf`: removido o `server_name` `129.121.37.184`, IP de um VPS anterior que não existe mais (item do backlog).
+- Achado operacional: bind mount de **arquivo** no Docker prende no inode — trocar o arquivo no host com `mv` não chega no container, que continua lendo o antigo. `nginx -t` passa e o reload não muda nada. Exige recriar o container.
+- Achado operacional: `docker compose up -d --force-recreate` **zera a política de restart** aplicada por `docker update`, porque ela não está no `docker-compose.yml`. Reaplicada nos dois containers; enquanto não for para o repositório, todo recreate a perde.
+
+### Imagens centralizadas — virar o CDN passa a ser uma variável (2026-08-29)
+- **`src/public/images/` reorganizado para espelhar o bucket R2 exatamente** (`organizadores/{id}/eventos/{id}/card.jpg`, `plataforma/padrao/…`, `plataforma/home/…`). Os dois lados têm a mesma árvore — é isso que torna a virada de chave uma variável em vez de uma refatoração.
+- **`App\Support\Arquivos`** vira o único lugar que monta URL de imagem. A regra estava copiada em **seis** views (`event-card`, `my-subscriptions`, `main-banner`, `banner-v2`, `event-details`, `top-bar`), com variações entre elas.
+- **`config/arquivos.php` + `ARQUIVOS_BASE_URL`** (documentado no `.env.example`): vazio serve do disco do container, preenchido serve do CDN.
+- **A existência da imagem de evento passa a ser decidida pelo banco** (`banner_url` preenchido), não por `file_exists` no disco, com `onerror` no `<img>` como rede de segurança. Sem isso, servir do R2 jogaria **toda** imagem no fallback silenciosamente.
+- **DEBT-009 corrigido de passagem**: o favicon montava `images/organizers/{id}logo.png` — sem a barra antes de `logo.png`, dava 404 em todas as páginas do site desde sempre.
+- `images:generate-gemini` passou a gravar em `public/images/plataforma/home`.
+- **8 testes novos**, incluindo um que varre as views e falha se alguém voltar a montar caminho na mão (`file_exists(public_path(...))` ou `asset('images/...')`) — sem ele a próxima view fora do padrão quebraria o CDN sem avisar. Suíte: **51 testes, 113 asserções**.
+- Validado no navegador: home (banner + cards) e página de evento renderizando com os caminhos novos.
+- **Nada foi virado ainda**: `ARQUIVOS_BASE_URL` está vazio em todo lugar, tudo continua vindo do disco. Falta só decidir o domínio do CDN.
+
+### Painel administrativo — fatia 1: esqueleto e cadastro de eventos (2026-08-29)
+- **Decisão registrada em `docs/decisoes/0006-painel-admin-neste-projeto.md`**: o painel é construído neste projeto, não migra para o Cubo. Spec completo em `docs/specs/painel-admin.md`.
+- **Entrada do painel** em `/admin`, com duas travas: `auth` + `EnsureOrganizerAdmin` (exige papel `organizer_admin` **e** `organizer_id` preenchido). O papel já existia no enum de `users.role` desde a migration original e nunca tinha sido usado.
+- Dentro do painel o escopo vem do **usuário logado**, não do domínio — diferente do site público (ADR 0002). `IdentifyOrganizerByDomain` ganhou uma exceção para as rotas do painel e do login: sem ela, `admin.correvirtual.com.br`, que não pertence a organizador nenhum, cairia no 404 de "organizador não encontrado".
+- **`php artisan admin:criar {email}`**: cria um administrador novo ou promove um atleta existente. Não existe tela para isso (não há `super_admin` implementado).
+- **CRUD de eventos** (`/admin/eventos`): listar com contagem de categorias/kits/inscritos, criar, editar e apagar. Toda busca de registro específico filtra por organizador na própria consulta e devolve **404** (não 403) quando não é do organizador — assim um organizador não descobre nem que o registro do outro existe.
+- Apagar evento que já tem inscrição é bloqueado (cascatearia para inscrição paga); a orientação na tela é desativar.
+- Layout `layouts/admin.blade.php` a partir do SB Admin Pro (`TEMPLATES/Painel-Admin/`), recolorido para a paleta do projeto. Assets em `public/assets/admin/` — **não** em `public/admin/`, que faria o nginx (`try_files $uri $uri/`) achar o diretório e devolver 403 na rota do painel.
+- `OrganizerFactory` criada — `EventFactory` já chamava `Organizer::factory()` desde sempre, e nunca tinha quebrado porque os testes montavam organizador na mão.
+- **19 testes novos** (`tests/Feature/Admin/`), incluindo os de isolamento entre organizadores: admin de A recebe 404 ao abrir, alterar ou apagar evento de B, e o registro de B fica intacto. Suíte total: 43 testes, 101 asserções.
+- Validado no navegador via Playwright: login, painel, criação de evento e listagem.
+
+### Desenvolvimento local ~70× mais rápido (2026-08-29)
+- `vendor/` passou a viver num volume nomeado do Docker no ambiente local (`docker-compose.local.yml`, que produção nunca lê). O boot do Laravel abria ~10 mil arquivos pelo bind mount do Windows a cada request: a rota `/up`, que não faz nada, levava **11,8s**; agora leva **0,17s**. A home caiu de 13,4s para 1,1s.
+- Consequência: depois de mexer no `composer.json`, rode `docker exec corre_app composer install` para atualizar o `vendor/` de dentro do container. O do host continua servindo o autocomplete da IDE.
+
 ### E-mail de confirmação de inscrição (2026-08-03)
 - **`App\Mail\SubscriptionConfirmed`** (novo): enviado quando o webhook do Mercado Pago confirma o pagamento — traz evento, data, local, modalidade, kit, botão "Ver minha inscrição" e botão "Adicionar à agenda" (link pro Google Calendar como evento de dia inteiro, sem inventar horário de término).
 - **`MercadoPagoWebhookController::handle()`**: o update de `Subscription.status` pra `paid` agora é atômico e condicional (`where('status', '!=', 'paid')`) — evita e-mail duplicado se o Mercado Pago reenviar a notificação (retry). O e-mail só é enviado quando esse update afeta 1 linha.

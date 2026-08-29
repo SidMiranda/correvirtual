@@ -13,6 +13,15 @@ class DatabaseSeeder extends Seeder
     /**
      * Seed the application's database.
      */
+    /**
+     * Dados de demonstração.
+     *
+     * Todos os kits daqui custam R$ 0,05 de propósito: são eventos de teste, e
+     * o Pix cobra o preço real do kit (não existe mais sobreposição global de
+     * valor). Com o preço de mercado aqui, um teste de pagamento cobraria
+     * R$ 240,00 de verdade. Evento real é cadastrado pelo painel, com o preço
+     * dele. Ver docs/backlog.md.
+     */
     public function run(): void
     {
         // 1. Criar um Organizador Padrão
@@ -54,21 +63,21 @@ class DatabaseSeeder extends Seeder
         EventKit::factory()->create([
             'event_id' => $event1->id,
             'name' => 'Kit Treinão',
-            'price' => 39.90,
+            'price' => 0.05,
             'description' => 'Medalha em MDF + Café Comunitário pós-treino'
         ]);
 
         EventKit::factory()->create([
             'event_id' => $event1->id,
             'name' => 'Kit Bebaço',
-            'price' => 59.90,
+            'price' => 0.05,
             'description' => 'Medalha em MDF + Caneca de Chopp + Café Comunitário pós-treino'
         ]);
 
         EventKit::factory()->create([
             'event_id' => $event1->id,
             'name' => 'Kit Nóis Capota Mas Não Breca',
-            'price' => 79.90,
+            'price' => 0.05,
             'description' => 'Medalha em MDF + Camiseta Exclusiva + Café Comunitário pós-treino'
         ]);
 
@@ -92,7 +101,7 @@ class DatabaseSeeder extends Seeder
         EventKit::factory()->create([
             'event_id' => $event2->id,
             'name' => 'Kit Treinão Solidário',
-            'price' => 39.90,
+            'price' => 0.05,
             'description' => 'Medalha de participação em MDF + Café comunitário'
         ]);
 
@@ -117,7 +126,7 @@ class DatabaseSeeder extends Seeder
         EventKit::factory()->create([
             'event_id' => $event3->id,
             'name' => 'Kit Desafio Básico',
-            'price' => 49.90,
+            'price' => 0.05,
             'description' => 'Medalha de Ferro'
         ]);
 
@@ -143,7 +152,7 @@ class DatabaseSeeder extends Seeder
         EventKit::factory()->create([
             'event_id' => $event4->id,
             'name' => 'Kit Geral',
-            'price' => 240.00,
+            'price' => 0.05,
             'description' => 'Camiseta poliamida, número de peito, chip de cronometragem e medalha (pós-prova)'
         ]);
 
@@ -168,13 +177,13 @@ class DatabaseSeeder extends Seeder
         EventKit::factory()->create([
             'event_id' => $event5->id,
             'name' => 'Kit Participação',
-            'price' => 149.90,
+            'price' => 0.05,
             'description' => 'Número de peito, chip, sacochila e medalha'
         ]);
         EventKit::factory()->create([
             'event_id' => $event5->id,
             'name' => 'Kit Premium',
-            'price' => 299.90,
+            'price' => 0.05,
             'description' => 'Camiseta exclusiva, jaqueta corta-vento, número de peito, chip, sacochila e medalha'
         ]);
 
@@ -197,7 +206,7 @@ class DatabaseSeeder extends Seeder
         EventKit::factory()->create([
             'event_id' => $event6->id,
             'name' => 'Kit Básico',
-            'price' => 119.90,
+            'price' => 0.05,
             'description' => 'Camiseta manga longa, número de peito, chip, led luminoso e medalha'
         ]);
     }

@@ -35,6 +35,14 @@ class IdentifyOrganizerByDomain
         }
 
         if (!$organizer) {
+            // O painel administrativo é a exceção: lá o organizador vem do usuário
+            // logado, não do domínio (ver docs/specs/painel-admin.md). Sem esta
+            // saída, admin.correvirtual.com.br — que não pertence a organizador
+            // nenhum — cairia no 404 antes mesmo da tela de login aparecer.
+            if ($request->is('admin', 'admin/*', 'login', 'logout')) {
+                return $next($request);
+            }
+
             // Se o domínio não existir no seu banco, retorna erro ou redireciona
             abort(404, 'Organizador não encontrado para este domínio.');
         }

@@ -21,14 +21,31 @@ Objetivo: site público bonito e funcional, um organizador, fluxo de inscrição
 - [x] Liberar o IP da VPS de produção (`143.95.218.62`) no Remote MySQL da Hostgator.
 - [x] Apontar o DNS de `eventos.correvirtual.com.br` pra `143.95.218.62` e emitir certificado TLS real (Let's Encrypt via certbot, webroot, renovação automática já agendada — expira 2026-10-31).
 - [x] Configurar `MERCADOPAGO_WEBHOOK_SECRET` de produção — resolvido em 2026-08-03, junto com a troca pra uma aplicação nova do Mercado Pago (a credencial anterior, "tentativa 1" no `.env`, dava BUG-008; a aplicação nova gerou um Pix de teste real com sucesso, confirmado via `MercadoPagoService::createPixPayment` diretamente na VPS).
-- [ ] Definir rotina de backup do banco de produção (Hostgator ou `mysqldump` agendado a partir do VPS) — ainda não implementado, ver nota de risco no ADR 0005.
+- [x] **Definir rotina de backup do banco de produção** — feito em 2026-08-29. `mysqldump` agendado no cron da VPS (03:20 diário) para os dois bancos, com validação do dump antes de aceitar, retenção de 14 dias em `/opt/backups/corre/`, e restauração testada de verdade num MySQL temporário. Ver `docs/runbook.md` ("Backup do banco") e `CHANGELOG.md`.
 - [ ] Trocar `docker/nginx/default.conf`: `server_name` do bloco HTTP ainda lista um IP antigo (`129.121.37.184`, de um VPS anterior) — inofensivo mas vale limpar.
 - [ ] **Reverter o preço de teste de R$ 0,05 para o preço real do kit quando a fase de teste acabar** — `MERCADOPAGO_TEST_PRICE_ENABLED=true` está ligado em produção e dev desde 2026-08-02 (decisão do Sidney: encher a plataforma de inscrições de teste sem cobrar valor cheio). Reverter é só trocar essa variável para `false` no secret `APP_ENV` do GitHub e no `.env` da VPS — não mexe em código. Ver `PixAmountResolver`, `PixController::generatePix`.
 - [x] **Credencial Mercado Pago trocada pra conta do Uéslei em 2026-08-02/03** (era do Sidney) — as tentativas anteriores ficaram comentadas em `src/.env` (não apagadas), dá pra reativar se precisar.
 
 ## Fase 2 (depois do MVP no ar)
 
-- [ ] Painel administrativo para o organizador (cadastrar evento, modalidade, kit, ver inscritos) usando o template SB Admin Pro, já recebido em `TEMPLATES/Painel-Admin/` (inclui telas prontas de seleção/criação de tenant)
+- [ ] **Painel administrativo para o organizador** — em construção desde 2026-08-29, fatiado. Spec: `docs/specs/painel-admin.md`. Decisão de construir aqui (e não no Cubo): ADR 0006.
+  - [x] Fatia 1: entrada do painel (`/admin`, papel `organizer_admin`, `admin:criar`), layout do SB Admin Pro e CRUD de **eventos**, com testes de isolamento entre organizadores.
+  - [ ] Fatia 2: CRUD de **categorias** (as modalidades/distâncias, por evento) e de **kits** (por evento).
+  - [ ] Fatia 3: CRUD de **equipes** (por organizador, aberta/fechada) + seletor de equipe na inscrição do atleta, mostrando só as abertas. Exige migration (`teams` + `subscriptions.team_id`).
+  - [x] **`admin.correvirtual.com.br` no ar** (2026-08-29): DNS apontado pelo Sidney, certificado Let's Encrypt emitido (vence 2026-11-27) e bloco próprio no nginx, com a raiz redirecionando para `/admin`. O painel aparece quando o código for para produção.
+  - [ ] Levar `restart: unless-stopped` para o `docker-compose.yml` do repositório. **Confirmado na prática em 2026-08-29**: um `docker compose up -d --force-recreate nginx` zerou a política de volta para `no`. Enquanto não estiver no arquivo, todo recreate (inclusive o `up -d --build` do deploy) a perde, e o problema de 20/08 volta.
+  - [ ] **Antes do primeiro push depois de 2026-08-29**: o `docker/nginx/default.conf` foi alterado direto na VPS para o painel funcionar hoje. O deploy roda `git pull`, que **falha** quando o arquivo rastreado está modificado — e o script não checa erro, então ele seguiria e reportaria "✅ Deploy finalizado com sucesso" sem ter atualizado o código. Rodar `git checkout -- docker/nginx/default.conf` na VPS antes de subir. Backup do arquivo antigo em `/root/nginx-default.conf.bak`.
+  - [ ] Ver inscritos de um evento (era parte do item original desta linha; continua pendente).
+
+- [ ] **Migrar os arquivos para o R2** (bucket `correvirtual-arquivos` já criado e populado em 2026-08-29). Spec: `docs/specs/armazenamento-r2.md`.
+  - [x] Bucket criado, estrutura desenhada, 18 arquivos existentes copiados e conferidos.
+  - [x] Centralizar a montagem da URL de imagem — feito em 2026-08-29 (`App\Support\Arquivos` + `ARQUIVOS_BASE_URL`). O disco local foi reorganizado para espelhar o bucket, então virar a chave é preencher uma variável.
+  - [x] **Domínio do CDN definido e no ar**: `https://cdncorrevirtual.mobspot.com.br` (2026-08-29). `cdn.correvirtual.com.br` não era possível — domínio próprio no R2 exige a zona na Cloudflare, e `correvirtual.com.br` está na WebCit. Trocar para um domínio do `correvirtual.com.br` no futuro é mudar `ARQUIVOS_BASE_URL`, sem tocar em código.
+  - [x] **Bucket privado separado** (`correvirtual-privado`, sem domínio). Corrige erro de desenho: prefixo `privado/` dentro do bucket público era acessível por URL, porque o domínio do R2 expõe o bucket inteiro.
+  - [ ] Ligar o CDN em **produção**: `ARQUIVOS_BASE_URL=https://cdncorrevirtual.mobspot.com.br/publico` precisa entrar no secret `APP_ENV` do GitHub. Local já está ligado e validado.
+  - [ ] Pendente com o Sidney: criar token R2 restrito só a `correvirtual-arquivos` (a cópia foi feita com a credencial do Cubo, que enxerga todos os buckets da conta).
+  - [ ] Decidir o destino de `events.banner_url`, que perde a função com o caminho derivado do ID do evento.
+  - [ ] Só depois de tudo validado: apagar `src/public/images/` e tirar os 6,1 MB de imagem do Git.
 - [ ] Geração de número de peito (`bib_number`) após pagamento confirmado
 - [ ] BUG-007 (throttle em login/registro/verificação)
 - [ ] Papéis `organizer_admin` / `super_admin` (hoje só `athlete` é usado de fato)

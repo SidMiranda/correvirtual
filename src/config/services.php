@@ -38,12 +38,6 @@ return [
     'mercadopago' => [
         'token' => env('MERCADOPAGO_ACCESS_TOKEN'),
         'webhook_secret' => env('MERCADOPAGO_WEBHOOK_SECRET'),
-
-        // TEMPORÁRIO — teste, reverter para $subscription->price quando o Sidney liberar (BUG-001).
-        // Enquanto MERCADOPAGO_TEST_PRICE_ENABLED=true, toda cobrança Pix sai no valor de
-        // MERCADOPAGO_TEST_PRICE_VALUE, não no preço real do kit. Ver PixController::generatePix.
-        'test_price_enabled' => env('MERCADOPAGO_TEST_PRICE_ENABLED', false),
-        'test_price_value' => env('MERCADOPAGO_TEST_PRICE_VALUE', 0.05),
     ],
 
     'gemini' => [

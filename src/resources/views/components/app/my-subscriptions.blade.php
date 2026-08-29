@@ -2,16 +2,16 @@
 
 @php
     $event = $subscription->event;
-    $imageRelativePath = 'images/events/' . $event->id . '/card-' . $event->banner_url;
-    $hasImage = $event->banner_url && file_exists(public_path($imageRelativePath));
 @endphp
 
 <div class="registration-list-card">
     <div class="registration-list-card__image-wrapper">
-        @if($hasImage)
-            <img src="{{ asset($imageRelativePath) }}" class="event-card__image" alt="{{ $event->title }}">
+        @if($event->banner_url)
+            <img src="{{ \App\Support\Arquivos::cardDoEvento($event) }}"
+                 onerror="this.onerror=null;this.src='{{ \App\Support\Arquivos::cardPadrao() }}';"
+                 class="event-card__image" alt="{{ $event->title }}">
         @else
-            <img src="{{ asset('images/default/card.jpg') }}" class="event-card__image" alt="{{ $event->title }}">
+            <img src="{{ \App\Support\Arquivos::cardPadrao() }}" class="event-card__image" alt="{{ $event->title }}">
             <div class="default-card-overlay">
                 <h3 class="event-card-overlay-title">{{ $event->title }}</h3>
             </div>

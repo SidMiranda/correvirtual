@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Subscriptions;
 
 use App\Http\Controllers\Controller;
 use App\Services\MercadoPagoService;
-use App\Services\PixAmountResolver;
 use App\Models\Subscription;
 use App\Models\Payment;
 use Carbon\Carbon;
@@ -19,8 +18,12 @@ class PixController extends Controller
 
         $subscription = Subscription::find($subscriptionId);
 
+        // Cobra o preço que a inscrição registrou — que é o preço do kit escolhido
+        // no momento em que ela foi criada (SubscribeController). Não existe mais
+        // sobreposição global de valor: os eventos de teste têm R$ 0,05 gravado
+        // como preço real do kit, e os cadastrados pelo painel têm o preço deles.
         $pix = MercadoPagoService::createPixPayment(
-            PixAmountResolver::resolve($subscription),
+            (float) $subscription->price,
             auth()->user()->email,
             $subscriptionId // Enviando o ID da inscrição como referência externa
         );

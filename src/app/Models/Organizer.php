@@ -15,5 +15,11 @@ class Organizer extends Model
         'cnpj',
         'email',
         'slug',
+        'active',
     ];
+
+    public function events()
+    {
+        return $this->hasMany(Event::class);
+    }
 }

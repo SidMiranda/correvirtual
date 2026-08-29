@@ -65,6 +65,45 @@ docker exec corre_app php artisan db:seed --force
 
 **Status atual**: `https://eventos.correvirtual.com.br` está no ar (VPS `143.95.218.62`, Hostgator) desde 2026-08-02. Certificado emitido via `certbot certonly --webroot -w src/public -d eventos.correvirtual.com.br` diretamente no host (não em container) — o container `nginx` só consome os certs que já existem em `/etc/letsencrypt`, montados read-only. Renovação automática já agendada pelo certbot (`systemctl list-timers | grep certbot`).
 
+## Backup do banco
+
+Roda sozinho: **cron da VPS, 03:20 todo dia**, via `/usr/local/bin/corre-backup.sh`. Faz `mysqldump` de `webcit29_eventos_prod` e `webcit29_eventos_dev`, comprime com gzip e guarda em `/opt/backups/corre/`, mantendo **14 dias**. A VPS é máquina diferente do banco (Hostgator), então a cópia já nasce fora do servidor de origem.
+
+O script lê as credenciais do `src/.env` da aplicação — não tem senha escrita dentro dele.
+
+**Ele se recusa a aceitar um dump ruim.** Só vira backup o arquivo com mais de 1KB e que contenha `CREATE TABLE`; qualquer outra coisa é salva como `.SUSPEITO` e a rotação é suspensa, para que um dump quebrado nunca apague os backups bons.
+
+```bash
+# rodar na hora, fora do horário
+ssh root@143.95.218.62 -p 22022 /usr/local/bin/corre-backup.sh
+
+# ver o que existe e o histórico
+ls -lh /opt/backups/corre/
+tail -20 /var/log/corre-backup.log
+```
+
+**Restaurar** (o procedimento foi testado de verdade em 2026-08-29, restaurando produção num MySQL 5.7 temporário e conferindo as contagens):
+
+```bash
+# para um banco de teste antes de qualquer coisa — nunca direto em produção
+zcat /opt/backups/corre/webcit29_eventos_prod_AAAA-MM-DD_HHMM.sql.gz \
+  | mysql --host=srv238.prodns.com.br --user=<usuario> -p <banco_destino>
+```
+
+## Painel administrativo
+
+O painel vive em `/admin` (ver `docs/specs/painel-admin.md`). Não existe tela para criar o primeiro administrador — é por linha de comando:
+
+```bash
+# cria um administrador novo
+docker exec -it corre_app php artisan admin:criar admin@exemplo.com.br --organizador=1
+
+# ou promove um atleta que já se cadastrou pelo site
+docker exec -it corre_app php artisan admin:criar pessoa@exemplo.com.br
+```
+
+Sem `--organizador`, o comando pergunta qual usar (ou assume o único, se só houver um). Ao promover alguém, o e-mail é marcado como confirmado se ainda não estivesse — sem isso o login barra a entrada.
+
 ### Branches
 
 `main` (protegida, deploy automático) ← PR ← `develop` (integração, sem deploy automático) ← PR ← `feature/*` / `fix/*`. Ver ADR 0004.
