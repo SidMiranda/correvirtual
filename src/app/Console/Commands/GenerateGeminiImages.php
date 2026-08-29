@@ -29,7 +29,7 @@ class GenerateGeminiImages extends Command
             return self::FAILURE;
         }
 
-        $outputDir = public_path('images/home-v2');
+        $outputDir = public_path('images/plataforma/home');
 
         if (!is_dir($outputDir)) {
             mkdir($outputDir, 0755, true);
@@ -76,7 +76,7 @@ class GenerateGeminiImages extends Command
             }
 
             file_put_contents($destination, base64_decode($imageBase64));
-            $this->info("Salvo: public/images/home-v2/{$filename}.jpg");
+            $this->info("Salvo: public/images/plataforma/home/{$filename}.jpg");
         }
 
         $this->info('Concluído. Atualize src/resources/views/components/app/banner-v2.blade.php pra usar os novos arquivos nos slides 2 e 3.');

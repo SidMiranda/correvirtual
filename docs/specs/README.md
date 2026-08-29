@@ -15,3 +15,6 @@ Cada arquivo aqui descreve o comportamento esperado de uma área do sistema. É 
 | [eventos-e-inscricoes.md](eventos-e-inscricoes.md) | Eventos, modalidades, kits, inscrição |
 | [pagamentos-pix.md](pagamentos-pix.md) | Pix / Mercado Pago |
 | [multi-tenancy-e-autenticacao.md](multi-tenancy-e-autenticacao.md) | Organizador por domínio, cadastro, login |
+| [frontend-publico.md](frontend-publico.md) | Site público, Home v2 |
+| [painel-admin.md](painel-admin.md) | Painel do organizador (`/admin`), cadastros |
+| [armazenamento-r2.md](armazenamento-r2.md) | Arquivos no Cloudflare R2 (imagens, banners, uploads) |

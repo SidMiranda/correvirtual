@@ -84,6 +84,38 @@ class PixControllerTest extends TestCase
         ]);
     }
 
+    public function test_generate_pix_charges_exactly_the_subscription_price(): void
+    {
+        // A asserção de dinheiro. Até 2026-08-29 existia um PixAmountResolver que
+        // sobrepunha o valor de TODA cobrança por uma variável de ambiente — foi
+        // removido, e o preço passou a viver no kit. Este teste garante que o
+        // valor cobrado é o da inscrição, e que ninguém reintroduza sobreposição.
+        $subscription = $this->createPendingSubscription();
+        $subscription->update(['price' => 87.50]);
+
+        $pix = (object) [
+            'id' => 'mp-preco',
+            'point_of_interaction' => (object) [
+                'transaction_data' => (object) [
+                    'qr_code' => '00020126...',
+                    'qr_code_base64' => 'base64stuff',
+                    'ticket_url' => 'https://mercadopago.com/ticket/preco',
+                ],
+            ],
+            'date_of_expiration' => null,
+        ];
+
+        $mock = \Mockery::mock('alias:' . MercadoPagoService::class);
+        $mock->shouldReceive('createPixPayment')
+            ->once()
+            ->with(87.50, $subscription->user->email, (string) $subscription->id)
+            ->andReturn($pix);
+
+        $this->actingAs($subscription->user)
+            ->post('/event-pay', ['subscription_id' => $subscription->id])
+            ->assertOk();
+    }
+
     public function test_generate_pix_shows_friendly_error_when_mercadopago_fails(): void
     {
         $subscription = $this->createPendingSubscription();
