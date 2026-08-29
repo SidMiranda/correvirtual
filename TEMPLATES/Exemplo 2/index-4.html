@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Contacts</title>
+<meta charset="utf-8">    
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="img/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon" />
+<meta name="description" content="Your description">
+<meta name="keywords" content="Your keywords">
+<meta name="author" content="Your name">
+<meta name = "format-detection" content = "telephone=no" />
+<!--CSS-->
+<link rel="stylesheet" href="css/bootstrap.css" >
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="fonts/font-awesome.css">
+<!--JS-->
+<script src="js/jquery.js"></script>
+<script src="js/jquery-migrate-1.2.1.min.js"></script>
+<script src="js/superfish.js"></script>
+<script src="js/jquery.easing.1.3.js"></script>
+<script src="js/jquery.mobilemenu.js"></script>
+<script src="js/jquery.equalheights.js"></script> 
+<script src="js/TMForm.js"></script>
+<script src="js/jquery.ui.totop.js"></script>
+<!--[if lt IE 9]>
+    <div style='text-align:center'><a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode"><img src="http://storage.ie6countdown.com/assets/100/images/banners/warning_bar_0000_us.jpg" border="0" height="42" width="820" alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today." /></a></div>  
+  <![endif]-->
+  <!--[if lt IE 9]><script src="../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<!--header-->
+<header>
+    <div class="follow-box">
+        <div class="container">
+            <ul>
+                <li><a href="#"><span class="fa fa-facebook"></span></a></li>
+                <li><a href="#"><span class="fa fa-twitter"></span></a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="logo-box">
+        <div class="container">
+            <h1 class="navbar-brand navbar-brand_"><a href="index.html"><img src="img/logo.png" alt=""><span>Gobo</span></a></h1>
+            <nav class="navbar navbar-default navbar-static-top tm_navbar clearfix" role="navigation">
+                <ul class="nav sf-menu clearfix">
+                    <li><a href="index.html">Home</a></li>
+                    <li class="sub-menu"><a href="index-1.html">About</a><span></span>
+                        <ul class="submenu">
+            				<li><a href="#">Lorem ipsum dolor sit amet</a></li>
+            				<li><a href="#">Conse ctetur adipisicing</a></li>
+            				<li><a href="#">Elit sed do eiusmod tempor</a></li>
+                            <li><a href="#">Incididunt ut labore</a><span></span>
+                                <ul class="submenu">
+                                    <li><a href="#">Lorem ipsum</a></li>
+                                    <li><a href="#">Dolor sit amet</a></li>
+                                    <li><a href="#">Conse ctetur</a></li>
+                              </ul> 
+                            </li>
+                            <li><a href="#">Et dolore magna aliqua</a></li>
+                            <li><a href="#">Ut enim ad minim veniam</a></li>
+            			</ul>
+                    </li>
+                    <li><a href="index-2.html">Membership</a></li>
+                    <li><a href="index-3.html">Training</a></li>
+                    <li class="active"><a href="index-4.html">Contacts</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</header>
+<!--content-->
+<div class="global indent">
+    <div class="container">
+        <div class="row">  
+            <div class="col-lg-12">
+                <h2 class="indent">Contact Information</h2>
+                <figure class="map">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d24214.807650104907!2d-73.94846048422478!3d40.65521573400813!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sus!4v1395650655094" style="border:0"></iframe>
+                </figure>
+            </div>
+        </div>
+    </div>
+    <div class="formBox">
+        <div class="container">
+        <div class="row">  
+        <div class="col-lg-4 col-md-4 col-sm-4">
+            <h2 class="indent">Address</h2>
+            <div class="info">
+                <h4>9870 St Vincent Place,<br>Glasgow, DC 45 Fr 45.</h4>
+                <p><span>Freephone:</span>+1 800 559 6580</p>
+                <p><span>Telephone:</span>+1 800 603 6035</p>
+                <p><span>FAX:</span>+1 800 889 9898</p>
+                <p>E-mail: <a href="#">mail@demolink.org</a></p>
+            </div>
+        </div>
+        <div class="col-lg-8 col-md-8 col-sm-8">
+            <h2 class="indent">Contact Form</h2>
+            <form id="contact-form">
+                <div class="success-message">Contact form submitted.</div>
+                <div class="holder">
+                    <div class="form-div-1 clearfix">
+                        <label class="name">
+                            <input type="text" placeholder="Name*:" data-constraints="@Required @JustLetters" />
+                            <span class="empty-message">*This field is required.</span>
+                            <span class="error-message">*This is not a valid name.</span>
+                        </label>
+                    </div>
+                    <div class="form-div-2 clearfix">
+                        <label class="email">
+                            <input type="text" placeholder="Email*:" data-constraints="@Required @Email" />
+                            <span class="empty-message">*This field is required.</span>
+                            <span class="error-message">*This is not a valid email.</span>
+                        </label>
+                    </div>
+                    <div class="form-div-3 clearfix">
+                        <label class="phone">
+                            <input type="text" placeholder="Phone*:" data-constraints="@Required @JustNumbers"/>
+                            <span class="empty-message">*This field is required.</span>
+                            <span class="error-message">*This is not a valid phone.</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-div-4 clearfix">
+                    <label class="message">
+                        <textarea placeholder="Message:" data-constraints='@Required @Length(min=20,max=999999)'></textarea>
+                        <span class="empty-message">*This field is required.</span>
+                        <span class="error-message">*The message is too short.</span>
+                    </label>
+                </div>
+                <div class="btns">
+                    <a href="#" data-type="submit" class="btn-default btn1">Submit</a>
+                    <p>* required fields</p>
+                </div>  
+            </form>
+        </div>
+        </div>
+        </div>
+    </div>
+</div>
+<!--footer-->
+<footer>
+    <div class="container">
+        <p>Triathlon &copy; <em id="copyright-year"></em>. <a href="index-5.html">Privacy policy</a></p>
+    </div>
+</footer>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/tm-scripts.js"></script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+.camera_wrap .camera_pag .camera_pag_ul li > span{
+    behavior:url(../js/PIE.htc); position:absolute;
+}
+
+
+.sf-menu ul{
+    left: 110px;
+    width: 117px;
+}
+
+.contact-box a:hover{
+    background:none;
+    -ms-filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#26ffffff,endColorstr=#26ffffff);
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#26ffffff,endColorstr=#26ffffff);
+    zoom: 1;
+}
+
+#header .menu-btn, .sf-menu{
+    top: 73px;
+}
+
+#toTop{
+    cursor: pointer;
+}
+#toTop:hover{
+    color:#000;
+}
+
+#toTop span:hover{
+    display: block;
+}

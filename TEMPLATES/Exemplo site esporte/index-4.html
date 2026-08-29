@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Contacts</title>
+    <meta charset="utf-8">
+    <meta name="format-detection" content="telephone=no"/>
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="css/grid.css">
+    <link rel="stylesheet" href="css/font-awesome.css"/>
+    <link rel="stylesheet" href="css/contact-form.css"/>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/jquery.js"></script>
+    <script src="js/jquery-migrate-1.2.1.js"></script>
+    <script src="js/modal.js"></script>
+    <script src="js/TMForm.js"></script>
+    <!--[if (gt IE 9)|!(IE)]><!-->
+    <script src="js/wow/wow.js"></script>
+    <script>
+        $(document).ready(function () {
+            if ($('html').hasClass('desktop')) {
+                new WOW().init();
+            }
+        });
+    </script>
+    <!--<![endif]-->
+    <!--[if lt IE 9]>
+    <div style=' clear: both; text-align:center; position: relative;'>
+        <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+            <img src="http://storage.ie6countdown.com/assets/100/images/banners/warning_bar_0000_us.jpg" border="0"
+                 height="42" width="820"
+                 alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today."/>
+        </a>
+    </div>
+    <script src="js/html5shiv.js"></script>
+    <link rel="stylesheet" type="text/css" media="screen" href="css/ie.css">
+    <![endif]-->
+</head>
+
+<body>
+
+<!--========================================================
+                          HEADER
+=========================================================-->
+<header id="header">
+
+    <div class="mobile-menu-bg">
+        <div class="container">
+            <div class="row">
+                <div class="grid_12 mh">
+                    <div id="mobile-menu"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bg-header">
+        <div class="container">
+            <div class="row">
+                <div class="grid_12 mh">
+                    <a class="menu-btn bg_1" href="#">
+                        <div class="span-wrap">
+                            <span class="first"></span>
+                            <span class="second"></span>
+                            <span class="third"></span>
+                        </div>
+                    </a>
+                    <nav>
+                        <ul class="sf-menu text_1">
+                            <li><a href="index.html">Home</a></li>
+                            <li><a href="index-1.html">About</a>
+                                <ul>
+                                    <li><a href="#">Aliquam</a></li>
+                                    <li><a href="#">Ferment</a></li>
+                                    <li><a href="#">Mauris</a>
+                                        <ul>
+                                            <li><a href="#">Aliquet</a></li>
+                                            <li><a href="#">Nulla ven</a></li>
+                                            <li><a href="#">In pede mi</a></li>
+                                            <li><a href="#">Aliquet sit </a></li>
+                                            <li><a href="#">Euismod in</a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="#">Nulla vel</a></li>
+                                    <li><a href="#">Sed in lac</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="index-2.html">Blog</a></li>
+                            <li><a href="index-3.html">Gallery</a></li>
+                            <li class="current"><a href="index-4.html">Contacts</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            <div class="row">
+                <div class="grid_12 mh">
+                    <h1 class="logo-2 text_7 color_1"><a href="index.html">eXtreme</a></h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<!--========================================================
+                          CONTENT
+=========================================================-->
+<section id="content">
+    <div class="container">
+        <div class="wrapper11">
+            <div class="row">
+                <div class="grid_7">
+                    <div class="heading_1">
+                        <h3 class="lh_1">how to find us</h3>
+                    </div>
+                    <div class="sub-heading_5 color_3">
+                        <h4>Vestibulum dignissim fermentum </h4>
+                    </div>
+                    <iframe class="map wow fadeInLeft" data-wow-delay="0.2s"
+                            src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d24214.807650104907!2d-73.94846048422478!3d40.65521573400813!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sus!4v1395650655094"></iframe>
+                    <h4 class="h4_1">The Company Name Inc.</h4>
+
+                    <div class="row wow fadeInLeft" data-wow-delay="0.4s">
+                        <div class="grid_3">
+                            <address class="color_7">8901 Marmora Road, <br/> Glasgow, D04 89GR.</address>
+                            <dl>
+                                <dt>Freephone: <br/>
+                                    Telephone: <br/>
+                                    FAX: <br/>
+                                <dd>+1 800 559 6580 <br/>
+                                    +1 800 603 6035 <br/>
+                                    +1 800 889 9898
+                                </dd>
+                            </dl>
+                            <p class="mail">E-mail:
+                                <a href="#" class="text_6 color_4">mail@demolink.org</a>
+                            </p>
+                        </div>
+                        <div class="grid_3">
+                            <address class="color_7">9863 - 9867 Mill Road,  Cambridge, MG09 99HT.</address>
+                            <dl>
+                                <dt>Freephone: <br/>
+                                    Telephone: <br/>
+                                    FAX: <br/>
+                                <dd>+1 800 559 6580 <br/>
+                                    +1 800 603 6035 <br/>
+                                    +1 800 889 9898
+                                </dd>
+                            </dl>
+                            <p class="mail">E-mail:
+                                <a href="#" class="text_6 color_4">mail@demolink.org</a>
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="preffix_1 grid_4">
+                    <div class="margin_3">
+                        <div class="sub-heading_5">
+                            <h6>feedback</h6>
+                        </div>
+                        <div class="sub-heading_5 color_3">
+                            <h4>Maecenas egestas </h4>
+                        </div>
+                    </div>
+                    <div class="form-wrapper">
+                        <form id="contact-form">
+                            <div class="contact-form-loader"></div>
+                            <fieldset>
+                                <label class="name wow fadeInRight" data-wow-delay="0.1s">
+                                    <input type="text" name="name" placeholder="Name:" value=""
+                                           data-constraints="@Required @JustLetters"/>
+                                    <span class="empty-message">*This field is required.</span>
+                                    <span class="error-message">*This is not a valid name.</span>
+                                </label>
+
+                                <label class="email wow fadeInRight" data-wow-delay="0.2s">
+                                    <input type="text" name="email" placeholder="E-mail:" value=""
+                                           data-constraints="@Required @Email"/>
+                                    <span class="empty-message">*This field is required.</span>
+                                    <span class="error-message">*This is not a valid email.</span>
+                                </label>
+
+                                <label class="phone wow fadeInRight" data-wow-delay="0.3s">
+                                    <input type="text" name="phone" placeholder="Phone:" value=""
+                                           data-constraints="@Required @JustNumbers"/>
+                                    <span class="empty-message">*This field is required.</span>
+                                    <span class="error-message">*This is not a valid phone.</span>
+                                </label>
+                                <label class="message wow fadeInRight" data-wow-delay="0.4s">
+                                    <textarea name="message" placeholder="Message:"
+                                              data-constraints='@Required @Length(min=20,max=999999)'></textarea>
+                                    <span class="empty-message">*This field is required.</span>
+                                    <span class="error-message">*The message is too short.</span>
+                                </label>
+
+                                <div class="btn-wrapper">
+                                    <a class="btn" href="#" data-type="reset">clear</a>
+                                    <a class="btn" href="#" data-type="submit">send</a>
+                                </div>
+                            </fieldset>
+                            <div class="modal fade response-message">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal"
+                                                    aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title">Modal title</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            You message has been sent! We will be in touch soon.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="divider"></div>
+
+
+</section>
+
+
+<!--========================================================
+                          FOOTER
+=========================================================-->
+<footer id="footer">
+    <div class="container">
+        <div class="row">
+            <div class="row">
+
+                <div class="put-right social">
+                    <div class="grid_3">
+                        <p>Follow Us</p>
+                        <a class="fa fa-twitter" href="#"></a>
+                        <a class="fa fa-google-plus" href="#"></a>
+                        <a class="fa fa-facebook" href="#"></a>
+                        <a class="fa fa-skype" href="#"></a>
+                    </div>
+                </div>
+
+                <div class="put-right contacts">
+                    <div class="grid_4">
+                        <div class="address">
+                            <p><span>8901 Marmora Road,</span> <br/>
+                                <span>Glasgow, D04 89GR.</span></p>
+                        </div>
+                        <div class="phone">
+                            <p><span class="span_pad_1">Telephone:</span> +1 800 603 6035</p>
+                        </div>
+                        <div class="mail">
+                            <span>E-mail: <a class="color_4 text_6" href="#">mail@demolink.org</a></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="put-right copyright">
+
+                    <div class="grid_5">
+                        <h1 class="text_7"><a href="index.html">eXtreme</a></h1>
+                        <span>&copy; <span id="copyright-year"></span> All Rights Reserved</span><span
+                            class="span_pad_2">|</span>
+                        <a href="index-5.html">Privacy Policy</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<script src="js/script.js"></script>
+</body>
+</html>
