@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Event;
+use App\Support\ImagensDoEvento;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -32,6 +33,10 @@ class EventController extends AdminController
         $evento->slug = $this->slugUnico($dados['title']);
         $evento->save();
 
+        // Depois do save: o caminho da imagem no R2 usa o id do evento, que só
+        // existe depois de gravar.
+        $this->guardarImagens($request, $evento);
+
         return redirect()
             ->route('admin.eventos.index')
             ->with('sucesso', "Evento \"{$evento->title}\" criado.");
@@ -57,6 +62,8 @@ class EventController extends AdminController
 
         $event->fill($dados)->save();
 
+        $this->guardarImagens($request, $event);
+
         return redirect()
             ->route('admin.eventos.index')
             ->with('sucesso', "Evento \"{$event->title}\" atualizado.");
@@ -76,6 +83,11 @@ class EventController extends AdminController
         }
 
         $titulo = $event->title;
+
+        // As imagens saem junto: o caminho no bucket é derivado do id do evento,
+        // então um evento futuro com o mesmo id herdaria a imagem deste.
+        ImagensDoEvento::apagar($event);
+
         $event->delete();
 
         return redirect()
@@ -97,19 +109,58 @@ class EventController extends AdminController
             ->firstOrFail();
     }
 
+    /**
+     * Sobe para o R2 o que veio no formulário.
+     *
+     * `banner_url` deixou de guardar um nome de arquivo digitado e passou a ser
+     * só a marca de "este evento tem imagem" — o caminho é derivado do id do
+     * organizador e do evento (ver ImagensDoEvento). Enquanto houver evento
+     * antigo com o nome de arquivo lá dentro, o valor continua valendo como
+     * marca; o que importa é estar preenchido.
+     */
+    private function guardarImagens(Request $request, Event $event): void
+    {
+        $subiuAlguma = false;
+
+        if ($request->hasFile('banner')) {
+            ImagensDoEvento::salvarBanner($event, $request->file('banner'));
+            $subiuAlguma = true;
+        }
+
+        if ($request->hasFile('card')) {
+            ImagensDoEvento::salvarCard($event, $request->file('card'));
+            $subiuAlguma = true;
+        }
+
+        if ($subiuAlguma && !$event->banner_url) {
+            $event->banner_url = 'banner.jpg';
+            $event->save();
+        }
+    }
+
     private function validar(Request $request): array
     {
-        return $request->validate([
+        $dados = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
             'location' => ['required', 'string', 'max:255'],
             'event_date' => ['required', 'date'],
             'registration_deadline' => ['required', 'date', 'before_or_equal:event_date'],
-            'banner_url' => ['nullable', 'string', 'max:255'],
+            'banner' => ImagensDoEvento::regraDeValidacao(),
+            'card' => ImagensDoEvento::regraDeValidacao(),
             'active' => ['boolean'],
         ], [
             'registration_deadline.before_or_equal' => 'O prazo de inscrição não pode ser depois da data do evento.',
-        ]) + ['active' => $request->boolean('active')];
+            'banner.image' => 'O banner precisa ser uma imagem (JPG, PNG ou WEBP).',
+            'banner.max' => 'O banner passou de 5 MB.',
+            'card.image' => 'O card precisa ser uma imagem (JPG, PNG ou WEBP).',
+            'card.max' => 'O card passou de 5 MB.',
+        ]);
+
+        // Os arquivos não são colunas do evento — vão para o R2 em guardarImagens().
+        unset($dados['banner'], $dados['card']);
+
+        return $dados + ['active' => $request->boolean('active')];
     }
 
     /**

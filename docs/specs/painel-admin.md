@@ -1,12 +1,20 @@
 # Painel administrativo do organizador
 
-Status: Aprovado (fatia 1 em implementação)
+Status: Fatias 1 e 2 implementadas; escolha de equipe na inscrição pendente
 
 ## Problema
 
 Hoje **não existe nenhuma tela administrativa**. Evento, modalidade e kit só entram no sistema por seeder ou escrevendo direto no banco — o organizador depende do desenvolvedor pra qualquer coisa, até corrigir um preço errado. É a maior lacuna funcional do produto: o sistema sabe *vender* uma inscrição, mas não sabe deixar ninguém *cadastrar* o que está sendo vendido.
 
 Decisão do dono do projeto em 2026-08-29: o painel é construído **neste projeto**, no servidor onde ele já roda — não migra pro Cubo. A ideia de levar o cadastro pra lá foi considerada e descartada (ver `docs/decisoes/0006-painel-admin-neste-projeto.md`).
+
+## O que já está implementado (2026-08-29)
+
+**Fatia 1:** entrada do painel (`/admin`, papel `organizer_admin`, `admin:criar`), layout do SB Admin Pro e CRUD de eventos. `admin.correvirtual.com.br` no ar com certificado próprio.
+
+**Fatia 2:** CRUD de categorias e kits aninhados no evento (`/admin/eventos/{id}/categorias` e `.../kits`), CRUD de equipes por organizador (`/admin/equipes`), upload de banner e card direto para o R2, e situação do evento deduzida das datas.
+
+**Ainda não:** a escolha de equipe na tela de inscrição do atleta. O cadastro existe e o filtro está pronto e testado (`Team::escolhivelPeloAtleta()`), mas a coluna `subscriptions.team_id` não foi criada e a tela do atleta não foi tocada — foi o combinado desta rodada.
 
 ## Requisitos
 

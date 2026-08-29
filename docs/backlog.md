@@ -30,10 +30,12 @@ Objetivo: site público bonito e funcional, um organizador, fluxo de inscrição
 
 - [ ] **Painel administrativo para o organizador** — em construção desde 2026-08-29, fatiado. Spec: `docs/specs/painel-admin.md`. Decisão de construir aqui (e não no Cubo): ADR 0006.
   - [x] Fatia 1: entrada do painel (`/admin`, papel `organizer_admin`, `admin:criar`), layout do SB Admin Pro e CRUD de **eventos**, com testes de isolamento entre organizadores.
-  - [ ] Fatia 2: CRUD de **categorias** (as modalidades/distâncias, por evento) e de **kits** (por evento).
-  - [ ] Fatia 3: CRUD de **equipes** (por organizador, aberta/fechada) + seletor de equipe na inscrição do atleta, mostrando só as abertas. Exige migration (`teams` + `subscriptions.team_id`).
+  - [x] Fatia 2 (2026-08-29): CRUD de **categorias** e de **kits** aninhados no evento, CRUD de **equipes** por organizador, **upload das imagens** do evento direto para o R2, situação do evento deduzida das datas, e o cabeçalho do painel com a foto da ponte.
+  - [ ] Fatia 3: ligar a **escolha de equipe na inscrição do atleta** — mostrar só as abertas e ativas do organizador atual, recusar equipe fechada ou de outro organizador mesmo que o id venha na mão. Exige `subscriptions.team_id`. O filtro já existe pronto e testado em `Team::escolhivelPeloAtleta()`.
+  - [ ] Limite de vagas da categoria e estoque do kit são hoje só informativos — o sistema não bloqueia a inscrição ao atingir o limite.
+  - [ ] Trocar a imagem de um evento mantém o mesmo nome de arquivo, então a versão antiga pode ficar no cache do CDN por um tempo. Se incomodar, a saída é versionar o nome.
   - [x] **`admin.correvirtual.com.br` no ar** (2026-08-29): DNS apontado pelo Sidney, certificado Let's Encrypt emitido (vence 2026-11-27) e bloco próprio no nginx, com a raiz redirecionando para `/admin`. O painel aparece quando o código for para produção.
-  - [ ] Levar `restart: unless-stopped` para o `docker-compose.yml` do repositório. **Confirmado na prática em 2026-08-29**: um `docker compose up -d --force-recreate nginx` zerou a política de volta para `no`. Enquanto não estiver no arquivo, todo recreate (inclusive o `up -d --build` do deploy) a perde, e o problema de 20/08 volta.
+  - [x] `restart: unless-stopped` no `docker-compose.yml` (2026-08-29).
   - [ ] **Antes do primeiro push depois de 2026-08-29**: o `docker/nginx/default.conf` foi alterado direto na VPS para o painel funcionar hoje. O deploy roda `git pull`, que **falha** quando o arquivo rastreado está modificado — e o script não checa erro, então ele seguiria e reportaria "✅ Deploy finalizado com sucesso" sem ter atualizado o código. Rodar `git checkout -- docker/nginx/default.conf` na VPS antes de subir. Backup do arquivo antigo em `/root/nginx-default.conf.bak`.
   - [ ] Ver inscritos de um evento (era parte do item original desta linha; continua pendente).
 

@@ -7,10 +7,18 @@ RUN apt-get update && apt-get install -y \
     unzip \
     libzip-dev \
     libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    libwebp-dev \
     libonig-dev \
     libxml2-dev \
     libpq-dev \
-    && docker-php-ext-install pdo_pgsql pdo_mysql mbstring bcmath zip
+    # GD entrou em 2026-08-29 junto com o upload de imagem do painel: sem ele
+    # `UploadedFile::fake()->image()` nem roda ("GD extension is not installed"),
+    # e qualquer tratamento de imagem futuro (redimensionar, gerar miniatura)
+    # também dependeria dele.
+    && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
+    && docker-php-ext-install pdo_pgsql pdo_mysql mbstring bcmath zip gd
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 

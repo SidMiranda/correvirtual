@@ -11,7 +11,7 @@
             <div class="card mb-4">
                 <div class="card-header">Dados do evento</div>
                 <div class="card-body">
-                    <form method="POST" action="{{ route('admin.eventos.store') }}">
+                    <form method="POST" enctype="multipart/form-data" action="{{ route('admin.eventos.store') }}">
                         @csrf
 
                         @include('admin.events._form')

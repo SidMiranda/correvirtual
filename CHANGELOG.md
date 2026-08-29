@@ -6,6 +6,22 @@ Histórico anterior a este arquivo (todo o desenvolvimento inicial do projeto) p
 
 ## [Unreleased]
 
+### Painel — fatia 2: categorias, kits, equipes e upload de imagem (2026-08-29)
+- **CRUD de categorias** (as distâncias) e de **kits**, aninhados no evento: as rotas são `/admin/eventos/{id}/categorias` e `/admin/eventos/{id}/kits`, o que torna impossível cadastrar um kit sem dizer de qual evento é. Abas no topo ligam as três telas do mesmo evento.
+- **CRUD de equipes** (`/admin/equipes`), por organizador e não por evento — a mesma assessoria corre vários eventos no ano. Cada equipe é **aberta** (aparecerá para o atleta escolher) ou **fechada** (o vínculo é decidido pelo organizador). Tabela `teams` nova, com slug único por organizador. **A escolha na inscrição do atleta não foi tocada**, conforme combinado.
+- **Upload das imagens do evento** (banner e card, separados) direto para o R2, não para o container. O caminho é derivado do organizador e do evento — nunca do nome do arquivo enviado, que é entrada do usuário. Apagar o evento leva as imagens junto, senão um evento futuro com o mesmo id herdaria a imagem deste.
+- **Situação do evento deduzida das datas** (decisão do dono): Realizado / Inscrições abertas / Inscrições encerradas / Inativo, sem coluna nova no banco. Os 6 eventos antigos aparecem como Realizado.
+- **Evento de teste novo** ("Corrida de Teste do Fluxo 2026") com 3 categorias e 2 kits a R$ 0,05, para testar inscrição e pagamento de ponta a ponta.
+- Cabeçalho do painel passou a usar a foto da ponte de Mogi Guaçu, a mesma do banner do site — com degradê por cima para o texto continuar legível.
+- Categorias e kits com inscritos não podem ser apagados (a foreign key é `restrictOnDelete`; melhor explicar do que deixar estourar erro 500).
+- Kit com preço R$ 0,00 é recusado no cadastro: o Mercado Pago não aceita cobrança zerada, e descobrir isso na hora de gerar o Pix seria pior.
+- **26 testes novos**, incluindo o isolamento de categoria e kit — que não têm `organizer_id` próprio e dependem do evento, uma camada a mais onde o escopo pode escapar. Suíte: **77 testes, 176 asserções**.
+
+### Três armadilhas de infraestrutura encontradas nesta rodada
+- **`vendor/` não está no git e o deploy nunca rodou `composer install`.** O vendor de produção era um instalado à mão uma única vez; qualquer dependência nova quebraria o site com "class not found", e só na hora que a rota fosse usada. Descoberto ao adicionar o driver de S3. Corrigido no workflow.
+- **GD não estava no container.** Sem ele o Laravel nem consegue gerar imagem de teste ("GD extension is not installed"), e qualquer tratamento futuro de imagem dependeria dele. Entrou no `Dockerfile`.
+- **nginx cortava upload em 1 MB** (`client_max_body_size` padrão), devolvendo 413 antes do Laravel ver a requisição — a validação de 5 MB da aplicação nunca chegava a rodar. O PHP também cortava em 2 MB. Os dois limites agora batem (16 MB no nginx, 6 MB por arquivo no PHP). Achado testando o upload no navegador de verdade.
+
 ### Produção fora do ar por 9 dias — religada e protegida (2026-08-29)
 - **`eventos.correvirtual.com.br` ficou fora do ar de 20/08 a 29/08.** Causa: a VPS reiniciou sozinha em 20/08 05:24 (atualização de kernel, `6.8.0-111` → `6.8.0-136`) e os containers não voltaram, porque subiam com `RestartPolicy=no`. Nenhum dado foi perdido — o banco fica na Hostgator, fora da VPS.
 - Containers religados e com `restart=unless-stopped` aplicado (`docker update`), então o próximo reboot traz o site de volta sozinho. **Falta ainda** levar o `restart: unless-stopped` para o `docker-compose.yml` do repositório, senão um `up -d --build` do deploy recria os containers sem a política.

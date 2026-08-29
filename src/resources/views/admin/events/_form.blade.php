@@ -67,18 +67,59 @@
     </div>
 </div>
 
-<div class="form-group">
-    <label class="small mb-1" for="banner_url">Imagem de destaque</label>
-    <input class="form-control @error('banner_url') is-invalid @enderror"
-           id="banner_url" name="banner_url" type="text" maxlength="255"
-           placeholder="Ex.: banners/corrida-mogi.jpg"
-           value="{{ old('banner_url', $event?->banner_url) }}">
-    @error('banner_url')
-        <div class="invalid-feedback">{{ $message }}</div>
-    @else
-        <small class="form-text text-muted">Por enquanto é o caminho do arquivo. Envio de imagem pelo painel ainda não existe.</small>
-    @enderror
+<hr class="my-4">
+<h6 class="text-muted mb-3" style="letter-spacing:.06em; text-transform:uppercase; font-size:12px;">Imagens do evento</h6>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label class="small mb-1" for="banner">Banner (topo da página do evento)</label>
+
+            @if ($event?->banner_url)
+                <div class="mb-2">
+                    <img src="{{ \App\Support\Arquivos::bannerDoEvento($event) }}?v={{ $event->updated_at?->timestamp }}"
+                         alt="Banner atual" class="img-fluid rounded border" style="max-height: 110px;"
+                         onerror="this.style.display='none';">
+                </div>
+            @endif
+
+            <input class="form-control-file @error('banner') is-invalid @enderror"
+                   id="banner" name="banner" type="file" accept="image/jpeg,image/png,image/webp">
+            @error('banner')
+                <div class="invalid-feedback d-block">{{ $message }}</div>
+            @else
+                <small class="form-text text-muted">Imagem larga. JPG, PNG ou WEBP, até 5 MB.</small>
+            @enderror
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="form-group">
+            <label class="small mb-1" for="card">Card (imagem da listagem)</label>
+
+            @if ($event?->banner_url)
+                <div class="mb-2">
+                    <img src="{{ \App\Support\Arquivos::cardDoEvento($event) }}?v={{ $event->updated_at?->timestamp }}"
+                         alt="Card atual" class="img-fluid rounded border" style="max-height: 110px;"
+                         onerror="this.style.display='none';">
+                </div>
+            @endif
+
+            <input class="form-control-file @error('card') is-invalid @enderror"
+                   id="card" name="card" type="file" accept="image/jpeg,image/png,image/webp">
+            @error('card')
+                <div class="invalid-feedback d-block">{{ $message }}</div>
+            @else
+                <small class="form-text text-muted">Mais quadrada, aparece na lista de eventos.</small>
+            @enderror
+        </div>
+    </div>
 </div>
+
+<p class="small text-muted">
+    As imagens vão para o armazenamento externo, não para dentro do servidor — assim não se perdem numa
+    atualização do sistema. Deixe em branco para manter as que já estão lá.
+</p>
 
 <div class="form-group">
     <div class="custom-control custom-switch">

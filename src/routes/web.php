@@ -9,6 +9,9 @@ use App\Http\Controllers\Events\EventsController;
 use App\Http\Controllers\Subscriptions\PixController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\EventController as AdminEventController;
+use App\Http\Controllers\Admin\EventModalityController as AdminModalityController;
+use App\Http\Controllers\Admin\EventKitController as AdminKitController;
+use App\Http\Controllers\Admin\TeamController as AdminTeamController;
 
 use App\Services\MercadoPagoService;
 
@@ -108,5 +111,21 @@ Route::middleware(['auth', 'organizer.admin'])
         Route::resource('eventos', AdminEventController::class)
             ->except(['show'])
             ->parameters(['eventos' => 'id']);
+
+        // Categorias e kits são aninhados de propósito: não existem fora de um
+        // evento, e a rota aninhada torna impossível cadastrar um kit sem dizer
+        // de qual evento ele é.
+        Route::resource('eventos.categorias', AdminModalityController::class)
+            ->except(['show'])
+            ->parameters(['eventos' => 'evento', 'categorias' => 'id']);
+
+        Route::resource('eventos.kits', AdminKitController::class)
+            ->except(['show'])
+            ->parameters(['eventos' => 'evento', 'kits' => 'id']);
+
+        // Equipes pertencem ao organizador, não ao evento.
+        Route::resource('equipes', AdminTeamController::class)
+            ->except(['show'])
+            ->parameters(['equipes' => 'id']);
 
     });

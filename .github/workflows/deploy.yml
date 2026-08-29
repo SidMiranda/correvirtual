@@ -35,6 +35,14 @@ jobs:
             echo '' >> /home/correvirtual/src/.env
             echo '# CDN das imagens (bucket R2). Ver docs/specs/armazenamento-r2.md' >> /home/correvirtual/src/.env
             echo 'ARQUIVOS_BASE_URL=https://cdncorrevirtual.mobspot.com.br/publico' >> /home/correvirtual/src/.env
+            echo 'R2_BUCKET=correvirtual-arquivos' >> /home/correvirtual/src/.env
+            echo 'R2_BUCKET_PRIVADO=correvirtual-privado' >> /home/correvirtual/src/.env
+
+            # Credenciais do R2 em secrets próprios, e não dentro do APP_ENV:
+            # assim dá para trocar uma sem reescrever o .env inteiro.
+            echo 'R2_ENDPOINT=${{ secrets.R2_ENDPOINT }}' >> /home/correvirtual/src/.env
+            echo 'R2_ACCESS_KEY_ID=${{ secrets.R2_ACCESS_KEY_ID }}' >> /home/correvirtual/src/.env
+            echo 'R2_SECRET_ACCESS_KEY=${{ secrets.R2_SECRET_ACCESS_KEY }}' >> /home/correvirtual/src/.env
 
             cd /home/correvirtual
 
@@ -47,6 +55,13 @@ jobs:
             # parecia funcionar porque ./src e bind mount e o PHP atualiza sozinho,
             # mas o container nunca era reconstruido. Descoberto em 2026-08-29.
             docker compose up -d --build
+
+            # vendor/ não está no git e o Dockerfile não instala nada: até
+            # 2026-08-29 o vendor de produção era um instalado à mão uma única
+            # vez. Qualquer dependência nova quebraria o site com "class not
+            # found", e só na hora que a rota fosse usada. Descoberto ao
+            # adicionar o driver de S3 para o R2.
+            docker exec corre_app composer install --no-interaction --optimize-autoloader
 
             docker exec corre_app php artisan migrate --force
             docker exec corre_app php artisan optimize

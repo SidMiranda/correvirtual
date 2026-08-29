@@ -21,4 +21,9 @@ class EventModality extends Model
     {
         return $this->belongsTo(Event::class);
     }
+
+    public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class, 'modality_id');
+    }
 }

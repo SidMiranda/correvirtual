@@ -23,7 +23,16 @@
             --cv-blue: #1a71b2;
             --cv-blue-pale: #eaf4fb;
         }
-        .bg-gradient-primary-to-secondary { background: linear-gradient(90deg, var(--cv-navy) 0%, var(--cv-blue) 100%) !important; }
+        /* Cabeçalho com a ponte de Mogi Guaçu, a mesma imagem do banner do site
+           público — o painel deixa de ser um degradê genérico e passa a ter a
+           cara do organizador. O degradê escuro por cima é o que mantém o texto
+           branco legível sobre qualquer parte da foto. */
+        .bg-gradient-primary-to-secondary {
+            background:
+                linear-gradient(90deg, rgba(13,27,42,.94) 0%, rgba(13,27,42,.72) 45%, rgba(26,113,178,.62) 100%),
+                url('{{ \App\Support\Arquivos::imagemDaHome('banner-1-organizer-cropped.jpg') }}') center 38% / cover no-repeat,
+                var(--cv-navy) !important;
+        }
         .btn-primary { background-color: var(--cv-blue); border-color: var(--cv-blue); }
         .btn-primary:hover, .btn-primary:focus { background-color: var(--cv-navy); border-color: var(--cv-navy); }
         .navbar-brand-cv { color: #fff; font-weight: 600; letter-spacing: .01em; }
@@ -86,6 +95,12 @@
                            href="{{ route('admin.eventos.index') }}">
                             <div class="nav-link-icon"><i data-feather="calendar"></i></div>
                             Eventos
+                        </a>
+
+                        <a class="nav-link {{ request()->routeIs('admin.equipes.*') ? 'active' : '' }}"
+                           href="{{ route('admin.equipes.index') }}">
+                            <div class="nav-link-icon"><i data-feather="users"></i></div>
+                            Equipes
                         </a>
 
                     </div>

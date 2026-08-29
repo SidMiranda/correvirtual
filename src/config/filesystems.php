@@ -60,6 +60,41 @@ return [
             'report' => false,
         ],
 
+        /*
+        | Cloudflare R2 — o disco de verdade da aplicação. Container é só código;
+        | arquivo enviado pelo painel some no próximo deploy se ficar nele.
+        | Ver docs/specs/armazenamento-r2.md.
+        |
+        | 'region' => 'auto' e a exigência do R2. 'throw' => true de propósito:
+        | um upload que falha em silêncio grava o evento apontando para uma
+        | imagem que não existe, e o defeito só aparece depois, na tela.
+        */
+
+        // Bucket com domínio público — só entra aqui o que pode ser lido por
+        // qualquer pessoa da internet.
+        'r2' => [
+            'driver' => 's3',
+            'key' => env('R2_ACCESS_KEY_ID'),
+            'secret' => env('R2_SECRET_ACCESS_KEY'),
+            'region' => 'auto',
+            'bucket' => env('R2_BUCKET', 'correvirtual-arquivos'),
+            'endpoint' => env('R2_ENDPOINT'),
+            'use_path_style_endpoint' => true,
+            'throw' => true,
+        ],
+
+        // Bucket sem domínio nenhum: só alcançável com credencial, pelo back.
+        'r2_privado' => [
+            'driver' => 's3',
+            'key' => env('R2_ACCESS_KEY_ID'),
+            'secret' => env('R2_SECRET_ACCESS_KEY'),
+            'region' => 'auto',
+            'bucket' => env('R2_BUCKET_PRIVADO', 'correvirtual-privado'),
+            'endpoint' => env('R2_ENDPOINT'),
+            'use_path_style_endpoint' => true,
+            'throw' => true,
+        ],
+
     ],
 
     /*
