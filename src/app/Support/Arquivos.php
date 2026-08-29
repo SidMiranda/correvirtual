@@ -69,9 +69,14 @@ class Arquivos
     |--------------------------------------------------------------------------
     */
 
-    public static function logoDoOrganizador(int $organizerId): string
+    /**
+     * Aceita nulo: em admin.correvirtual.com.br não existe organizador no
+     * domínio, e a tela de login é a mesma view pública. Sem esse caso, o
+     * favicon montaria `organizadores//logo.png`.
+     */
+    public static function logoDoOrganizador(?int $organizerId): ?string
     {
-        return self::url("organizadores/{$organizerId}/logo.png");
+        return $organizerId ? self::url("organizadores/{$organizerId}/logo.png") : null;
     }
 
     public static function bannerDoOrganizador(int $organizerId): string

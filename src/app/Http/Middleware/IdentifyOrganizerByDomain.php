@@ -40,6 +40,16 @@ class IdentifyOrganizerByDomain
             // saída, admin.correvirtual.com.br — que não pertence a organizador
             // nenhum — cairia no 404 antes mesmo da tela de login aparecer.
             if ($request->is('admin', 'admin/*', 'login', 'logout')) {
+                // As views públicas (a tela de login é uma delas) contam com estas
+                // variáveis existindo sempre. Sem compartilhá-las aqui, o login em
+                // admin.correvirtual.com.br quebrava com "Undefined variable
+                // $organizerId" — o painel abria, mas a porta de entrada dele não.
+                // organizerId nulo é o sinal de "nenhum organizador neste domínio";
+                // quem usa (head.blade.php) trata isso.
+                View::share('organizerName', config('app.name'));
+                View::share('organizerId', null);
+                View::share('organizerEmail', config('mail.from.address'));
+
                 return $next($request);
             }
 

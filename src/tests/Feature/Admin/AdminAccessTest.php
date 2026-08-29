@@ -77,6 +77,24 @@ class AdminAccessTest extends TestCase
             ->assertOk();
     }
 
+    public function test_tela_de_login_abre_no_dominio_do_painel(): void
+    {
+        // A porta de entrada do painel é a tela de login pública, que conta com
+        // $organizerId/$organizerName existindo sempre. A exceção em
+        // IdentifyOrganizerByDomain devolvia cedo sem compartilhar essas
+        // variáveis: o painel abria, mas o login dele dava 500. Aconteceu em
+        // produção em 2026-08-29.
+        $this->get('http://admin.correvirtual.com.br/login')
+            ->assertOk()
+            ->assertSee('Login', false);
+    }
+
+    public function test_visitante_deslogado_no_dominio_do_painel_vai_para_o_login(): void
+    {
+        $this->get('http://admin.correvirtual.com.br/admin')
+            ->assertRedirect('/login');
+    }
+
     public function test_dominio_desconhecido_fora_do_painel_continua_404(): void
     {
         // A exceção acima não pode ter aberto o site público para qualquer host.
