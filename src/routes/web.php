@@ -7,6 +7,8 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Subscriptions\SubscribeController;
 use App\Http\Controllers\Events\EventsController;
 use App\Http\Controllers\Subscriptions\PixController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\EventController as AdminEventController;
 
 use App\Services\MercadoPagoService;
 
@@ -86,3 +88,25 @@ Route::post('/subscription/cancel', [SubscribeController::class, 'cancel'])
     ->name('subscriptions.cancel');
 
 Route::get('/subscriptions/{id}/success', [PixController::class, 'success'])->name('subscriptions.success');
+
+/*
+|--------------------------------------------------------------------------
+| Painel administrativo do organizador
+|--------------------------------------------------------------------------
+| Duas travas: precisa estar logado E ser organizer_admin com organizador
+| preenchido. Dentro do painel o escopo vem do usuário logado, não do domínio
+| (ver docs/specs/painel-admin.md).
+*/
+
+Route::middleware(['auth', 'organizer.admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+
+        Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+        Route::resource('eventos', AdminEventController::class)
+            ->except(['show'])
+            ->parameters(['eventos' => 'id']);
+
+    });

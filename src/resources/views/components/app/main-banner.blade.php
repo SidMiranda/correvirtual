@@ -63,29 +63,27 @@
 <div class="main-banner-container">
     <div class="main-banner">
         @php
-            $desktopBanner = 'images/organizers/'.$organizerId.'/banner.jpg';
-            $mobileBanner = 'images/organizers/'.$organizerId.'/banner-mobile.jpg';
-            $hasDesktop = file_exists(public_path($desktopBanner));
-            $hasMobile = file_exists(public_path($mobileBanner));
-            
-            $defaultDesktop = 'images/default/banner.jpg';
-            $defaultMobile = 'images/default/banner-mobile.jpg';
-            $hasDefaultMobile = file_exists(public_path($defaultMobile));
+            use App\Support\Arquivos;
+
+            $temDesktop = Arquivos::organizadorTem("organizadores/{$organizerId}/banner.jpg");
+            $temMobile  = Arquivos::organizadorTem("organizadores/{$organizerId}/banner-mobile.jpg");
         @endphp
 
-        @if($hasDesktop || $hasMobile)
+        @if($temDesktop || $temMobile)
             <picture>
-                @if($hasMobile)
-                    <source media="(max-width: 1024px)" srcset="{{ asset($mobileBanner) }}">
+                @if($temMobile)
+                    <source media="(max-width: 1024px)" srcset="{{ Arquivos::bannerMobileDoOrganizador($organizerId) }}">
                 @endif
-                <img src="{{ asset($hasDesktop ? $desktopBanner : $mobileBanner) }}" class="main-banner__image" alt="Banner Principal">
+                <img src="{{ $temDesktop ? Arquivos::bannerDoOrganizador($organizerId) : Arquivos::bannerMobileDoOrganizador($organizerId) }}"
+                     onerror="this.onerror=null;this.src='{{ Arquivos::bannerPadrao() }}';"
+                     class="main-banner__image" alt="Banner Principal">
             </picture>
         @else
+            {{-- Não existe banner-mobile padrão (nunca existiu — o código antigo
+                 referenciava images/default/banner-mobile.jpg, que não está no
+                 repositório). O banner padrão único serve os dois tamanhos. --}}
             <picture>
-                @if($hasDefaultMobile)
-                    <source media="(max-width: 1024px)" srcset="{{ asset($defaultMobile) }}">
-                @endif
-                <img src="{{ asset($defaultDesktop) }}" class="main-banner__image" alt="Banner Principal">
+                <img src="{{ Arquivos::bannerPadrao() }}" class="main-banner__image" alt="Banner Principal">
             </picture>
             <div class="default-banner-overlay">
                 <h1 class="organizer-banner-title">{{ $organizerName }}</h1>

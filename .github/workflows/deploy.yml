@@ -19,18 +19,29 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
           script: |
+            # Sem -e, um `git pull` que falha não interrompe nada: o deploy segue,
+            # rebuilda o código ANTIGO e imprime "✅ finalizado com sucesso".
+            # Aconteceu de verdade em 2026-08-29 (arquivo alterado à mão na VPS).
+            set -euo pipefail
 
             echo "🔄️ Criando .env.."
             cat << 'EOF' > /home/correvirtual/src/.env
               ${{ secrets.APP_ENV }}
             EOF
 
+            # Configuração que NÃO é segredo mora aqui, versionada, em vez de
+            # escondida dentro do secret APP_ENV — onde ninguém consegue revisar
+            # nem ver o histórico de mudança.
+            echo '' >> /home/correvirtual/src/.env
+            echo '# CDN das imagens (bucket R2). Ver docs/specs/armazenamento-r2.md' >> /home/correvirtual/src/.env
+            echo 'ARQUIVOS_BASE_URL=https://cdncorrevirtual.mobspot.com.br/publico' >> /home/correvirtual/src/.env
+
             cd /home/correvirtual
 
             echo "🚀 Iniciando Deploy..."
             git pull origin main
             docker-compose up -d --build
-            
+
             docker exec corre_app php artisan migrate --force
             docker exec corre_app php artisan optimize
 

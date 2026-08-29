@@ -1,24 +1,17 @@
 @php
-    $desktopBanner = 'images/organizers/' . $organizerId . '/banner.jpg';
-    $hasOrganizerBanner = file_exists(public_path($desktopBanner));
+    use App\Support\Arquivos;
 
     // Versão recortada do banner.jpg do organizador (remove o bloco de logo à esquerda,
     // mantém a ponte de Mogi Guaçu — pedido do organizador depois de ver o slide 1 com a
     // logo cortando mal). Gerada uma vez via script, não em runtime. Se não existir, cai
     // pro banner cru e depois pra imagem do Gemini.
-    $organizerBannerCropped = 'images/home-v2/banner-1-organizer-cropped.jpg';
-    $hasCroppedBanner = file_exists(public_path($organizerBannerCropped));
-
-    // Imagens geradas via `php artisan images:generate-gemini` (ver docs/specs/frontend-publico.md).
-    $geminiBanner1 = 'images/home-v2/banner-1.jpg';
-    $geminiBanner2 = 'images/home-v2/banner-2.jpg';
-    $geminiBanner3 = 'images/home-v2/banner-3.jpg';
+    $temRecorte = Arquivos::organizadorTem('plataforma/home/banner-1-organizer-cropped.jpg');
+    $temBannerDoOrganizador = Arquivos::organizadorTem("organizadores/{$organizerId}/banner.jpg");
 
     $slide1Image = match (true) {
-        $hasCroppedBanner => asset($organizerBannerCropped),
-        $hasOrganizerBanner => asset($desktopBanner),
-        file_exists(public_path($geminiBanner1)) => asset($geminiBanner1),
-        default => null,
+        $temRecorte => Arquivos::imagemDaHome('banner-1-organizer-cropped.jpg'),
+        $temBannerDoOrganizador => Arquivos::bannerDoOrganizador($organizerId),
+        default => Arquivos::imagemDaHome('banner-1.jpg'),
     };
 
     $slides = [
@@ -36,7 +29,7 @@
             'text' => 'Modalidades e kits pra cada perfil de atleta, do iniciante ao competitivo.',
             'cta_label' => 'Inscreva-se Já',
             'cta_href' => '#eventos',
-            'image' => file_exists(public_path($geminiBanner2)) ? asset($geminiBanner2) : null,
+            'image' => Arquivos::imagemDaHome('banner-2.jpg'),
         ],
         [
             'eyebrow' => 'Comunidade',
@@ -44,7 +37,7 @@
             'text' => 'Convide amigos e família. Medalhas exclusivas te esperam na chegada.',
             'cta_label' => 'Sobre a Plataforma',
             'cta_href' => '#sobre',
-            'image' => file_exists(public_path($geminiBanner3)) ? asset($geminiBanner3) : null,
+            'image' => Arquivos::imagemDaHome('banner-3.jpg'),
         ],
     ];
 @endphp

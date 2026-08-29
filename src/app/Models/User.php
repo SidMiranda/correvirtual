@@ -38,4 +38,14 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function organizer()
+    {
+        return $this->belongsTo(Organizer::class);
+    }
+
+    public function isOrganizerAdmin(): bool
+    {
+        return $this->role === 'organizer_admin' && $this->organizer_id !== null;
+    }
 }

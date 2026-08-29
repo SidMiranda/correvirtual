@@ -86,11 +86,11 @@
                 data-toggle="dropdown"
                 aria-haspopup="true"
                 aria-expanded="false">
-                <img class="img-fluid" src="{{ asset('images/default/user.jpg') }}" />
+                <img class="img-fluid" src="{{ \App\Support\Arquivos::usuarioPadrao() }}" />
             </a>
             <div class="dropdown-menu dropdown-menu-right border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownUserImage">
                 <h6 class="dropdown-header d-flex align-items-center">
-                    <img class="dropdown-user-img" src="{{ asset('images/default/user.jpg') }}" />
+                    <img class="dropdown-user-img" src="{{ \App\Support\Arquivos::usuarioPadrao() }}" />
                     <div class="dropdown-user-details">
                         <div class="dropdown-user-details-name">
                             @auth

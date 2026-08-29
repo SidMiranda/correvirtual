@@ -3,6 +3,23 @@
 #
 # Uso: docker compose -f docker-compose.yml -f docker-compose.local.yml up -d --build
 services:
+  app:
+    volumes:
+      # O bind mount ./src:/var/www vem do compose base e continua valendo — este
+      # volume nomeado se sobrepõe só em /var/www/vendor.
+      #
+      # Por quê: no Windows, o Docker lê o bind mount pelo sistema de arquivos do
+      # host, e o boot do Laravel abre ~10 mil arquivos de vendor/ a cada request.
+      # Medido antes desta mudança: 11,8s na rota /up, que não faz absolutamente
+      # nada. Com vendor/ dentro do Docker, a leitura é local ao container.
+      #
+      # Consequência: o vendor/ do container é uma cópia independente do vendor/
+      # do host. Depois de mexer no composer.json, rode
+      #   docker exec corre_app composer install
+      # pra atualizar o de dentro. O do host continua servindo o autocomplete da
+      # IDE. Em produção nada disso existe — lá o disco é Linux e é rápido.
+      - vendor_local:/var/www/vendor
+
   nginx:
     # Porta 80 já é publicada no docker-compose.yml base; "ports" é concatenado (não
     # substituído) em overrides, então não repetimos aqui pra evitar bind duplicado.
@@ -10,3 +27,6 @@ services:
     volumes:
       - ./src:/var/www
       - ./docker/nginx/local.conf:/etc/nginx/conf.d/default.conf
+
+volumes:
+  vendor_local:

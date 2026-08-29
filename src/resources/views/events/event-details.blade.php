@@ -8,11 +8,13 @@
 @endpush
 
 @section('content')
-    @if(file_exists(public_path('images/events/'.$event->id.'/banner-' . $event->banner_url)))
+    @if($event->banner_url)
         <div class="banner-wrap">
             <a class="back-button" href="{{ url('/') }}">← Voltar</a>
             <section class="event-banner">
-                <img src="{{ asset('images/events/' . $event->id . '/banner-' . $event->banner_url) }}" alt="Banner do evento {{ $event->title }}" class="banner-img">
+                <img src="{{ \App\Support\Arquivos::bannerDoEvento($event) }}"
+                     onerror="this.onerror=null;this.src='{{ \App\Support\Arquivos::bannerPadrao() }}';"
+                     alt="Banner do evento {{ $event->title }}" class="banner-img">
             </section>
         </div>
     @else
