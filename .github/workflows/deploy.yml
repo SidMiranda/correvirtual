@@ -40,7 +40,13 @@ jobs:
 
             echo "🚀 Iniciando Deploy..."
             git pull origin main
-            docker-compose up -d --build
+
+            # `docker compose` (v2, plugin) e nao `docker-compose` (v1, binario):
+            # a VPS so tem o v2. O script chamava o v1 desde sempre e falhava em
+            # silencio — sem `set -e`, seguia adiante e imprimia sucesso. O deploy
+            # parecia funcionar porque ./src e bind mount e o PHP atualiza sozinho,
+            # mas o container nunca era reconstruido. Descoberto em 2026-08-29.
+            docker compose up -d --build
 
             docker exec corre_app php artisan migrate --force
             docker exec corre_app php artisan optimize

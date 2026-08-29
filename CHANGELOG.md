@@ -24,6 +24,11 @@ Histórico anterior a este arquivo (todo o desenvolvimento inicial do projeto) p
 - **Nada foi apagado e nenhum código foi alterado** — o site continua servindo tudo do disco local, exatamente como antes. A cópia no R2 está parada esperando a migração de código.
 - Levantado no processo: três views (`event-card`, `my-subscriptions`, `main-banner`) decidem se mostram imagem ou fallback com `file_exists(public_path(...))`. Com o arquivo no R2 isso responde `false` sempre e **todo mundo cai no fallback em silêncio** — é o bloqueio real da migração, e o motivo de ela exigir mudança de código e não só de configuração.
 
+### Deploy estava meio quebrado em silêncio (2026-08-29)
+- O `set -euo pipefail` acrescentado ao workflow expôs, no primeiro deploy, uma falha que já existia: **`docker-compose: command not found`**. A VPS só tem `docker compose` (v2, plugin); o script chamava `docker-compose` (v1, binário), que nunca existiu lá.
+- Sem `set -e`, o erro não interrompia nada — o script seguia para `migrate` e `optimize` e imprimia "✅ Deploy finalizado com sucesso!". **O container nunca era reconstruído em nenhum deploy.** Passava despercebido porque `./src` é bind mount e o código PHP atualiza sozinho; só mudança de imagem (extensão nova no Dockerfile, por exemplo) é que teria sumido sem aviso.
+- Corrigido para `docker compose up -d --build`.
+
 ### CDN no ar e painel com domínio próprio (2026-08-29)
 - **`https://cdncorrevirtual.mobspot.com.br`** ligado ao bucket `correvirtual-arquivos`, certificado da Cloudflare ativo, cache confirmado (`cf-cache-status: HIT`). O site local já serve todas as imagens de lá — validado no navegador. `cdn.correvirtual.com.br` não era possível: domínio próprio no R2 exige a zona na Cloudflare, e `correvirtual.com.br` está na WebCit.
 - **🔴 Corrigido um erro de desenho do dia anterior: `publico/` e `privado/` como prefixos do mesmo bucket não protegiam nada.** Um domínio público do R2 expõe o **bucket inteiro** — com o domínio ligado, `https://<cdn>/privado/...` respondeu **200**. Prefixo não é fronteira de segurança. Nada vazou (só havia marcadores vazios), mas documento de atleta ali seria legível por qualquer um. Agora são **dois buckets**: `correvirtual-arquivos` (com domínio) e `correvirtual-privado` (sem domínio nenhum, só com credencial). O prefixo `privado/` foi apagado do bucket público e agora dá 404.
