@@ -80,6 +80,23 @@
         }
         .brasao-equipe--grande { width: 72px; height: 72px; flex-basis: 72px; }
 
+        /* Logo de patrocinador: retangular e não redondo como o brasão — logo
+           de marca é deitada, e recortar em círculo comeria o nome. Fundo
+           branco porque a maioria é feita para fundo claro; `contain` porque
+           cada uma vem numa proporção. */
+        .logo-patrocinador {
+            width: 76px; height: 38px; flex: 0 0 76px;
+            display: inline-flex; align-items: center; justify-content: center;
+            border-radius: 6px;
+            background: #fff;
+            border: 1px solid #dbe3ec;
+            overflow: hidden;
+        }
+        .logo-patrocinador img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .logo-patrocinador--vazio { background: var(--cv-blue-pale); color: #8fa5ba; }
+        .logo-patrocinador--vazio .feather { width: 16px; height: 16px; }
+        .logo-patrocinador--grande { width: 148px; height: 74px; flex-basis: 148px; }
+
         /* Selo de autoria: presente, nunca protagonista. */
         .selo-mobspot a { color: inherit; text-decoration: none; opacity: .7; transition: opacity .15s ease; }
         .selo-mobspot a:hover, .selo-mobspot a:focus-visible { opacity: 1; text-decoration: underline; }
@@ -110,6 +127,7 @@
             --icone-modalidades: #b45309;  /* âmbar: as distâncias */
             --icone-kits:        #7c3aed;  /* roxo: o que o atleta recebe */
             --icone-equipes:     #be185d;  /* magenta: gente */
+            --icone-patrocinadores: #0f766e;  /* teal: dinheiro que entra */
         }
 
         /* Os seletores abaixo precisam ser tão específicos quanto os do template
@@ -131,6 +149,9 @@
 
         .sidenav .sidenav-menu .nav .nav-link.nav-icone-equipes .nav-link-icon,
         .sidenav .sidenav-menu .nav .nav-link.nav-icone-equipes .nav-link-icon .feather { color: var(--icone-equipes); }
+
+        .sidenav .sidenav-menu .nav .nav-link.nav-icone-patrocinadores .nav-link-icon,
+        .sidenav .sidenav-menu .nav .nav-link.nav-icone-patrocinadores .nav-link-icon .feather { color: var(--icone-patrocinadores); }
 
         /* No item ativo o ícone não muda de cor — é a faixa clara atrás que
            marca onde você está, então a cor continua servindo de referência. */
@@ -248,6 +269,12 @@
                            href="{{ route('admin.equipes.index') }}">
                             <div class="nav-link-icon"><i data-feather="users"></i></div>
                             Equipes
+                        </a>
+
+                        <a class="nav-link nav-icone-patrocinadores {{ request()->routeIs('admin.patrocinadores.*') ? 'active' : '' }}"
+                           href="{{ route('admin.patrocinadores.index') }}">
+                            <div class="nav-link-icon"><i data-feather="award"></i></div>
+                            Patrocinadores
                         </a>
 
                     </div>

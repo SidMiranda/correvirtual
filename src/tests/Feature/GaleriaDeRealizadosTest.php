@@ -107,6 +107,10 @@ class GaleriaDeRealizadosTest extends TestCase
 
     public function test_patrocinadores_ficam_entre_os_proximos_e_os_realizados(): void
     {
+        // A seção só existe quando há patrocinador cadastrado — ver
+        // PatrocinadoresNoSiteTest.
+        \App\Models\Sponsor::factory()->create(['organizer_id' => $this->organizador->id]);
+
         $conteudo = $this->get('/')->assertOk()->getContent();
 
         $proximos = strpos($conteudo, 'id="eventos"');

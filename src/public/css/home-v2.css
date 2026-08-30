@@ -404,3 +404,70 @@ html {
     display: none;
   }
 }
+
+/* ============ PATROCINADORES ============ */
+
+/*
+   Fileira de logos, não grade fixa: a quantidade muda conforme os contratos, e
+   uma grade de quatro colunas deixaria a última linha torta com cinco ou seis.
+   Cada logo entra numa caixa do mesmo tamanho, `contain`, então marcas altas e
+   marcas deitadas ficam com o mesmo peso visual.
+*/
+.patrocinadores {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 28px 40px;
+  padding: 12px 0 8px;
+}
+
+.patrocinador {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 150px;
+  height: 76px;
+  text-decoration: none;
+}
+
+.patrocinador img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  /* Dessaturado em repouso e colorido no hover: assim a fileira não briga com
+     a arte dos eventos logo acima, e a marca ganha destaque quando a pessoa
+     realmente para nela. */
+  filter: grayscale(100%);
+  opacity: .72;
+  transition: filter .2s ease, opacity .2s ease, transform .2s ease;
+}
+
+a.patrocinador:hover img,
+a.patrocinador:focus-visible img {
+  filter: grayscale(0);
+  opacity: 1;
+  transform: scale(1.04);
+}
+
+/* Patrocinador sem logo enviado: o nome ocupa o lugar em vez de deixar um
+   buraco na fileira. */
+.patrocinador__nome {
+  color: var(--cv-navy);
+  font-size: .95rem;
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.25;
+  text-wrap: balance;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .patrocinador img { transition: none; }
+  a.patrocinador:hover img,
+  a.patrocinador:focus-visible img { transform: none; }
+}
+
+@media (max-width: 640px) {
+  .patrocinadores { gap: 20px 26px; }
+  .patrocinador { width: 116px; height: 60px; }
+}

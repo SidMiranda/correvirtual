@@ -156,6 +156,18 @@ Quando o organizador sobe uma arte no painel, a derivada é gerada na hora (`Ima
 
 O card continua deitado, como sempre foi. O que muda é a arte: `object-fit: contain` sobre o degradê do evento, em vez de `cover`. No celular o card empilha e a coluna da arte ganha altura para o cartaz caber em pé.
 
+### Patrocinadores vindos do cadastro
+
+A seção era seis SVGs de exemplo ("Logoipsum") colados em `components/app/sponsors.blade.php`, herdados do template — trocar um patrocinador exigia mexer em código e subir deploy. Agora ela lê `sponsors` (ver `docs/specs/painel-admin.md`): ativos do organizador atual, na ordem que ele definiu, com o nome desempatando quem tem a mesma posição.
+
+**Sem nenhum cadastrado a seção não aparece** — fileira vazia embaixo de um título é pior que não ter a seção. Mesma regra da vitrine de realizados.
+
+Quem tem site vira link (`target="_blank"` com `rel="noopener"`, senão a página aberta ganha acesso a esta pela `window.opener`); quem não tem fica só como imagem. Sem logo enviado, aparece o nome em texto, para não abrir buraco na fileira.
+
+Os logos ficam dessaturados em repouso e coloridos no hover: assim a fileira não briga com a arte dos eventos logo acima, e a marca ganha destaque quando a pessoa realmente para nela.
+
+Os seis logos de exemplo foram **rasterizados para PNG e migrados para o cadastro**, então nada mudou de lugar no site e o organizador apaga ou substitui um a um pelo painel — em vez de ficarem presos no código.
+
 ### Rolagem até as seções, e o menu que nunca grudou
 
 Os links do menu davam um salto seco. `scroll-behavior: smooth` no `html` resolve a rolagem, com `prefers-reduced-motion` respeitado — movimento na tela inteira incomoda de verdade quem tem sensibilidade vestibular.
@@ -181,6 +193,7 @@ Simula por padrão; só apaga com `--force`, dentro de uma transação. `LimparD
 
 - `GaleriaDeRealizadosTest` — as artes da config aparecem, o evento passado do banco entra, o evento passado **sem** arte fica de fora (entraria como buraco na grade), os cartazes não são link, a galeria de um organizador não vaza no site do outro, a seção some quando não há nada, e os patrocinadores ficam entre próximos e realizados.
 - `PaginaDoEventoTest` — o topo é o nome sobre o degradê e não a arte; o compartilhamento leva a derivada e o texto cadastrado; evento sem arte cai no cartão do organizador.
+- `PatrocinadoresNoSiteTest` — a seção some quando não há patrocinador, o ativo aparece com logo e link, o sem logo mostra o nome, o inativo fica de fora, o de outro organizador não vaza, e a ordem é a que o organizador definiu.
 - `ImagemOgTest` — sai sempre 1200×630 (de retrato, paisagem e quadrado), fica abaixo de 300 KB, e reclama quando o conteúdo não é imagem.
 - Verificação visual via Playwright em 1440 / 900 / 390 na home, na página do evento e em "minhas inscrições".
 

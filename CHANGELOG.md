@@ -6,6 +6,19 @@ Histórico anterior a este arquivo (todo o desenvolvimento inicial do projeto) p
 
 ## [Unreleased]
 
+### Cadastro de patrocinadores no painel, e a seção do site lendo o banco (2026-08-30)
+- **CRUD de patrocinadores** em `/admin/patrocinadores`, no molde do de equipes: o patrocinador pertence ao **organizador**, não ao evento — o mesmo apoiador cobre várias provas no ano, e amarrá-lo a um evento obrigaria a recadastrar a cada prova.
+- Campos: nome, logo, site, ordem de exibição, observação interna e "aparece no site". A **ordem é do organizador**, não alfabética — quem aparece primeiro é o que foi negociado no contrato.
+- **Sem `slug`**, diferente de equipes: patrocinador não tem página nem endereço próprio aqui, seria coluna sem uso.
+- O site exige `https://` no campo de site. Sem esquema, "mobspot.com.br" vira link relativo e leva para dentro do painel — parece que funcionou e não funcionou.
+- O logo vai para `publico/organizadores/{id}/patrocinadores/{id}/logo.png`, caminho derivado de ids do banco e nunca do nome do arquivo enviado. Termina em `.png` e não `.jpg` como os outros porque logo de marca costuma vir com fundo transparente.
+- **A seção de patrocinadores da home passou a ler o banco.** Eram seis SVGs de exemplo ("Logoipsum") colados na view, herdados do template: trocar um exigia mexer em código e subir deploy.
+- **Sem nenhum patrocinador cadastrado, a seção não aparece** — fileira vazia embaixo de um título é pior que não ter a seção. Mesma regra da vitrine de realizados.
+- Quem tem site vira link, com `rel="noopener"` — sem isso a página aberta ganha acesso a esta pela `window.opener`. Sem logo enviado, aparece o nome em texto, para não abrir buraco na fileira.
+- Os logos ficam dessaturados em repouso e coloridos no hover: a fileira para de brigar com a arte dos eventos logo acima.
+- **Os seis logos de exemplo foram rasterizados para PNG e migrados para o cadastro**, então nada mudou de lugar no site — e agora o Sidney apaga ou substitui um a um pelo painel, sem deploy. Eles seguem sendo marca fictícia até serem trocados pelos reais; está no backlog.
+- 17 testes novos. Suíte: **156 testes, 413 asserções**.
+
 ### Rolagem suave, o menu que nunca grudou, e limpeza da base de teste (2026-08-30)
 - **Os links do menu deslizam até a seção** em vez de dar um salto seco. Quem pediu menos movimento no sistema operacional (`prefers-reduced-motion`) continua com o salto direto — movimento na tela inteira incomoda de verdade quem tem sensibilidade vestibular.
 - **O menu da home nunca grudou**, apesar de estar declarado `position: sticky` desde a Home v2. Duas causas somadas, as duas vindas do CSS do template de painel, que é carregado em toda página pública:

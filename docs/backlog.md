@@ -51,7 +51,9 @@ Objetivo: site público bonito e funcional, um organizador, fluxo de inscrição
   - [ ] Decidir o destino de `events.banner_url`, que perde a função com o caminho derivado do ID do evento.
   - [ ] Só depois de tudo validado: apagar `src/public/images/` e tirar os 6,1 MB de imagem do Git.
 - [ ] **Vitrine de eventos realizados no painel.** Hoje a lista de artes de provas anteriores à plataforma mora em `config/galeria.php` — mudar exige deploy. Enquanto a lista não muda, tabela + CRUD seriam estrutura sem uso; quando o organizador quiser mexer sozinho, vira tabela (`organizer_id`, arquivo, nome, ordem) e uma tela igual à de equipes. Ver `docs/specs/frontend-publico.md` (Fase 2).
-- [ ] **Os patrocinadores da home são logos de exemplo** (`Logoipsum`, em `components/app/sponsors.blade.php`). A seção subiu para logo depois dos próximos eventos, que é onde ela vale — mas continua com marca fictícia. Trocar pelos patrocinadores reais, ou esconder a seção enquanto não houver nenhum.
+- [x] **Patrocinadores viraram cadastro** (2026-08-30): CRUD no painel, seção do site lendo o banco, e a seção some sozinha quando não há nenhum. Os seis logos de exemplo (`Logoipsum`) foram migrados para o cadastro — continuam lá até o Sidney substituir pelos reais, mas agora sai pelo painel, sem deploy.
+- [ ] **Trocar os seis patrocinadores de exemplo pelos reais** em `/admin/patrocinadores`. Enquanto não trocar, a home mostra marca fictícia para quem visita.
+- [ ] **Fonte Metropolis dá 404 no painel** (`/assets/admin/fonts/metropolis/*.otf`): o CSS do SB Admin Pro referencia arquivos que não vieram no template. O navegador cai na fonte de sistema e nada quebra visualmente, mas são quatro 404 por página no console. Ou trazer os arquivos, ou tirar o `@font-face`.
 - [ ] Geração de número de peito (`bib_number`) após pagamento confirmado
 - [ ] BUG-007 (throttle em login/registro/verificação)
 - [ ] Papéis `organizer_admin` / `super_admin` (hoje só `athlete` é usado de fato)

@@ -79,6 +79,22 @@ Nenhuma tabela existente é alterada, exceto pela coluna nova em `subscriptions`
 | `active` | boolean, default `true` | |
 | timestamps | | |
 
+**`sponsors`** (nova, 2026-08-30) — como a equipe, o patrocinador pertence ao **organizador**: o mesmo apoiador cobre várias provas ao longo do ano, e amarrá-lo a um evento obrigaria a recadastrar a cada prova.
+
+| Coluna | Tipo | Observação |
+|---|---|---|
+| `id` | id | |
+| `organizer_id` | FK → organizers | `cascadeOnDelete` |
+| `name` | string | |
+| `site_url` | string nullable | precisa de esquema (`https://`) — sem ele o link vira relativo e leva para dentro do painel |
+| `description` | text nullable | observação interna; não aparece no site |
+| `has_logo` | boolean, default `false` | a marca de que existe logo no bucket |
+| `position` | integer, default `0` | ordem de exibição; menor primeiro, nome desempata |
+| `active` | boolean, default `true` | tira do site sem apagar o cadastro |
+| timestamps | | |
+
+**Sem `slug`**, diferente de `teams`: patrocinador não tem página nem endereço próprio neste sistema — seria coluna sem uso.
+
 **`subscriptions.team_id`** (nova coluna) — `foreignId` nullable, `nullOnDelete()`: apagar uma equipe não pode apagar inscrição de ninguém, só desvincula.
 
 ### "Aberta" e "fechada"
@@ -98,6 +114,7 @@ resource /admin/eventos               eventos
 resource /admin/eventos/{evento}/modalidades
 resource /admin/eventos/{evento}/kits
 resource /admin/equipes               equipes
+resource /admin/patrocinadores        patrocinadores
 ```
 
 Modalidades e kits são aninhados em evento de propósito: eles não existem fora de um evento, e a rota aninhada torna impossível cadastrar um kit sem dizer de qual evento é.

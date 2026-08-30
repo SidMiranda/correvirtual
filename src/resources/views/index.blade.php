@@ -40,14 +40,19 @@
 
     {{-- Patrocinadores logo depois do que está aberto: é ali que o visitante
          ainda está olhando a página, e é o que a marca patrocinadora paga
-         para ver. Antes ficava no fim, depois do "sobre nós". --}}
-    <div class="container" id="patrocinadores">
-        <h2 class="block-header-title">
-            NOSSOS <span> PATROCINADORES </span>
-        </h2>
+         para ver. Antes ficava no fim, depois do "sobre nós".
 
-        <x-app.sponsors />
-    </div>
+         Sem nenhum cadastrado, a seção não aparece — uma fileira vazia com
+         título é pior que não ter a seção. Cadastro em /admin/patrocinadores. --}}
+    @if($patrocinadores->isNotEmpty())
+        <div class="container" id="patrocinadores">
+            <h2 class="block-header-title">
+                NOSSOS <span> PATROCINADORES </span>
+            </h2>
+
+            <x-app.sponsors :patrocinadores="$patrocinadores" />
+        </div>
+    @endif
 
     @if($eventosRealizados->isNotEmpty())
         {{-- Vitrine: prova entregue é o melhor argumento de quem está decidindo

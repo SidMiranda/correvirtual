@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Events;
 
 use App\Http\Controllers\Controller;
 use App\Models\Event;
+use App\Models\Sponsor;
 use App\Support\Arquivos;
 use App\Support\GaleriaDeRealizados;
 
@@ -37,7 +38,11 @@ class EventsController extends Controller
         // têm registro no banco. Quem junta as duas fontes é a GaleriaDeRealizados.
         $eventosRealizados = GaleriaDeRealizados::montar($organizerId, $eventosPassados);
 
-        return view('index', compact('proximosEventos', 'eventosRealizados'));
+        // Os patrocinadores vêm do cadastro do painel, não mais de SVG colado
+        // na view: trocar um deixou de exigir deploy.
+        $patrocinadores = Sponsor::naVitrine($organizerId)->get();
+
+        return view('index', compact('proximosEventos', 'eventosRealizados', 'patrocinadores'));
     }
 
     public function show($event_id)

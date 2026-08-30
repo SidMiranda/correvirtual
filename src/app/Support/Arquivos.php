@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use App\Models\Event;
+use App\Models\Sponsor;
 use App\Models\Team;
 
 /**
@@ -188,6 +189,31 @@ class Arquivos
         return $team->has_logo
             ? self::url("organizadores/{$team->organizer_id}/equipes/{$team->id}/brasao.jpg")
             : null;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Logo do patrocinador
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Devolve nulo quando o patrocinador não tem logo, para a tela decidir o
+     * que mostrar no lugar (o nome) em vez de exibir imagem quebrada.
+     */
+    public static function logoDoPatrocinador(Sponsor $sponsor): ?string
+    {
+        if (! $sponsor->has_logo) {
+            return null;
+        }
+
+        $url = self::url("organizadores/{$sponsor->organizer_id}/patrocinadores/{$sponsor->id}/logo.png");
+        $versao = $sponsor->updated_at?->timestamp;
+
+        // O caminho é derivado do id e não muda quando o logo é trocado, e ele
+        // sobe com Cache-Control: immutable — sem a versão, a troca não
+        // apareceria para ninguém. Mesmo cuidado da arte do evento.
+        return $versao ? "{$url}?v={$versao}" : $url;
     }
 
     /*

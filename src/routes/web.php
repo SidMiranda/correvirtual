@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\EventController as AdminEventController;
 use App\Http\Controllers\Admin\EventModalityController as AdminModalityController;
 use App\Http\Controllers\Admin\EventKitController as AdminKitController;
+use App\Http\Controllers\Admin\SponsorController as AdminSponsorController;
 use App\Http\Controllers\Admin\TeamController as AdminTeamController;
 use App\Http\Controllers\Admin\CatalogoController as AdminCatalogoController;
 
@@ -137,5 +138,10 @@ Route::middleware(['auth', 'organizer.admin'])
         Route::resource('equipes', AdminTeamController::class)
             ->except(['show'])
             ->parameters(['equipes' => 'id']);
+
+        // Patrocinadores também: o mesmo apoiador cobre várias provas no ano.
+        Route::resource('patrocinadores', AdminSponsorController::class)
+            ->except(['show'])
+            ->parameters(['patrocinadores' => 'id']);
 
     });
