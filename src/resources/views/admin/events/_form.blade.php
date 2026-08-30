@@ -122,6 +122,28 @@
 </p>
 
 <div class="form-group">
+    <label class="small mb-1" for="accent_color">Cor do evento</label>
+
+    <div class="d-flex align-items-center">
+        <input class="form-control @error('accent_color') is-invalid @enderror mr-3"
+               id="accent_color" name="accent_color" type="color" style="width: 68px; height: 40px; padding: 4px;"
+               value="{{ old('accent_color', $event?->accent_color ?? \App\Models\Event::COR_PADRAO) }}">
+
+        <div class="flex-grow-1 rounded"
+             style="height: 40px; background: {{ $event?->degrade() ?? 'linear-gradient(135deg, #05080d 0%, ' . \App\Models\Event::COR_PADRAO . ' 58%, #05080d 100%)' }};"></div>
+    </div>
+
+    @error('accent_color')
+        <div class="invalid-feedback d-block">{{ $message }}</div>
+    @else
+        <small class="form-text text-muted">
+            Usada quando o evento não tem imagem: o card e o topo da página viram um degradê escuro
+            puxado para esta cor, com o nome do evento por cima. A faixa ao lado mostra como fica.
+        </small>
+    @enderror
+</div>
+
+<div class="form-group">
     <div class="custom-control custom-switch">
         <input type="hidden" name="active" value="0">
         <input class="custom-control-input" id="active" name="active" type="checkbox" value="1"

@@ -1,7 +1,10 @@
 @props(['event'])
 
 <a class="event-card" href="{{ url('/event/' . $event->id) }}">
-    <div class="event-card__image-wrapper">
+    {{-- O degradê do evento é o fundo do espaço da imagem: quando a arte não
+         preenche exatamente a proporção, é ele que aparece em volta, na cor do
+         evento — nunca uma barra branca. --}}
+    <div class="event-card__image-wrapper" style="background: {{ $event->degrade() }};">
         @if($event->banner_url)
             {{-- onerror: a existência é decidida pelo banco, não pelo disco (o
                  arquivo pode estar no CDN). Se mesmo assim faltar, o navegador
@@ -10,9 +13,12 @@
                  onerror="this.onerror=null;this.src='{{ \App\Support\Arquivos::cardPadrao() }}';"
                  class="event-card__image" alt="{{ $event->title }}">
         @else
-            <img src="{{ \App\Support\Arquivos::cardPadrao() }}" class="event-card__image" alt="{{ $event->title }}">
-            <div class="default-card-overlay">
-                <h3 class="event-card-overlay-title">{{ $event->title }}</h3>
+            {{-- Sem arte enviada, o lugar da imagem vira um degradê escuro
+                 puxado para a cor do evento, com o nome por cima. É desenhado
+                 no navegador, então nunca aparece cortado nem desfocado — que
+                 era o problema de encaixar arte vertical num espaço largo. --}}
+            <div class="event-card__degrade" style="background: {{ $event->degrade() }};">
+                <span class="event-card__degrade-nome">{{ $event->title }}</span>
             </div>
         @endif
 

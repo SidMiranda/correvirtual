@@ -8,6 +8,14 @@
     <link rel="stylesheet" href="{{ asset('css/event-cards.css') }}?v={{ filemtime(public_path('css/event-cards.css')) }}">
 @endpush
 
+@php
+    // Qual modelo de card usar. Ver config/aparencia.php — as duas versões
+    // continuam mantidas, e trocar é mudar CARD_DE_EVENTO no .env.
+    $cardDeEvento = config('aparencia.card_de_evento') === 'v1'
+        ? 'app.event-card'
+        : 'app.event-card-v2';
+@endphp
+
 @section('content')
 
     <x-app.banner-v2 />
@@ -24,7 +32,7 @@
         @else
             <div class="cards-grid">
                 @foreach($proximosEventos as $event)
-                    <x-app.event-card :event="$event" />
+                    <x-dynamic-component :component="$cardDeEvento" :event="$event" />
                 @endforeach
             </div>
         @endif
@@ -40,7 +48,7 @@
 
             <div class="cards-grid">
                 @foreach($eventosPassados as $event)
-                    <x-app.event-card :event="$event" />
+                    <x-dynamic-component :component="$cardDeEvento" :event="$event" />
                 @endforeach
             </div>
         </div>

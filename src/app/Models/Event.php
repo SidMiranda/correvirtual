@@ -18,6 +18,7 @@ class Event extends Model
         'event_date',
         'registration_deadline',
         'banner_url',
+        'accent_color',
         'active',
     ];
 
@@ -43,6 +44,34 @@ class Event extends Model
 
     public function subscriptions() {
         return $this->hasMany(Subscription::class);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Aparência
+    |--------------------------------------------------------------------------
+    */
+
+    /** Azul escuro do tema do site, usado quando o evento não define cor. */
+    public const COR_PADRAO = '#0d1b2a';
+
+    public function corDeDestaque(): string
+    {
+        return $this->accent_color ?: self::COR_PADRAO;
+    }
+
+    /**
+     * O degradê que substitui a imagem quando o evento não tem arte enviada.
+     *
+     * Sempre escuro: o nome do evento vai por cima em branco, e precisa ser
+     * legível independentemente da cor escolhida. A cor do evento entra só como
+     * um puxão no meio do degradê, não como fundo chapado.
+     */
+    public function degrade(): string
+    {
+        $cor = $this->corDeDestaque();
+
+        return "linear-gradient(135deg, #05080d 0%, {$cor} 58%, #05080d 100%)";
     }
 
     /*

@@ -241,7 +241,10 @@ body {
   align-items: center;
   background: linear-gradient(135deg, var(--cv-navy) 0%, var(--cv-blue) 100%);
   background-size: cover;
-  background-position: center;
+  /* "center 25%" e não "center": as fotos têm pessoas, e centralizar cortava a
+     cabeça de quem aparecia mais acima no enquadramento. Puxar o recorte para
+     cima mantém rosto e ombros visíveis. */
+  background-position: center 25%;
   opacity: 0;
   visibility: hidden;
   transition: opacity .8s ease;

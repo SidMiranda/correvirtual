@@ -30,17 +30,45 @@
 
 .event-banner {
   width: 100%;
+  /* Altura fixa: com arte ou sem, todo evento abre igual. Antes a altura vinha
+     da proporção da imagem, e arte vertical fazia o topo ocupar a tela toda. */
+  height: 320px;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+  border-radius: 10px;
 }
 
 .event-banner img,
 .event-banner .banner-img {
   width: 100%;
-  height: auto;
+  height: 100%;
   display: block;
   max-width: 100%;
+  /* contain e não cover: mostra o cartaz inteiro, centralizado. A arte é
+     vertical e o topo é largo — recortar cortava o nome e a data, que ficam
+     justo na parte de cima do cartaz. O que sobra nas laterais é preenchido
+     pelo degradê do evento, aplicado no elemento pai. */
+  object-fit: contain;
+}
+
+/* Topo sem arte enviada: degradê na cor do evento com o nome por cima. */
+.event-banner--degrade {
+  padding: 24px 28px;
+  box-sizing: border-box;
+}
+
+.event-banner__nome {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(1.6rem, 4vw, 2.8rem);
+  font-weight: 800;
+  line-height: 1.15;
+  text-align: center;
+  text-transform: uppercase;
+  text-wrap: balance;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, .55);
 }
 
 .banner-overlay {
@@ -144,7 +172,7 @@
 
   .event-banner {
     width: 100% !important;
-    height: auto;
+    height: 200px;
   }
 
   .banner-overlay h1 {

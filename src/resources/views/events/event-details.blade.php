@@ -8,18 +8,29 @@
 @endpush
 
 @section('content')
-    @if($event->banner_url)
-        <div class="banner-wrap">
-            <a class="back-button" href="{{ url('/') }}">← Voltar</a>
-            <section class="event-banner">
+    {{-- O topo tem sempre a mesma altura, com arte ou sem: antes ele crescia
+         conforme a proporção da imagem, e cada evento abria com um tamanho
+         diferente. Sem arte enviada, vira um degradê escuro na cor do evento
+         com o nome por cima — o resto (data, local, descrição) já vem logo
+         abaixo, então o topo só precisa dizer onde a pessoa está. --}}
+    <div class="banner-wrap">
+        <a class="back-button" href="{{ url('/') }}">← Voltar</a>
+
+        @if($event->banner_url)
+            {{-- O degradê do evento no fundo: o cartaz é vertical e o topo é
+                 largo, então o que sobra nas laterais fica na cor do evento em
+                 vez de branco. --}}
+            <section class="event-banner" style="background: {{ $event->degrade() }};">
                 <img src="{{ \App\Support\Arquivos::bannerDoEvento($event) }}"
                      onerror="this.onerror=null;this.src='{{ \App\Support\Arquivos::bannerPadrao() }}';"
                      alt="Banner do evento {{ $event->title }}" class="banner-img">
             </section>
-        </div>
-    @else
-        {{-- <a class="back-button md-mt-5" href="{{ url('/') }}">← Voltar</a> --}}
-    @endif
+        @else
+            <section class="event-banner event-banner--degrade" style="background: {{ $event->degrade() }};">
+                <h1 class="event-banner__nome">{{ $event->title }}</h1>
+            </section>
+        @endif
+    </div>
 
     <h2 class="block-header-title">
         {{ $event->title }}

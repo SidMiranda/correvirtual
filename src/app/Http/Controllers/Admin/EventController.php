@@ -148,8 +148,12 @@ class EventController extends AdminController
             'registration_deadline' => ['required', 'date', 'before_or_equal:event_date'],
             'banner' => ImagensDoEvento::regraDeValidacao(),
             'card' => ImagensDoEvento::regraDeValidacao(),
+            // Só hexadecimal de 6 dígitos: o valor vai direto para o style de
+            // um elemento, então tudo que não for cor precisa ser barrado aqui.
+            'accent_color' => ['nullable', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/'],
             'active' => ['boolean'],
         ], [
+            'accent_color.regex' => 'A cor precisa estar no formato #RRGGBB.',
             'registration_deadline.before_or_equal' => 'O prazo de inscrição não pode ser depois da data do evento.',
             'banner.image' => 'O banner precisa ser uma imagem (JPG, PNG ou WEBP).',
             'banner.max' => 'O banner passou de 5 MB.',
