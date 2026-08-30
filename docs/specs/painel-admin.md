@@ -12,7 +12,7 @@ Decisão do dono do projeto em 2026-08-29: o painel é construído **neste proje
 
 **Fatia 1:** entrada do painel (`/admin`, papel `organizer_admin`, `admin:criar`), layout do SB Admin Pro e CRUD de eventos. `admin.correvirtual.com.br` no ar com certificado próprio.
 
-**Fatia 2:** CRUD de categorias e kits aninhados no evento (`/admin/eventos/{id}/categorias` e `.../kits`), CRUD de equipes por organizador (`/admin/equipes`), upload de banner e card direto para o R2, e situação do evento deduzida das datas.
+**Fatia 2:** CRUD de modalidades e kits aninhados no evento (`/admin/eventos/{id}/modalidades` e `.../kits`), CRUD de equipes por organizador (`/admin/equipes`), upload de banner e card direto para o R2, e situação do evento deduzida das datas.
 
 **Ainda não:** a escolha de equipe na tela de inscrição do atleta. O cadastro existe e o filtro está pronto e testado (`Team::escolhivelPeloAtleta()`), mas a coluna `subscriptions.team_id` não foi criada e a tela do atleta não foi tocada — foi o combinado desta rodada.
 
@@ -21,7 +21,7 @@ Decisão do dono do projeto em 2026-08-29: o painel é construído **neste proje
 - [ ] Um usuário com papel `organizer_admin` consegue entrar no painel e só enxerga dados do organizador dele.
 - [ ] Um usuário com papel `athlete` (ou deslogado) **não** consegue acessar nenhuma rota do painel.
 - [ ] O organizador cadastra, edita, ativa/desativa e lista seus **eventos**.
-- [ ] O organizador cadastra as **categorias** (as distâncias — 5km, 10km, Caminhada 3km) de cada evento seu.
+- [ ] O organizador cadastra as **modalidades** (as distâncias — 5km, 10km, Caminhada 3km) de cada evento seu.
 - [ ] O organizador cadastra os **kits** (nome, descrição, preço, estoque) de cada evento seu.
 - [ ] O organizador cadastra as **equipes** que participam dos eventos dele, marcando cada uma como aberta ou fechada.
 - [ ] O atleta, ao se inscrever, pode escolher uma equipe numa lista que mostra **apenas as equipes abertas** do organizador daquele site.
@@ -31,8 +31,8 @@ Decisão do dono do projeto em 2026-08-29: o painel é construído **neste proje
 
 Fica explicitamente para depois, pra esta fatia não crescer sem controle:
 
-- **Catálogo reutilizável de kits/categorias entre eventos.** Decisão do dono (2026-08-29): kit e categoria continuam pertencendo ao **evento**, como já é hoje. Cadastrar um evento novo significa cadastrar os kits dele de novo.
-- **Categoria de premiação** (faixa etária/sexo). Decisão do dono: "categoria" neste projeto significa a distância — é o que hoje se chama `EventModality`. Não existe entidade separada de faixa etária.
+- **Catálogo reutilizável de kits/modalidades entre eventos.** Decisão do dono (2026-08-29): kit e modalidade continuam pertencendo ao **evento**, como já é hoje. Cadastrar um evento novo significa cadastrar os kits dele de novo.
+- **Categoria de premiação** (faixa etária/sexo). Decisão do dono: a distância se chama **modalidade** — é o que o banco chama de `EventModality`, e é esse o nome usado na tela desde 2026-08-29 (antes a tela dizia "categoria", corrigido a pedido dele). Não existe entidade separada de faixa etária.
 - **Inscrição em lote pelo capitão da equipe.** A equipe aqui é só um vínculo do atleta; não existe capitão inscrevendo o grupo nem pagamento único de vários atletas.
 - Relatório/exportação de inscritos, geração de número de peito, check-in, lotes de preço por data. Continuam no `docs/backlog.md`.
 - Papel `super_admin` e tela de cadastro de organizador — o organizador ainda é criado na mão (ver `docs/runbook.md`).
@@ -95,12 +95,12 @@ Todas sob `/admin`, com os dois middlewares:
 ```
 GET    /admin                         painel (contadores)
 resource /admin/eventos               eventos
-resource /admin/eventos/{evento}/categorias
+resource /admin/eventos/{evento}/modalidades
 resource /admin/eventos/{evento}/kits
 resource /admin/equipes               equipes
 ```
 
-Categorias e kits são aninhados em evento de propósito: eles não existem fora de um evento, e a rota aninhada torna impossível cadastrar um kit sem dizer de qual evento é.
+Modalidades e kits são aninhados em evento de propósito: eles não existem fora de um evento, e a rota aninhada torna impossível cadastrar um kit sem dizer de qual evento é.
 
 ### Visual
 
@@ -120,11 +120,11 @@ Automatizados (`tests/Feature/Admin/`), obrigatórios antes de considerar pronto
 - Admin do organizador A não vê eventos/equipes do B na listagem.
 - Admin de A abrindo a edição de um evento do B → 404.
 - Admin de A tentando atualizar (`PUT`) um evento do B → 404, e o registro do B fica intacto.
-- O mesmo para categoria e kit, que herdam o escopo pelo evento.
-- Admin de A não consegue criar categoria/kit dentro de um evento do B.
+- O mesmo para modalidade e kit, que herdam o escopo pelo evento.
+- Admin de A não consegue criar modalidade/kit dentro de um evento do B.
 
 **Cadastros**
-- Criar, editar e listar evento, categoria, kit e equipe pelo caminho feliz.
+- Criar, editar e listar evento, modalidade, kit e equipe pelo caminho feliz.
 - Validação recusa campos obrigatórios vazios e preço negativo.
 
 **Equipe no lado do atleta**
@@ -133,7 +133,7 @@ Automatizados (`tests/Feature/Admin/`), obrigatórios antes de considerar pronto
 - Inscrição enviando o ID de uma equipe **de outro organizador** é recusada.
 - Inscrição sem equipe continua funcionando (o campo é opcional).
 
-Manual, no Playwright, contra o ambiente local: entrar no painel, cadastrar um evento com categoria e kit, criar uma equipe aberta e outra fechada, e conferir na tela pública de inscrição que só a aberta aparece.
+Manual, no Playwright, contra o ambiente local: entrar no painel, cadastrar um evento com modalidade e kit, criar uma equipe aberta e outra fechada, e conferir na tela pública de inscrição que só a aberta aparece.
 
 ## Critérios de aceite
 

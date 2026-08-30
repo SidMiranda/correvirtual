@@ -6,6 +6,13 @@ Histórico anterior a este arquivo (todo o desenvolvimento inicial do projeto) p
 
 ## [Unreleased]
 
+### Ajustes no painel pedidos pelo Sidney (2026-08-29)
+- **"Categoria" virou "modalidade" em todo o painel** — rota, nome de rota, rótulos e testes. É o nome correto do domínio e o que o banco já usava (`EventModality`); a tela é que estava errada.
+- **Modalidades e Kits ganharam entrada no menu lateral**, com listagem de todos os eventos do organizador (coluna do evento junto) e um seletor "cadastrar em [evento]" — modalidade e kit vivem dentro de um evento, então o atalho pergunta em qual antes de abrir o formulário aninhado de sempre. O evento escolhido é validado contra os do organizador: o valor vem de um `<select>`, que é entrada do usuário como qualquer outra.
+- **Botão do menu no celular**: vinha do template com a cor do próprio fundo escuro (`btn-transparent-dark`) e menor que o texto ao lado — praticamente invisível, justo no tamanho de tela em que ele é a única forma de abrir o menu. Agora é branco, do corpo do nome, e fica colado à marca (antes o `order-1` o jogava para o canto oposto da barra). O nome do organizador também passou a aparecer no celular (era `d-none d-sm-block`), agora com a logo dele ao lado.
+- **Os 4 cards do painel saíram de dentro do banner.** O SB Admin Pro combina `pb-10` no cabeçalho com `mt-n10` no conteúdo para o primeiro bloco invadir o banner de propósito. Ficava estranho com os cards, então a sobreposição foi desfeita: banner mais baixo (`pb-4`) e conteúdo começando logo abaixo dele.
+- 4 testes novos para as telas gerais e o atalho de cadastro. Suíte: **81 testes, 188 asserções**.
+
 ### Painel — fatia 2: categorias, kits, equipes e upload de imagem (2026-08-29)
 - **CRUD de categorias** (as distâncias) e de **kits**, aninhados no evento: as rotas são `/admin/eventos/{id}/categorias` e `/admin/eventos/{id}/kits`, o que torna impossível cadastrar um kit sem dizer de qual evento é. Abas no topo ligam as três telas do mesmo evento.
 - **CRUD de equipes** (`/admin/equipes`), por organizador e não por evento — a mesma assessoria corre vários eventos no ano. Cada equipe é **aberta** (aparecerá para o atleta escolher) ou **fechada** (o vínculo é decidido pelo organizador). Tabela `teams` nova, com slug único por organizador. **A escolha na inscrição do atleta não foi tocada**, conforme combinado.

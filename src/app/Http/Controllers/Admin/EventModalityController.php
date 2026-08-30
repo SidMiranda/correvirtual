@@ -7,11 +7,11 @@ use App\Models\EventModality;
 use Illuminate\Http\Request;
 
 /**
- * Categorias (as distâncias) de um evento.
+ * Modalidades (as distâncias) de um evento.
  *
- * "Categoria" aqui é a distância — 5km, 10km, Caminhada 3km. É o que o banco
+ * "Modalidade" aqui é a distância — 5km, 10km, Caminhada 3km. É o que o banco
  * chama de EventModality; o nome na tela é decisão do dono (2026-08-29). Não
- * existe categoria de premiação por faixa etária.
+ * existe modalidade de premiação por faixa etária.
  */
 class EventModalityController extends AdminController
 {
@@ -37,8 +37,8 @@ class EventModalityController extends AdminController
         $event->modalities()->create($this->validar($request));
 
         return redirect()
-            ->route('admin.eventos.categorias.index', $event->id)
-            ->with('sucesso', 'Categoria criada.');
+            ->route('admin.eventos.modalidades.index', $event->id)
+            ->with('sucesso', 'Modalidade criada.');
     }
 
     public function edit(int $eventoId, int $id)
@@ -57,8 +57,8 @@ class EventModalityController extends AdminController
         $modality->update($this->validar($request));
 
         return redirect()
-            ->route('admin.eventos.categorias.index', $event->id)
-            ->with('sucesso', 'Categoria atualizada.');
+            ->route('admin.eventos.modalidades.index', $event->id)
+            ->with('sucesso', 'Modalidade atualizada.');
     }
 
     public function destroy(int $eventoId, int $id)
@@ -70,15 +70,15 @@ class EventModalityController extends AdminController
         // banco recusaria — melhor explicar antes de deixar estourar erro 500.
         if ($modality->subscriptions()->exists()) {
             return back()->withErrors([
-                'categoria' => 'Esta categoria já tem inscritos e por isso não pode ser apagada. Desative-a para tirá-la das novas inscrições.',
+                'modalidade' => 'Esta modalidade já tem inscritos e por isso não pode ser apagada. Desative-a para tirá-la das novas inscrições.',
             ]);
         }
 
         $modality->delete();
 
         return redirect()
-            ->route('admin.eventos.categorias.index', $event->id)
-            ->with('sucesso', 'Categoria apagada.');
+            ->route('admin.eventos.modalidades.index', $event->id)
+            ->with('sucesso', 'Modalidade apagada.');
     }
 
     /** O evento, já filtrado pelo organizador do usuário logado. */
@@ -89,7 +89,7 @@ class EventModalityController extends AdminController
             ->firstOrFail();
     }
 
-    /** A categoria, obrigatoriamente dentro do evento já escopado acima. */
+    /** A modalidade, obrigatoriamente dentro do evento já escopado acima. */
     private function modalidade(Event $event, int $id): EventModality
     {
         return $event->modalities()->where('id', $id)->firstOrFail();

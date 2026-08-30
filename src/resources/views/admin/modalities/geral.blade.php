@@ -2,33 +2,33 @@
 
 @section('titulo', 'Modalidades')
 @section('icone', 'flag')
-@section('subtitulo', $event->title)
+@section('subtitulo', 'As distâncias de todos os seus eventos')
 
 @section('acoes')
-    <a class="btn btn-primary" href="{{ route('admin.eventos.modalidades.create', $event->id) }}">
-        <i class="mr-1" data-feather="plus"></i> Nova modalidade
-    </a>
+    @include('admin._seletor-de-evento', [
+        'tipo' => 'modalidades',
+        'tipoLabel' => 'modalidades',
+        'botaoLabel' => 'Nova modalidade',
+    ])
 @endsection
 
 @section('conteudo')
-
-    @include('admin._abas-do-evento')
 
     <div class="card mb-4">
         <div class="card-body p-0">
             @if ($modalities->isEmpty())
                 <div class="p-5 text-center text-muted">
-                    <p class="mb-3">Este evento ainda não tem modalidades. Sem pelo menos uma, ninguém consegue se inscrever.</p>
-                    <a class="btn btn-primary" href="{{ route('admin.eventos.modalidades.create', $event->id) }}">Criar a primeira</a>
+                    <div class="mb-3"><i data-feather="flag" style="width:42px;height:42px;"></i></div>
+                    <p class="mb-0">Nenhuma modalidade cadastrada ainda em nenhum evento.</p>
                 </div>
             @else
                 <div class="table-responsive">
-                    <table class="table table-hover mb-0" style="min-width: 720px;">
+                    <table class="table table-hover mb-0" style="min-width: 820px;">
                         <thead class="thead-light">
                             <tr>
                                 <th>Modalidade</th>
+                                <th>Evento</th>
                                 <th>Distância</th>
-                                <th class="text-center">Vagas</th>
                                 <th class="text-center">Inscritos</th>
                                 <th class="text-center">Situação</th>
                                 <th class="text-right">Ações</th>
@@ -38,8 +38,13 @@
                             @foreach ($modalities as $modalidade)
                                 <tr>
                                     <td class="font-weight-500">{{ $modalidade->name }}</td>
+                                    <td>
+                                        <a href="{{ route('admin.eventos.modalidades.index', $modalidade->event_id) }}">
+                                            {{ $modalidade->event->title }}
+                                        </a>
+                                        <div class="small text-muted">{{ $modalidade->event->event_date?->format('d/m/Y') }}</div>
+                                    </td>
                                     <td>{{ $modalidade->distance_km ? rtrim(rtrim(number_format($modalidade->distance_km, 2, ',', '.'), '0'), ',') . ' km' : '—' }}</td>
-                                    <td class="text-center">{{ $modalidade->max_participants ?? 'sem limite' }}</td>
                                     <td class="text-center">{{ $modalidade->subscriptions()->count() }}</td>
                                     <td class="text-center">
                                         @if ($modalidade->active)
@@ -48,20 +53,11 @@
                                             <span class="badge badge-secondary-soft text-secondary">Inativa</span>
                                         @endif
                                     </td>
-                                    <td class="text-right text-nowrap">
+                                    <td class="text-right">
                                         <a class="btn btn-datatable btn-icon btn-transparent-dark"
-                                           href="{{ route('admin.eventos.modalidades.edit', [$event->id, $modalidade->id]) }}" title="Editar">
+                                           href="{{ route('admin.eventos.modalidades.edit', [$modalidade->event_id, $modalidade->id]) }}" title="Editar">
                                             <i data-feather="edit"></i>
                                         </a>
-                                        <form method="POST" action="{{ route('admin.eventos.modalidades.destroy', [$event->id, $modalidade->id]) }}"
-                                              class="d-inline"
-                                              onsubmit="return confirm('Apagar a modalidade &quot;{{ $modalidade->name }}&quot;?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-datatable btn-icon btn-transparent-dark" title="Apagar">
-                                                <i data-feather="trash-2"></i>
-                                            </button>
-                                        </form>
                                     </td>
                                 </tr>
                             @endforeach
@@ -70,6 +66,10 @@
                 </div>
             @endif
         </div>
+
+        @if ($modalities->hasPages())
+            <div class="card-footer">{{ $modalities->links('pagination::bootstrap-4') }}</div>
+        @endif
     </div>
 
 @endsection

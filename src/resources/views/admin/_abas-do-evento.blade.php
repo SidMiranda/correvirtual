@@ -1,5 +1,5 @@
 {{-- Navegação entre as três telas de um mesmo evento. Fica logo abaixo do
-     cabeçalho para deixar claro que categorias e kits pertencem ao evento
+     cabeçalho para deixar claro que modalidades e kits pertencem ao evento
      aberto, e não a uma área solta do painel. --}}
 
 <ul class="nav nav-tabs mb-4">
@@ -10,9 +10,9 @@
         </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link {{ request()->routeIs('admin.eventos.categorias.*') ? 'active' : '' }}"
-           href="{{ route('admin.eventos.categorias.index', $event->id) }}">
-            Categorias
+        <a class="nav-link {{ request()->routeIs('admin.eventos.modalidades.*') ? 'active' : '' }}"
+           href="{{ route('admin.eventos.modalidades.index', $event->id) }}">
+            Modalidades
             <span class="badge badge-secondary-soft text-secondary ml-1">{{ $event->modalities()->count() }}</span>
         </a>
     </li>

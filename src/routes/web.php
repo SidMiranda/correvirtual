@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\EventController as AdminEventController;
 use App\Http\Controllers\Admin\EventModalityController as AdminModalityController;
 use App\Http\Controllers\Admin\EventKitController as AdminKitController;
 use App\Http\Controllers\Admin\TeamController as AdminTeamController;
+use App\Http\Controllers\Admin\CatalogoController as AdminCatalogoController;
 
 use App\Services\MercadoPagoService;
 
@@ -112,16 +113,25 @@ Route::middleware(['auth', 'organizer.admin'])
             ->except(['show'])
             ->parameters(['eventos' => 'id']);
 
-        // Categorias e kits são aninhados de propósito: não existem fora de um
+        // Modalidades e kits são aninhados de propósito: não existem fora de um
         // evento, e a rota aninhada torna impossível cadastrar um kit sem dizer
         // de qual evento ele é.
-        Route::resource('eventos.categorias', AdminModalityController::class)
+        Route::resource('eventos.modalidades', AdminModalityController::class)
             ->except(['show'])
-            ->parameters(['eventos' => 'evento', 'categorias' => 'id']);
+            ->parameters(['eventos' => 'evento', 'modalidades' => 'id']);
 
         Route::resource('eventos.kits', AdminKitController::class)
             ->except(['show'])
             ->parameters(['eventos' => 'evento', 'kits' => 'id']);
+
+        // Atalhos do menu lateral: listam modalidades e kits de todos os eventos
+        // do organizador, e o botão de cadastrar pergunta em qual evento antes
+        // de cair no formulário aninhado.
+        Route::get('modalidades', [AdminCatalogoController::class, 'modalidades'])->name('modalidades.geral');
+        Route::get('kits', [AdminCatalogoController::class, 'kits'])->name('kits.geral');
+        Route::get('catalogo/{tipo}/novo', [AdminCatalogoController::class, 'novo'])
+            ->whereIn('tipo', ['modalidades', 'kits'])
+            ->name('catalogo.novo');
 
         // Equipes pertencem ao organizador, não ao evento.
         Route::resource('equipes', AdminTeamController::class)

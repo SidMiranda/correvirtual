@@ -31,7 +31,7 @@
                                 <th>Evento</th>
                                 <th>Data</th>
                                 <th>Inscrições até</th>
-                                <th class="text-center">Categorias</th>
+                                <th class="text-center">Modalidades</th>
                                 <th class="text-center">Kits</th>
                                 <th class="text-center">Inscritos</th>
                                 <th class="text-center">Situação</th>
@@ -48,7 +48,7 @@
                                     <td>{{ $evento->event_date->format('d/m/Y H:i') }}</td>
                                     <td>{{ $evento->registration_deadline->format('d/m/Y') }}</td>
                                     <td class="text-center">
-                                        <a href="{{ route('admin.eventos.categorias.index', $evento->id) }}"
+                                        <a href="{{ route('admin.eventos.modalidades.index', $evento->id) }}"
                                            class="{{ $evento->modalities_count ? '' : 'text-danger font-weight-500' }}">
                                             {{ $evento->modalities_count }}
                                         </a>
@@ -68,7 +68,7 @@
                                     </td>
                                     <td class="text-right text-nowrap">
                                         <a class="btn btn-datatable btn-icon btn-transparent-dark"
-                                           href="{{ route('admin.eventos.categorias.index', $evento->id) }}" title="Categorias">
+                                           href="{{ route('admin.eventos.modalidades.index', $evento->id) }}" title="Modalidades">
                                             <i data-feather="flag"></i>
                                         </a>
                                         <a class="btn btn-datatable btn-icon btn-transparent-dark"

@@ -1,7 +1,7 @@
 @php $modality = $modality ?? null; @endphp
 
 <div class="form-group">
-    <label class="small mb-1" for="name">Nome da categoria</label>
+    <label class="small mb-1" for="name">Nome da modalidade</label>
     <input class="form-control @error('name') is-invalid @enderror"
            id="name" name="name" type="text" required maxlength="255"
            placeholder="Ex.: 10km, Caminhada 3km, Desafio 50km"
@@ -20,7 +20,7 @@
             @error('distance_km')
                 <div class="invalid-feedback">{{ $message }}</div>
             @else
-                <small class="form-text text-muted">Opcional. Serve para ordenar as categorias na tela.</small>
+                <small class="form-text text-muted">Opcional. Serve para ordenar as modalidades na tela.</small>
             @enderror
         </div>
     </div>
@@ -45,7 +45,7 @@
         <input type="hidden" name="active" value="0">
         <input class="custom-control-input" id="active" name="active" type="checkbox" value="1"
                {{ old('active', $modality?->active ?? true) ? 'checked' : '' }}>
-        <label class="custom-control-label" for="active">Categoria ativa</label>
+        <label class="custom-control-label" for="active">Modalidade ativa</label>
     </div>
-    <small class="form-text text-muted">Só categorias ativas aparecem para o atleta escolher.</small>
+    <small class="form-text text-muted">Só modalidades ativas aparecem para o atleta escolher.</small>
 </div>

@@ -35,9 +35,22 @@
         }
         .btn-primary { background-color: var(--cv-blue); border-color: var(--cv-blue); }
         .btn-primary:hover, .btn-primary:focus { background-color: var(--cv-navy); border-color: var(--cv-navy); }
-        .navbar-brand-cv { color: #fff; font-weight: 600; letter-spacing: .01em; }
+        .navbar-brand-cv { color: #fff; font-weight: 600; letter-spacing: .01em; font-size: 1.05rem; }
         .topnav.navbar-cv { background: var(--cv-navy) !important; }
         .topnav.navbar-cv .nav-link, .topnav.navbar-cv .navbar-brand-cv { color: #fff !important; }
+
+        /* Botão do menu: branco e do mesmo corpo do nome ao lado. */
+        .botao-menu { color: #fff !important; background: transparent; border: 0; padding: .35rem .5rem; }
+        .botao-menu:hover, .botao-menu:focus { color: #fff !important; background: rgba(255,255,255,.14); }
+        .botao-menu svg { width: 1.35rem; height: 1.35rem; stroke-width: 2.25; }
+        .topnav .btn-icon { color: #fff; }
+
+        /* Logo do organizador na barra: altura casada com a linha do texto,
+           fundo branco porque a maioria das logos é feita para fundo claro. */
+        .logo-topo {
+            height: 26px; width: auto; max-width: 96px;
+            border-radius: 4px; background: #fff; padding: 2px;
+        }
         .sidenav-menu .nav-link.active { color: var(--cv-blue); font-weight: 600; }
         .sidenav-menu .nav-link.active .nav-link-icon { color: var(--cv-blue); }
         .text-cv-blue { color: var(--cv-blue) !important; }
@@ -46,8 +59,23 @@
 <body class="nav-fixed">
 
     <nav class="topnav navbar navbar-expand shadow navbar-dark navbar-cv" id="sidenavAccordion">
-        <a class="navbar-brand-cv d-none d-sm-block ml-3" href="{{ route('admin.dashboard') }}">Corre Virtual</a>
-        <button class="btn btn-icon btn-transparent-dark order-1 order-lg-0 mr-lg-2" id="sidebarToggle">
+        {{-- Logo + nome + botão do menu, nesta ordem e colados, no celular e no
+             desktop. Antes o nome sumia abaixo de 576px (d-none d-sm-block) e o
+             botão ia parar no canto oposto da barra (order-1), separado da
+             marca. --}}
+        <a class="navbar-brand-cv ml-3 mr-1 d-flex align-items-center" href="{{ route('admin.dashboard') }}">
+            @if (auth()->user()->organizer_id)
+                <img src="{{ \App\Support\Arquivos::logoDoOrganizador(auth()->user()->organizer_id) }}"
+                     alt="" class="logo-topo mr-2" onerror="this.remove();">
+            @endif
+            Corre Virtual
+        </a>
+
+        {{-- O botão vinha do template com a cor do próprio fundo escuro
+             (btn-transparent-dark) e num tamanho menor que o texto ao lado —
+             praticamente invisível no celular, que é justo onde ele é a única
+             forma de abrir o menu. Agora é branco e do corpo do nome. --}}
+        <button class="btn btn-icon botao-menu" id="sidebarToggle" aria-label="Abrir menu">
             <i data-feather="menu"></i>
         </button>
 
@@ -97,6 +125,18 @@
                             Eventos
                         </a>
 
+                        <a class="nav-link {{ request()->routeIs('admin.modalidades.geral') ? 'active' : '' }}"
+                           href="{{ route('admin.modalidades.geral') }}">
+                            <div class="nav-link-icon"><i data-feather="flag"></i></div>
+                            Modalidades
+                        </a>
+
+                        <a class="nav-link {{ request()->routeIs('admin.kits.geral') ? 'active' : '' }}"
+                           href="{{ route('admin.kits.geral') }}">
+                            <div class="nav-link-icon"><i data-feather="package"></i></div>
+                            Kits
+                        </a>
+
                         <a class="nav-link {{ request()->routeIs('admin.equipes.*') ? 'active' : '' }}"
                            href="{{ route('admin.equipes.index') }}">
                             <div class="nav-link-icon"><i data-feather="users"></i></div>
@@ -116,7 +156,13 @@
 
         <div id="layoutSidenav_content">
             <main>
-                <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+                {{-- pb-4 e não o pb-10 do template: o SB Admin Pro combina um
+                     padding grande aqui com uma margem negativa no conteúdo
+                     (mt-n10) para o primeiro bloco invadir o banner de
+                     propósito. Fica estranho com os cards do painel, então a
+                     sobreposição foi desfeita: banner mais baixo, conteúdo
+                     começando logo abaixo dele. --}}
+                <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-4">
                     <div class="container-fluid">
                         <div class="page-header-content pt-4">
                             <div class="row align-items-center justify-content-between">
@@ -137,7 +183,7 @@
                     </div>
                 </header>
 
-                <div class="container-fluid mt-n10">
+                <div class="container-fluid mt-4">
 
                     @if (session('sucesso'))
                         <div class="alert alert-success alert-icon" role="alert">
