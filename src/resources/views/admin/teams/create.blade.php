@@ -9,7 +9,7 @@
             <div class="card mb-4">
                 <div class="card-header">Dados da equipe</div>
                 <div class="card-body">
-                    <form method="POST" action="{{ route('admin.equipes.store') }}">
+                    <form method="POST" enctype="multipart/form-data" action="{{ route('admin.equipes.store') }}">
                         @csrf
                         @include('admin.teams._form')
                         <hr class="my-4">

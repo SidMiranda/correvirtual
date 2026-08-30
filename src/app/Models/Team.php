@@ -14,6 +14,7 @@ class Team extends Model
         'name',
         'slug',
         'description',
+        'has_logo',
         'is_public',
         'active',
     ];
@@ -21,6 +22,7 @@ class Team extends Model
     protected function casts(): array
     {
         return [
+            'has_logo' => 'boolean',
             'is_public' => 'boolean',
             'active' => 'boolean',
         ];

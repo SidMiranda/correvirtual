@@ -6,6 +6,13 @@ Histórico anterior a este arquivo (todo o desenvolvimento inicial do projeto) p
 
 ## [Unreleased]
 
+### Brasão da equipe e correção do atalho para o site (2026-08-29)
+- **A equipe pode ter brasão.** Upload no cadastro, direto para o R2 (`publico/organizadores/{id}/equipes/{id}/brasao.jpg`). Na listagem ele aparece **redondo, antes do nome**; equipe sem brasão mostra as iniciais no mesmo tamanho e formato, para a coluna não ficar desalinhada.
+- Coluna `teams.has_logo`: com o CDN não dá para perguntar ao disco se o arquivo existe (seria uma requisição de rede por linha da listagem), então quem responde é o banco. Mesma escolha já feita para a imagem do evento.
+- `App\Support\ImagemPublica` extraído: gravar, apagar e validar imagem no bucket viraram um lugar só, usado pelo evento e pela equipe. O que é específico de cada um é o caminho — e ele sempre sai de ids do banco, nunca do nome do arquivo enviado.
+- **O atalho "ver o site público" ia parar no próprio painel.** Ele usava `url('/')`, que em `admin.correvirtual.com.br` devolve a raiz do domínio do painel — e o nginx manda essa raiz de volta para `/admin`. Agora o endereço sai do domínio do organizador (`Organizer::siteUrl()`), com uma exceção para o ambiente local: lá o domínio gravado no banco é o de produção, e mandar quem está testando para lá é convite a mexer no site errado.
+- 7 testes novos. Suíte: **94 testes, 224 asserções**.
+
 ### Evento já realizado vira somente leitura, e selo Mobspot (2026-08-29)
 - **Prova que já aconteceu não recebe mais alteração de modalidade nem de kit.** Mexer depois da corrida bagunça o histórico de quem se inscreveu e não muda nada no mundo real. A listagem continua abrindo (vira só leitura, com um aviso e sem os botões), e o evento sai do seletor de "cadastrar em" das telas gerais. A checagem vive no controller, não só na tela: esconder no front não é proteger, e o valor do `<select>` é entrada do usuário como qualquer outra.
 - **Ícone do perfil na barra de cima estava invisível** — a classe `btn-transparent-dark` do template pinta o ícone da própria cor do fundo escuro. Mesmo problema que o botão do menu tinha; agora os dois usam a mesma regra e ficam brancos.

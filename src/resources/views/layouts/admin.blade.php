@@ -51,6 +51,23 @@
         .botao-menu svg, .botao-topo svg { width: 1.35rem; height: 1.35rem; stroke-width: 2.25; }
         .topnav .btn-icon { color: #fff; }
 
+        /* Brasão da equipe: sempre redondo e do mesmo tamanho, com ou sem
+           imagem — assim a coluna de nomes fica alinhada na listagem. */
+        .brasao-equipe {
+            width: 38px; height: 38px; flex: 0 0 38px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #fff;
+            border: 1px solid #dbe3ec;
+        }
+        .brasao-equipe--vazio {
+            display: inline-flex; align-items: center; justify-content: center;
+            background: var(--cv-blue-pale);
+            color: var(--cv-navy);
+            font-size: 12px; font-weight: 700; letter-spacing: .02em;
+        }
+        .brasao-equipe--grande { width: 72px; height: 72px; flex-basis: 72px; }
+
         /* Selo de autoria: presente, nunca protagonista. */
         .selo-mobspot a { color: inherit; text-decoration: none; opacity: .7; transition: opacity .15s ease; }
         .selo-mobspot a:hover, .selo-mobspot a:focus-visible { opacity: 1; text-decoration: underline; }
@@ -92,10 +109,15 @@
 
         <ul class="navbar-nav align-items-center ml-auto">
             {{-- Atalho para o site público, à esquerda do perfil. Saiu do rodapé
-                 (onde ninguém rolava até) e virou ícone na barra. --}}
+                 (onde ninguém rolava até) e virou ícone na barra.
+
+                 O endereço vem do domínio do organizador, não de url('/'): no
+                 domínio do painel, url('/') aponta para a raiz dele mesmo, que
+                 o nginx manda de volta para /admin. --}}
             <li class="nav-item mr-1">
-                <a class="btn btn-icon botao-topo" href="{{ url('/') }}" target="_blank"
-                   rel="noopener" title="Ver o site público" aria-label="Ver o site público">
+                <a class="btn btn-icon botao-topo" href="{{ auth()->user()->organizer->siteUrl() }}"
+                   target="_blank" rel="noopener"
+                   title="Ver o site público" aria-label="Ver o site público">
                     <i data-feather="home"></i>
                 </a>
             </li>

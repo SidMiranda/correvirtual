@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Team;
+use App\Support\ImagemPublica;
+use App\Support\ImagensDaEquipe;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -42,6 +44,9 @@ class TeamController extends AdminController
         $team->slug = $this->slugUnico($dados['name']);
         $team->save();
 
+        // Depois do save: o caminho do brasão usa o id, que só existe agora.
+        $this->guardarBrasao($request, $team);
+
         return redirect()
             ->route('admin.equipes.index')
             ->with('sucesso', "Equipe \"{$team->name}\" criada.");
@@ -65,6 +70,8 @@ class TeamController extends AdminController
 
         $team->fill($dados)->save();
 
+        $this->guardarBrasao($request, $team);
+
         return redirect()
             ->route('admin.equipes.index')
             ->with('sucesso', "Equipe \"{$team->name}\" atualizada.");
@@ -74,6 +81,11 @@ class TeamController extends AdminController
     {
         $team = $this->buscarDoOrganizador($id);
         $nome = $team->name;
+
+        // O caminho no bucket é derivado do id: uma equipe futura com o mesmo
+        // id herdaria o brasão desta se ele ficasse órfão.
+        ImagensDaEquipe::apagar($team);
+
         $team->delete();
 
         return redirect()
@@ -90,15 +102,43 @@ class TeamController extends AdminController
 
     private function validar(Request $request): array
     {
-        return $request->validate([
+        $dados = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
+            'brasao' => ImagemPublica::regraDeValidacao(),
             'is_public' => ['boolean'],
             'active' => ['boolean'],
-        ]) + [
+        ], [
+            'brasao.image' => 'O brasão precisa ser uma imagem (JPG, PNG ou WEBP).',
+            'brasao.max' => 'O brasão passou de 5 MB.',
+        ]);
+
+        // O arquivo não é coluna da equipe — vai para o R2 em guardarBrasao().
+        unset($dados['brasao']);
+
+        return $dados + [
             'is_public' => $request->boolean('is_public'),
             'active' => $request->boolean('active'),
         ];
+    }
+
+    /**
+     * Sobe o brasão, se veio um.
+     *
+     * `has_logo` é a marca de que existe: com o CDN não dá para perguntar ao
+     * disco se o arquivo está lá (seria uma requisição de rede por linha da
+     * listagem), então quem responde é o banco.
+     */
+    private function guardarBrasao(Request $request, Team $team): void
+    {
+        if (!$request->hasFile('brasao')) {
+            return;
+        }
+
+        ImagensDaEquipe::salvarBrasao($team, $request->file('brasao'));
+
+        $team->has_logo = true;
+        $team->save();
     }
 
     /** O slug é único por organizador, não global (ver a migration). */

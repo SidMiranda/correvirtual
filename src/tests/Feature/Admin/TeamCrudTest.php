@@ -5,7 +5,10 @@ namespace Tests\Feature\Admin;
 use App\Models\Organizer;
 use App\Models\Team;
 use App\Models\User;
+use App\Support\ImagensDaEquipe;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class TeamCrudTest extends TestCase
@@ -19,6 +22,9 @@ class TeamCrudTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        // Disco em memoria: os testes nunca tocam o bucket real.
+        Storage::fake('r2');
 
         Organizer::factory()->create(['domain' => 'localhost']);
         $this->organizadorA = Organizer::factory()->create();
@@ -165,5 +171,112 @@ class TeamCrudTest extends TestCase
         $escolhiveis = Team::escolhivelPeloAtleta($this->organizadorA->id)->pluck('id');
 
         $this->assertSame([$aberta->id], $escolhiveis->all());
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Brasão
+    |--------------------------------------------------------------------------
+    */
+
+    public function test_brasao_vai_para_o_caminho_do_organizador_e_da_equipe(): void
+    {
+        $this->actingAs($this->adminA)->post('/admin/equipes', [
+            'name' => 'Corre Mogi',
+            'brasao' => UploadedFile::fake()->image('escudo-bonito.png', 400, 400),
+            'is_public' => 1,
+            'active' => 1,
+        ]);
+
+        $equipe = Team::where('name', 'Corre Mogi')->firstOrFail();
+
+        // O caminho sai do organizador dono e do id da equipe — nunca do nome
+        // do arquivo enviado, que é entrada do usuário.
+        Storage::disk('r2')->assertExists(
+            "publico/organizadores/{$this->organizadorA->id}/equipes/{$equipe->id}/brasao.jpg"
+        );
+        Storage::disk('r2')->assertMissing('publico/escudo-bonito.png');
+
+        $this->assertTrue($equipe->fresh()->has_logo);
+    }
+
+    public function test_equipe_sem_brasao_nao_grava_arquivo_nem_marca(): void
+    {
+        $this->actingAs($this->adminA)->post('/admin/equipes', [
+            'name' => 'Sem Escudo',
+            'is_public' => 1,
+            'active' => 1,
+        ]);
+
+        $this->assertFalse(Team::where('name', 'Sem Escudo')->first()->has_logo);
+        $this->assertCount(0, Storage::disk('r2')->allFiles());
+    }
+
+    public function test_arquivo_que_nao_e_imagem_e_recusado_no_brasao(): void
+    {
+        $this->actingAs($this->adminA)
+            ->post('/admin/equipes', [
+                'name' => 'Equipe PDF',
+                'brasao' => UploadedFile::fake()->create('documento.pdf', 100, 'application/pdf'),
+                'is_public' => 1,
+                'active' => 1,
+            ])
+            ->assertSessionHasErrors('brasao');
+
+        $this->assertDatabaseCount('teams', 0);
+        $this->assertCount(0, Storage::disk('r2')->allFiles());
+    }
+
+    public function test_editar_sem_enviar_arquivo_nao_apaga_o_brasao(): void
+    {
+        $equipe = Team::factory()->create([
+            'organizer_id' => $this->organizadorA->id,
+            'has_logo' => true,
+        ]);
+
+        $caminho = ImagensDaEquipe::caminho($equipe);
+        Storage::disk('r2')->put($caminho, 'escudo antigo');
+
+        $this->actingAs($this->adminA)->put("/admin/equipes/{$equipe->id}", [
+            'name' => 'Nome Novo',
+            'is_public' => 1,
+            'active' => 1,
+        ]);
+
+        Storage::disk('r2')->assertExists($caminho);
+        $this->assertSame('escudo antigo', Storage::disk('r2')->get($caminho));
+        $this->assertTrue($equipe->fresh()->has_logo);
+    }
+
+    public function test_apagar_equipe_leva_o_brasao_junto(): void
+    {
+        // O caminho é derivado do id: uma equipe futura com o mesmo id herdaria
+        // o brasão desta se ele ficasse órfão no bucket.
+        $equipe = Team::factory()->create([
+            'organizer_id' => $this->organizadorA->id,
+            'has_logo' => true,
+        ]);
+
+        $caminho = ImagensDaEquipe::caminho($equipe);
+        Storage::disk('r2')->put($caminho, 'x');
+
+        $this->actingAs($this->adminA)->delete("/admin/equipes/{$equipe->id}");
+
+        Storage::disk('r2')->assertMissing($caminho);
+    }
+
+    public function test_listagem_mostra_iniciais_quando_a_equipe_nao_tem_brasao(): void
+    {
+        Team::factory()->create([
+            'organizer_id' => $this->organizadorA->id,
+            'name' => 'Corre Mogi',
+            'has_logo' => false,
+        ]);
+
+        $this->actingAs($this->adminA)
+            ->get('/admin/equipes')
+            ->assertOk()
+            ->assertSee('brasao-equipe--vazio', false)
+            ->assertSee('CO', false);
     }
 }

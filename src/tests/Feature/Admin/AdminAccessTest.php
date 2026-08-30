@@ -101,4 +101,22 @@ class AdminAccessTest extends TestCase
         $this->get('http://dominio-que-nao-existe.example.com/')
             ->assertNotFound();
     }
+
+    public function test_casinha_aponta_para_o_site_do_organizador_e_nao_para_o_painel(): void
+    {
+        // No domínio do painel, url('/') devolve a raiz dele mesmo — que o nginx
+        // manda de volta para /admin. O atalho "ver o site" acabava no lugar de
+        // onde saiu. O endereço tem que sair do domínio do organizador.
+        $organizador = Organizer::factory()->create(['domain' => 'corrida.example.com']);
+        $admin = User::factory()->create([
+            'role' => 'organizer_admin',
+            'organizer_id' => $organizador->id,
+        ]);
+
+        $resposta = $this->actingAs($admin)->get('http://admin.correvirtual.com.br/admin');
+
+        $resposta->assertOk()
+            ->assertSee('corrida.example.com', false)
+            ->assertDontSee('href="http://admin.correvirtual.com.br/"', false);
+    }
 }

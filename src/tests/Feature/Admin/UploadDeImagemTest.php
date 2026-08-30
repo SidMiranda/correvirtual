@@ -5,6 +5,7 @@ namespace Tests\Feature\Admin;
 use App\Models\Event;
 use App\Models\Organizer;
 use App\Models\User;
+use App\Support\ImagemPublica;
 use App\Support\ImagensDoEvento;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -106,7 +107,7 @@ class UploadDeImagemTest extends TestCase
     {
         $this->actingAs($this->adminA)
             ->post('/admin/eventos', $this->dadosValidos([
-                'banner' => UploadedFile::fake()->image('enorme.jpg')->size(ImagensDoEvento::TAMANHO_MAXIMO_KB + 1),
+                'banner' => UploadedFile::fake()->image('enorme.jpg')->size(ImagemPublica::TAMANHO_MAXIMO_KB + 1),
             ]))
             ->assertSessionHasErrors('banner');
 

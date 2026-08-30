@@ -4,7 +4,6 @@ namespace App\Support;
 
 use App\Models\Event;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 
 /**
  * Grava as imagens de um evento no R2.
@@ -20,10 +19,6 @@ use Illuminate\Support\Facades\Storage;
  */
 class ImagensDoEvento
 {
-    /** Formatos aceitos no upload, e o que o R2 vai devolver como Content-Type. */
-    public const EXTENSOES = ['jpg', 'jpeg', 'png', 'webp'];
-    public const TAMANHO_MAXIMO_KB = 5120;
-
     /**
      * Salva o banner (imagem larga do topo da página do evento).
      */
@@ -45,29 +40,13 @@ class ImagensDoEvento
         // Sempre .jpg no destino, independente do que foi enviado: o caminho é
         // derivado (organizadores/X/eventos/Y/banner.jpg) e precisa ser
         // previsível para o site montar a URL sem consultar o banco.
-        $caminho = self::caminho($event, $tipo);
-
-        Storage::disk('r2')->put(
-            $caminho,
-            file_get_contents($arquivo->getRealPath()),
-            [
-                'ContentType' => $arquivo->getMimeType(),
-                // Mesmo cache das imagens que já estavam lá. Como o nome do
-                // arquivo não muda quando a imagem é trocada, a versão antiga
-                // pode continuar no cache do CDN por um tempo — é o preço de ter
-                // caminho previsível. Ver "Consequências" no spec.
-                'CacheControl' => 'public, max-age=31536000, immutable',
-            ]
-        );
+        ImagemPublica::salvar(self::caminho($event, $tipo), $arquivo);
     }
 
     public static function apagar(Event $event): void
     {
         foreach (['banner', 'card'] as $tipo) {
-            $caminho = self::caminho($event, $tipo);
-            if (Storage::disk('r2')->exists($caminho)) {
-                Storage::disk('r2')->delete($caminho);
-            }
+            ImagemPublica::apagar(self::caminho($event, $tipo));
         }
     }
 
@@ -80,14 +59,9 @@ class ImagensDoEvento
         return "publico/organizadores/{$event->organizer_id}/eventos/{$event->id}/{$tipo}.jpg";
     }
 
-    /** Regra de validação compartilhada pelos formulários. */
+    /** Regra de validação, compartilhada com os outros formulários com imagem. */
     public static function regraDeValidacao(): array
     {
-        return [
-            'nullable',
-            'image',
-            'mimes:' . implode(',', self::EXTENSOES),
-            'max:' . self::TAMANHO_MAXIMO_KB,
-        ];
+        return ImagemPublica::regraDeValidacao();
     }
 }

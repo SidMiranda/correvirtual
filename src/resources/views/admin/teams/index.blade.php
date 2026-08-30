@@ -43,10 +43,27 @@
                             @foreach ($teams as $team)
                                 <tr>
                                     <td>
-                                        <div class="font-weight-500">{{ $team->name }}</div>
-                                        @if ($team->description)
-                                            <div class="small text-muted">{{ Str::limit($team->description, 80) }}</div>
-                                        @endif
+                                        <div class="d-flex align-items-center">
+                                            {{-- Brasão redondo antes do nome. Sem brasão, as
+                                                 iniciais no lugar — um espaço vazio deixaria a
+                                                 lista desalinhada. --}}
+                                            @if ($team->has_logo)
+                                                <img src="{{ \App\Support\Arquivos::brasaoDaEquipe($team) }}?v={{ $team->updated_at?->timestamp }}"
+                                                     alt="" class="brasao-equipe mr-3"
+                                                     onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'brasao-equipe brasao-equipe--vazio mr-3',textContent:'{{ Str::upper(Str::substr($team->name, 0, 2)) }}'}));">
+                                            @else
+                                                <span class="brasao-equipe brasao-equipe--vazio mr-3">
+                                                    {{ Str::upper(Str::substr($team->name, 0, 2)) }}
+                                                </span>
+                                            @endif
+
+                                            <div>
+                                                <div class="font-weight-500">{{ $team->name }}</div>
+                                                @if ($team->description)
+                                                    <div class="small text-muted">{{ Str::limit($team->description, 80) }}</div>
+                                                @endif
+                                            </div>
+                                        </div>
                                     </td>
                                     <td class="text-center">
                                         @if ($team->is_public)

@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use App\Models\Event;
+use App\Models\Team;
 
 /**
  * O único lugar que sabe montar URL de imagem pública.
@@ -115,6 +116,23 @@ class Arquivos
         }
 
         return file_exists(public_path('images/' . ltrim($caminhoRelativo, '/')));
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Brasão da equipe
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Devolve nulo quando a equipe não tem brasão, para a tela decidir o que
+     * mostrar no lugar (as iniciais) em vez de exibir imagem quebrada.
+     */
+    public static function brasaoDaEquipe(Team $team): ?string
+    {
+        return $team->has_logo
+            ? self::url("organizadores/{$team->organizer_id}/equipes/{$team->id}/brasao.jpg")
+            : null;
     }
 
     /*

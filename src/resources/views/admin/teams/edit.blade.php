@@ -10,7 +10,7 @@
             <div class="card mb-4">
                 <div class="card-header">Dados da equipe</div>
                 <div class="card-body">
-                    <form method="POST" action="{{ route('admin.equipes.update', $team->id) }}">
+                    <form method="POST" enctype="multipart/form-data" action="{{ route('admin.equipes.update', $team->id) }}">
                         @csrf
                         @method('PUT')
                         @include('admin.teams._form', ['team' => $team])
