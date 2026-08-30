@@ -41,9 +41,12 @@
 
     <meta name="theme-color" content="#0d1b2a">
 
-    <link rel="stylesheet" href="{{ asset('css/top-bar.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/global.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/forms.css') }}">
+    {{-- ?v={{ filemtime(...) }}: sem isso uma correção de estilo só aparece
+         para quem limpa o cache do navegador. Já mordeu três vezes neste
+         projeto. --}}
+    <link rel="stylesheet" href="{{ asset('css/top-bar.css') }}?v={{ filemtime(public_path('css/top-bar.css')) }}">
+    <link rel="stylesheet" href="{{ asset('css/global.css') }}?v={{ filemtime(public_path('css/global.css')) }}">
+    <link rel="stylesheet" href="{{ asset('css/forms.css') }}?v={{ filemtime(public_path('css/forms.css')) }}">
 
     {{-- <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/js/all.min.js" crossorigin="anonymous"></script> --}}
     <script src="{{ asset('js/font-awesome.js') }}"></script>

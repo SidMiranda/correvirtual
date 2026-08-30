@@ -6,6 +6,18 @@ Histórico anterior a este arquivo (todo o desenvolvimento inicial do projeto) p
 
 ## [Unreleased]
 
+### Rolagem suave, o menu que nunca grudou, e limpeza da base de teste (2026-08-30)
+- **Os links do menu deslizam até a seção** em vez de dar um salto seco. Quem pediu menos movimento no sistema operacional (`prefers-reduced-motion`) continua com o salto direto — movimento na tela inteira incomoda de verdade quem tem sensibilidade vestibular.
+- **O menu da home nunca grudou**, apesar de estar declarado `position: sticky` desde a Home v2. Duas causas somadas, as duas vindas do CSS do template de painel, que é carregado em toda página pública:
+  - `body { overflow-x: hidden }` — `hidden` transforma o elemento num contêiner de rolagem, e isso desliga o `sticky` de quem está dentro. Virou `overflow-x: clip`, que corta igual sem criar contêiner.
+  - `html, body { height: 100% }` — prende a caixa do body à altura da janela, e `sticky` só gruda enquanto essa caixa está na tela. Virou `height: auto; min-height: 100%`.
+- A margem que impede o título da seção de parar atrás do menu vem da altura medida do próprio menu (`--cv-nav-altura`, no `home-v2.js`): as duas barras mudam de tamanho conforme a largura, e um número fixo no CSS erraria em algum lugar.
+- `global.css`, `top-bar.css` e `forms.css` ganharam cache-busting — sem isso a correção só apareceria para quem limpasse o cache. É a quarta vez que isso morde neste projeto.
+- **`php artisan base:limpar-testes`**: tira da base o que sobrou da fase de demonstração. Até hoje nada no banco era prova real — eventos de seeder, kits todos a R$ 0,05, inscrições feitas por quem estava testando. Aparecia em "minhas inscrições" como se fosse compromisso do atleta, apontando para evento que já tinha saído do site.
+- O comando apaga os seis eventos mocados com suas modalidades e kits, e todo o histórico de inscrição e pagamento. Ficam os atletas, os eventos reais, o evento de teste do fluxo e as modalidades e kits deles. Os eventos são identificados por **slug**, não por id: os ids são diferentes em dev e produção, e um número errado apagaria a prova errada.
+- Simula por padrão. Só apaga com `--force`, e dentro de uma transação — a ordem importa (pagamento aponta para inscrição, que aponta para kit, modalidade e evento), e uma falha no meio deixaria referência órfã.
+- 5 testes novos, mais as factories de inscrição e pagamento que faltavam. Suíte: **139 testes, 358 asserções**.
+
 ### Vitrine de eventos realizados, topo do evento e prévia do link com a arte (2026-08-30)
 - **A home mudou de ordem**: banner → próximos eventos → **patrocinadores** → **eventos realizados** → sobre nós. A seção de patrocinadores era a última da página, depois do "sobre nós" — quem paga para aparecer aparecia onde ninguém mais estava rolando.
 - **"Eventos realizados" virou vitrine**: só os cartazes, sem link e sem botão. A prova acabou, não há o que fazer com ela. Seis por linha no desktop, três no tablet, dois no celular.

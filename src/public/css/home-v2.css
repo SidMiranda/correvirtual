@@ -15,6 +15,41 @@ body {
   padding-top: 0;
 }
 
+/* ============ ROLAGEM ATÉ AS SEÇÕES ============ */
+
+/*
+   Os links do menu (#eventos, #sobre, #patrocinadores) davam um salto seco: a
+   página trocava de lugar de um quadro para o outro e a pessoa perdia a
+   referência de onde estava. Aqui ela desliza.
+
+   Vale só na home, que é a única página com âncora — esta folha não é
+   carregada nas outras.
+*/
+html {
+  scroll-behavior: smooth;
+}
+
+/* Movimento na tela inteira incomoda de verdade quem tem sensibilidade
+   vestibular, e o sistema operacional já sabe disso. Quem pediu menos
+   movimento continua com o salto direto. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/*
+   O menu é sticky: sem esta margem, a rolagem para com o título da seção
+   escondido atrás dele.
+
+   A altura vem do próprio menu, medida pelo home-v2.js — as duas barras mudam
+   de tamanho conforme a largura da tela, e um número fixo aqui erraria em
+   algum lugar. O valor no `var()` é só o que vale enquanto o script não rodou.
+*/
+.container[id] {
+  scroll-margin-top: calc(var(--cv-nav-altura, 100px) + 18px);
+}
+
 /* ============ NAV (duas camadas) ============ */
 
 .cv-nav {

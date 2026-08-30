@@ -10,10 +10,26 @@ a {
   color: inherit;
 }
 
+/* O CSS do template de painel (top-bar.css) entra em todas as páginas
+   públicas e prende html e body em `height: 100%`. Isso limita a caixa do body
+   à altura da janela — e `position: sticky` só gruda enquanto a caixa de quem
+   contém o elemento está na tela. Era a segunda metade do motivo de o menu da
+   home sumir ao rolar. `min-height` preserva a intenção original (ocupar a
+   tela em página curta) sem cortar a página longa. */
+html,
+body {
+  height: auto;
+  min-height: 100%;
+}
+
 body {
   background: #f3f3f3;
   color: #222;
-  overflow-x: hidden;
+  /* `clip` e não `hidden`: os dois cortam o que vaza na horizontal, mas
+     `hidden` transforma o body num contêiner de rolagem — e isso desliga o
+     `position: sticky` de quem está dentro dele. Era por isso que o menu da
+     home sumia ao rolar mesmo estando declarado como sticky. */
+  overflow-x: clip;
 }
 
 :root {

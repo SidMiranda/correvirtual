@@ -156,6 +156,27 @@ Quando o organizador sobe uma arte no painel, a derivada é gerada na hora (`Ima
 
 O card continua deitado, como sempre foi. O que muda é a arte: `object-fit: contain` sobre o degradê do evento, em vez de `cover`. No celular o card empilha e a coluna da arte ganha altura para o cartaz caber em pé.
 
+### Rolagem até as seções, e o menu que nunca grudou
+
+Os links do menu davam um salto seco. `scroll-behavior: smooth` no `html` resolve a rolagem, com `prefers-reduced-motion` respeitado — movimento na tela inteira incomoda de verdade quem tem sensibilidade vestibular.
+
+Ao ajustar a margem da âncora (`scroll-margin-top`, para o título não parar atrás do menu) apareceu que **o menu nunca grudou**, apesar de estar declarado `position: sticky` desde a Home v2. Duas causas somadas, as duas vindas do CSS do template de painel (`top-bar.css`), que é carregado em todas as páginas públicas:
+
+1. `body { overflow-x: hidden }` — `hidden` transforma o elemento num contêiner de rolagem, e isso desliga o `sticky` de quem está dentro. Trocado por `overflow-x: clip`, que corta igual sem criar contêiner.
+2. `html, body { height: 100% }` — prende a caixa do body à altura da janela, e `sticky` só gruda enquanto a caixa de quem contém o elemento está na tela. Virou `height: auto; min-height: 100%`, preservando a intenção (ocupar a tela em página curta).
+
+A altura da margem vem do próprio menu, medida pelo `home-v2.js` numa custom property (`--cv-nav-altura`): as duas barras mudam de tamanho conforme a largura, e um número fixo no CSS erraria em algum lugar.
+
+`global.css`, `top-bar.css` e `forms.css` ganharam cache-busting, que faltava — sem isso a correção só apareceria para quem limpasse o cache.
+
+### Limpeza da base de demonstração
+
+Até 2026-08-30 nada no banco era prova real: eventos de seeder, kits todos a R$ 0,05 e inscrições feitas por quem estava testando. Isso aparecia em "minhas inscrições" como se fosse compromisso do atleta, apontando para evento que já tinha saído do site.
+
+`php artisan base:limpar-testes` remove os seis eventos mocados (identificados por **slug**, não por id — os ids são diferentes em dev e produção) com suas modalidades e kits, e todo o histórico de inscrição e pagamento. Ficam os atletas, os eventos reais, o evento de teste do fluxo e as modalidades e kits deles.
+
+Simula por padrão; só apaga com `--force`, dentro de uma transação. `LimparDadosDeTesteTest` protege a linha divisória: o que sai e, principalmente, o que não pode sair.
+
 ## Plano de testes
 
 - `GaleriaDeRealizadosTest` — as artes da config aparecem, o evento passado do banco entra, o evento passado **sem** arte fica de fora (entraria como buraco na grade), os cartazes não são link, a galeria de um organizador não vaza no site do outro, a seção some quando não há nada, e os patrocinadores ficam entre próximos e realizados.

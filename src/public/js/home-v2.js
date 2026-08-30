@@ -19,6 +19,22 @@
     });
   }
 
+  // ---- Altura do menu, para a rolagem parar no lugar certo ----
+  // O menu é sticky, então a âncora precisa de uma margem do tamanho dele,
+  // senão o título da seção para escondido atrás. As duas barras mudam de
+  // altura conforme a largura da tela — por isso medimos em vez de fixar um
+  // número no CSS. Ver `.container[id]` em home-v2.css.
+  var nav = document.querySelector('.cv-nav');
+
+  if (nav) {
+    var medirNav = function () {
+      document.documentElement.style.setProperty('--cv-nav-altura', nav.offsetHeight + 'px');
+    };
+
+    medirNav();
+    window.addEventListener('resize', medirNav);
+  }
+
   // ---- Banner rotativo ----
   var track = document.getElementById('cv-banner-track');
   if (!track) {
