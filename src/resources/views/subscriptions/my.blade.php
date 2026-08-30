@@ -4,7 +4,9 @@
 
 @push('styles')
   <link rel="stylesheet" href="{{ asset('css/top-bar.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/my-subscriptions.css') }}">
+  {{-- ?v={{ filemtime(...) }}: sem isso a mudança de estilo só aparece para
+       quem limpar o cache do navegador. --}}
+  <link rel="stylesheet" href="{{ asset('css/my-subscriptions.css') }}?v={{ filemtime(public_path('css/my-subscriptions.css')) }}">
 @endpush
 
 @section('content')

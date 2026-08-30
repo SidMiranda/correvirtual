@@ -55,8 +55,9 @@ class PreviaDoLinkTest extends TestCase
         $resposta->assertOk()
             ->assertSee('og:title" content="Corrida da Ponte', false)
             ->assertSee('<meta property="og:type" content="article">', false)
-            // A imagem do cartão é a do evento, não a capa do organizador.
-            ->assertSee("eventos/{$evento->id}/banner.jpg", false);
+            // A imagem do cartão é a derivada 1200x630 do evento, não a capa
+            // do organizador e não o cartaz retrato (ver ImagemOg).
+            ->assertSee("eventos/{$evento->id}/og.jpg", false);
     }
 
     public function test_imagem_do_cartao_e_sempre_uma_url_absoluta(): void
@@ -84,7 +85,7 @@ class PreviaDoLinkTest extends TestCase
         // Cartão sem imagem nenhuma é bem pior que um cartão genérico.
         $this->get("/event/{$evento->id}")
             ->assertOk()
-            ->assertSee('plataforma/padrao/banner.jpg', false);
+            ->assertSee("organizadores/{$this->organizador->id}/og.jpg", false);
     }
 
     public function test_painel_nao_entra_em_busca_e_nao_descreve_conteudo(): void

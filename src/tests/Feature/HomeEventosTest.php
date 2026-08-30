@@ -13,6 +13,10 @@ use Tests\TestCase;
  * As duas listas têm ordens opostas de propósito: o que vem primeiro é o mais
  * próximo (é onde o atleta se inscreve); o que já passou desce pelo mais
  * recente (é histórico).
+ *
+ * O que já passou não sai como lista de eventos: sai como lista de cartazes,
+ * porque a vitrine mistura provas cadastradas aqui com artes de provas
+ * anteriores à plataforma (ver App\Support\GaleriaDeRealizados).
  */
 class HomeEventosTest extends TestCase
 {
@@ -25,6 +29,12 @@ class HomeEventosTest extends TestCase
         parent::setUp();
 
         $this->organizador = Organizer::factory()->create(['domain' => 'localhost']);
+
+        // Aqui o assunto é só o que está no banco. Sem zerar isto, o
+        // organizador criado pelo teste nasce com id 1 e herda as nove artes
+        // reais de config/galeria.php — a vitrine de realizados do Corre
+        // Virtual apareceria no meio das asserções.
+        config(['galeria.realizados' => []]);
     }
 
     private function evento(string $titulo, string $quando): Event
@@ -57,11 +67,11 @@ class HomeEventosTest extends TestCase
         $this->evento('Prova Recente', now()->subMonth());
         $this->evento('Prova Do Meio', now()->subMonths(8));
 
-        $lista = $this->get('/')->viewData('eventosPassados');
+        $lista = $this->get('/')->viewData('eventosRealizados');
 
         $this->assertSame(
             ['Prova Recente', 'Prova Do Meio', 'Prova Antiga'],
-            $lista->pluck('title')->all()
+            $lista->pluck('nome')->all()
         );
     }
 
@@ -73,7 +83,7 @@ class HomeEventosTest extends TestCase
         $resposta = $this->get('/');
 
         $this->assertSame([$futuro->id], $resposta->viewData('proximosEventos')->pluck('id')->all());
-        $this->assertSame([$passado->id], $resposta->viewData('eventosPassados')->pluck('id')->all());
+        $this->assertSame(['Ja Foi'], $resposta->viewData('eventosRealizados')->pluck('nome')->all());
     }
 
     public function test_evento_inativo_fica_fora_das_duas_listas(): void
@@ -88,7 +98,7 @@ class HomeEventosTest extends TestCase
         $resposta = $this->get('/');
 
         $this->assertCount(0, $resposta->viewData('proximosEventos'));
-        $this->assertCount(0, $resposta->viewData('eventosPassados'));
+        $this->assertCount(0, $resposta->viewData('eventosRealizados'));
         $resposta->assertDontSee('Rascunho');
     }
 

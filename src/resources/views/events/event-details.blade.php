@@ -8,33 +8,26 @@
 @endpush
 
 @section('content')
-    {{-- O topo tem sempre a mesma altura, com arte ou sem: antes ele crescia
-         conforme a proporção da imagem, e cada evento abria com um tamanho
-         diferente. Sem arte enviada, vira um degradê escuro na cor do evento
-         com o nome por cima — o resto (data, local, descrição) já vem logo
-         abaixo, então o topo só precisa dizer onde a pessoa está. --}}
+    {{-- O topo é o mesmo para todo evento: degradê no azul do tema com o nome
+         em texto grande. Antes ele tentava encaixar a arte da prova aqui, e a
+         arte é retrato (576x1024) num espaço largo — recortada ficava sem o
+         nome e a data, inteira ficava minúscula entre duas faixas de fundo.
+
+         A arte não se perde: ela é o cartaz da home e é o que viaja no cartão
+         de pré-visualização quando alguém compartilha o link (ver o $og no
+         EventsController). --}}
     <div class="banner-wrap">
         <a class="back-button" href="{{ url('/') }}">← Voltar</a>
 
-        @if($event->banner_url)
-            {{-- O degradê do evento no fundo: o cartaz é vertical e o topo é
-                 largo, então o que sobra nas laterais fica na cor do evento em
-                 vez de branco. --}}
-            <section class="event-banner" style="background: {{ $event->degrade() }};">
-                <img src="{{ \App\Support\Arquivos::bannerDoEvento($event) }}"
-                     onerror="this.onerror=null;this.src='{{ \App\Support\Arquivos::bannerPadrao() }}';"
-                     alt="Banner do evento {{ $event->title }}" class="banner-img">
-            </section>
-        @else
-            <section class="event-banner event-banner--degrade" style="background: {{ $event->degrade() }};">
-                <h1 class="event-banner__nome">{{ $event->title }}</h1>
-            </section>
-        @endif
+        <section class="event-banner">
+            <h1 class="event-banner__nome">{{ $event->title }}</h1>
+            <p class="event-banner__linha">
+                {{ \Carbon\Carbon::parse($event->event_date)->format('d/m/Y') }}
+                <span aria-hidden="true">·</span>
+                {{ $event->location }}
+            </p>
+        </section>
     </div>
-
-    <h2 class="block-header-title">
-        {{ $event->title }}
-    </h2>
 
   @error('inscricao')
     <div class="event-erro-inscricao" role="alert">{{ $message }}</div>

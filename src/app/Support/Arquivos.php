@@ -83,6 +83,20 @@ class Arquivos
         return $versao ? "{$url}?v={$versao}" : $url;
     }
 
+    /**
+     * Imagem do cartão de pré-visualização do link (WhatsApp, Facebook).
+     *
+     * É uma terceira derivada da arte, deitada e leve — mandar o cartaz cru
+     * fazia o robô recortar o meio e, pelo peso, muitas vezes desistir da
+     * prévia. Ver App\Support\ImagemOg.
+     */
+    public static function ogDoEvento(Event $event): string
+    {
+        return $event->banner_url
+            ? self::comVersao(self::url("organizadores/{$event->organizer_id}/eventos/{$event->id}/og.jpg"), $event)
+            : self::ogDoOrganizador($event->organizer_id);
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Imagens do organizador
@@ -115,6 +129,15 @@ class Arquivos
     }
 
     /**
+     * Cartão de compartilhamento das páginas que não são de um evento (home,
+     * inscrição, login). Também 1200x630 — ver o comentário em ogDoEvento.
+     */
+    public static function ogDoOrganizador(int $organizerId): string
+    {
+        return self::url("organizadores/{$organizerId}/og.jpg");
+    }
+
+    /**
      * O organizador tem imagem de marca própria?
      *
      * Diferente do evento, o organizador não tem no banco nenhum campo dizendo
@@ -135,6 +158,19 @@ class Arquivos
         }
 
         return file_exists(public_path('images/' . ltrim($caminhoRelativo, '/')));
+    }
+
+    /**
+     * Arte de uma prova já realizada, na vitrine da home.
+     *
+     * Diferente das imagens de evento, aqui o nome do arquivo vem de
+     * `config/galeria.php` — arquivo do projeto, não entrada de usuário. Ainda
+     * assim só o nome base é aproveitado, para que uma edição descuidada da
+     * config não consiga montar caminho para fora da pasta do organizador.
+     */
+    public static function arteRealizada(int $organizerId, string $arquivo): string
+    {
+        return self::url("organizadores/{$organizerId}/realizados/" . basename($arquivo));
     }
 
     /*
@@ -173,6 +209,12 @@ class Arquivos
     public static function bannerPadrao(): string
     {
         return self::url('plataforma/padrao/banner.jpg');
+    }
+
+    /** Último recurso do cartão de compartilhamento. Também 1200x630. */
+    public static function ogPadrao(): string
+    {
+        return self::url('plataforma/padrao/og.jpg');
     }
 
     public static function usuarioPadrao(): string

@@ -5,13 +5,17 @@
 @endphp
 
 <div class="registration-list-card">
-    <div class="registration-list-card__image-wrapper">
+    {{-- A arte aparece inteira (object-fit: contain no CSS), sobre o degradê do
+         evento. Antes era recortada para preencher a coluna, e o recorte de um
+         cartaz retrato come justamente o nome e a data, que ficam no topo. --}}
+    <div class="registration-list-card__image-wrapper" style="background: {{ $event->degrade() }};">
         @if($event->banner_url)
             <img src="{{ \App\Support\Arquivos::cardDoEvento($event) }}"
                  onerror="this.onerror=null;this.src='{{ \App\Support\Arquivos::cardPadrao() }}';"
                  class="event-card__image" alt="{{ $event->title }}">
         @else
-            <img src="{{ \App\Support\Arquivos::cardPadrao() }}" class="event-card__image" alt="{{ $event->title }}">
+            {{-- Sem arte, o nome sobre o degradê — mesma solução do card da
+                 home, em vez de uma foto de banco de imagem que não é da prova. --}}
             <div class="default-card-overlay">
                 <h3 class="event-card-overlay-title">{{ $event->title }}</h3>
             </div>

@@ -29,12 +29,18 @@
         180
     );
 
-    // Sem imagem específica, cai no banner do organizador; sem ele, no banner
-    // padrão da plataforma. Um cartão sem imagem é bem pior que um genérico.
+    // Sem imagem específica, cai no cartão do organizador; sem ele, no da
+    // plataforma. Um cartão sem imagem é bem pior que um genérico.
+    //
+    // Todas essas imagens são 1200x630 — é a proporção que o WhatsApp e o
+    // Facebook esperam, e é o que autoriza declarar as dimensões abaixo. Elas
+    // são geradas pelo comando `og:gerar` (ver App\Support\ImagemOg); nunca
+    // aponte esta meta para uma imagem de outro formato sem trocar as
+    // dimensões junto.
     $ogImagem = $imagem
         ?: (isset($organizerId) && $organizerId
-            ? Arquivos::bannerDoOrganizador($organizerId)
-            : Arquivos::bannerPadrao());
+            ? Arquivos::ogDoOrganizador($organizerId)
+            : Arquivos::ogPadrao());
 
     if (!\Illuminate\Support\Str::startsWith($ogImagem, ['http://', 'https://'])) {
         $ogImagem = url($ogImagem);
@@ -50,6 +56,14 @@
 <meta property="og:description" content="{{ $ogDescricao }}">
 <meta property="og:url" content="{{ url()->current() }}">
 <meta property="og:image" content="{{ $ogImagem }}">
+<meta property="og:image:secure_url" content="{{ $ogImagem }}">
+{{-- Dimensões declaradas: com elas o WhatsApp e o Facebook montam o cartão
+     grande já na primeira leitura, sem esperar o download da imagem para
+     descobrir o formato. Toda imagem que sai daqui é 1200x630 (ver
+     App\Support\ImagemOg). --}}
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="{{ $ogTitulo }}">
 
 <meta name="twitter:card" content="summary_large_image">

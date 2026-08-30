@@ -6,6 +6,23 @@ Histórico anterior a este arquivo (todo o desenvolvimento inicial do projeto) p
 
 ## [Unreleased]
 
+### Vitrine de eventos realizados, topo do evento e prévia do link com a arte (2026-08-30)
+- **A home mudou de ordem**: banner → próximos eventos → **patrocinadores** → **eventos realizados** → sobre nós. A seção de patrocinadores era a última da página, depois do "sobre nós" — quem paga para aparecer aparecia onde ninguém mais estava rolando.
+- **"Eventos realizados" virou vitrine**: só os cartazes, sem link e sem botão. A prova acabou, não há o que fazer com ela. Seis por linha no desktop, três no tablet, dois no celular.
+- **As nove artes do site antigo entraram na vitrine** (`correvirtual.com.br`, seção "Eventos Encerrados"): Desafio de Inverno, Arraiá do Corre, Sacra Run, Corre pela Conscientização do Autismo, CarnaRun do Quarteto, Corre Solidário de Natal, Mega Gelo & Chopp, Corra que a Bruxa Vem Aí e Pastelícia. Recomprimidas de PNG para JPEG: 2,5 MB viraram 959 KB.
+- A vitrine junta duas fontes que o visitante não distingue: essas artes avulsas (`config/galeria.php`, por organizador) e os eventos cadastrados aqui que já passaram da data. Sem a segunda, uma prova cadastrada sumiria do site no dia seguinte à realização.
+- **O topo da página do evento virou degradê no azul do tema com o nome em texto grande**, com a mesma altura para todo evento. Ele tentava encaixar a arte, e a arte é retrato: recortada sumia o nome e a data, que ficam no alto do cartaz; inteira virava um cartaz minúsculo entre duas faixas. A arte não se perde — é o cartaz da home e é o que viaja no compartilhamento.
+- **O compartilhamento passou a levar a arte de verdade.** A imagem estava declarada, mas era o cartaz retrato de até 1,9 MB: o robô do WhatsApp monta um cartão deitado (recortava o meio) e desiste da prévia bem antes daquele peso — na prática o link chegava sem imagem. Agora existe uma derivada de **1200x630** com a arte inteira sobre uma versão desfocada dela mesma, entre 56 e 82 KB.
+- O desfoque é feito numa miniatura de 60x32 e ampliado: o filtro do GD é fraco e caro, e ampliado o borrão sai mais suave do que aplicado na imagem inteira.
+- Organizador e plataforma também ganharam `og.jpg` de 1200x630 — é isso que autoriza declarar `og:image:width`/`og:image:height`, que fazem o cartão sair grande já na primeira leitura.
+- Nova arte no painel gera a derivada na hora, dentro de `try/catch`: a arte já foi salva, e falha aqui não pode derrubar o cadastro do evento. Para o que já existia, `php artisan og:gerar`.
+- **"Minhas inscrições" mostra a arte inteira**, mantendo o card deitado. No celular a coluna da arte ganha altura para o cartaz caber em pé.
+- `my-subscriptions.css` ganhou cache-busting (`?v=filemtime`), que faltava.
+- O `<h2>` que repetia o nome do evento logo abaixo do topo saiu — com o nome grande no degradê, era a mesma frase duas vezes seguidas. O título duplicado dentro da seção de patrocinadores também.
+- **Limpeza dos eventos mocados**: CarnaRun 2025, Corre que a Bruxa 2025 e Pastelícia saíram do site. Foram **desativados, não apagados** — seguram 8 inscrições pagas com pagamento aprovado no Mercado Pago, de três pessoas reais, e apagar o evento levaria esse histórico junto. Os eventos do organizador 2 (Borafitness) não foram tocados: são o catálogo de outro inquilino.
+- O evento de teste do fluxo (R$ 0,05) voltou a aparecer, por último na lista.
+- 14 testes novos. Suíte: **134 testes, 340 asserções**.
+
 ### Home separada em próximos e realizados, e cor nos ícones do painel (2026-08-29)
 - **A home passou a ter duas seções**: "Próximos eventos", do mais perto para o mais longe (é onde o atleta se inscreve), e "Eventos realizados", do mais recente para o mais antigo (é histórico). Antes era uma lista só, com o passado misturado no meio.
 - Sem nenhuma prova futura, a seção explica isso em vez de aparecer vazia.

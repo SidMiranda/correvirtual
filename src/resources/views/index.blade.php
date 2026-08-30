@@ -38,17 +38,29 @@
         @endif
     </div>
 
-    @if($eventosPassados->isNotEmpty())
-        {{-- Provas já realizadas continuam na página: servem de vitrine para
-             quem está chegando agora e conhecendo o organizador. --}}
-        <div class="container" id="eventos-passados">
+    {{-- Patrocinadores logo depois do que está aberto: é ali que o visitante
+         ainda está olhando a página, e é o que a marca patrocinadora paga
+         para ver. Antes ficava no fim, depois do "sobre nós". --}}
+    <div class="container" id="patrocinadores">
+        <h2 class="block-header-title">
+            NOSSOS <span> PATROCINADORES </span>
+        </h2>
+
+        <x-app.sponsors />
+    </div>
+
+    @if($eventosRealizados->isNotEmpty())
+        {{-- Vitrine: prova entregue é o melhor argumento de quem está decidindo
+             se confia no organizador. Só a arte, sem link — a prova acabou, não
+             há o que fazer com ela. Ver App\Support\GaleriaDeRealizados. --}}
+        <div class="container" id="eventos-realizados">
             <h2 class="block-header-title">
                 EVENTOS <span> REALIZADOS </span>
             </h2>
 
-            <div class="cards-grid">
-                @foreach($eventosPassados as $event)
-                    <x-dynamic-component :component="$cardDeEvento" :event="$event" />
+            <div class="cards-grid cards-grid--realizados">
+                @foreach($eventosRealizados as $arte)
+                    <x-app.arte-realizada :arte="$arte" />
                 @endforeach
             </div>
         </div>
@@ -60,15 +72,6 @@
         </h2>
 
         <x-app.about />
-    </div>
-
-    <div class="container" id="patrocinadores">
-        <h2 class="block-header-title">
-            NOSSOS <span> PATROCINADORES </span>
-        </h2>
-
-        <x-app.sponsors />
-
     </div>
 
     <x-app.foot />

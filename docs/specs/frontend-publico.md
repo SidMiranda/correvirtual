@@ -82,3 +82,87 @@ Mudança é puramente visual/apresentação (HTML/CSS/JS), sem lógica de negóc
 - [x] Login/logout/"Minhas inscrições" continuam funcionando a partir do novo menu.
 - [x] `php artisan test` continua verde.
 - [ ] Organizador revisa e aprova (ou pede ajuste) — **pendente**, é o próximo passo depois desta rodada.
+
+---
+
+# Fase 2 — vitrine de realizados, topo do evento e cartão de compartilhamento
+
+Status: Implementado (2026-08-30)
+
+## Problema
+
+Três coisas ficaram desalinhadas depois que as artes reais das provas entraram no lugar das imagens genéricas:
+
+1. **A home enterrava os patrocinadores.** A seção era a última da página, depois de "sobre nós" — quem paga para aparecer aparecia onde ninguém mais estava rolando.
+2. **O topo da página do evento tentava encaixar a arte.** A arte de corrida é retrato (576×1024, formato de story) e o topo é largo. Recortada, sumia justamente o nome e a data, que ficam na parte de cima do cartaz; inteira, virava um cartaz minúsculo entre duas faixas de fundo. As duas saídas eram ruins.
+3. **O botão de compartilhar chegava sem imagem.** A meta `og:image` existia e apontava para a arte, mas a arte é retrato e pesa de 500 KB a 1,9 MB. O robô do WhatsApp monta um cartão deitado — então recortava o meio do cartaz — e desiste da prévia bem antes daquele peso, então na prática o link chegava sem imagem nenhuma.
+
+Além disso, as provas que o organizador entregou **antes** desta plataforma existir não tinham lugar no site: elas viviam só no site antigo (`correvirtual.com.br`), como uma seção "Eventos Encerrados".
+
+## Requisitos
+
+- [x] Ordem da home: banner → próximos eventos → **patrocinadores** → **eventos realizados** → sobre nós → rodapé.
+- [x] "Eventos realizados" é uma vitrine de cartazes, **sem link**: seis por linha no desktop, três no tablet, dois no celular.
+- [x] A vitrine mostra tanto as artes das provas anteriores à plataforma quanto os eventos cadastrados aqui que já passaram da data.
+- [x] O topo da página do evento é um degradê no azul do tema com o nome em texto grande, com a **mesma altura para todo evento**.
+- [x] O compartilhamento leva a arte e o texto cadastrado do evento.
+- [x] "Minhas inscrições" mostra a arte inteira, mantendo o card deitado.
+
+## Fora de escopo
+
+- CRUD da vitrine no painel. Enquanto a lista não muda, uma tabela e um formulário seriam estrutura sem uso — está registrado em `docs/backlog.md`.
+- Trocar o formato das artes que o organizador manda fazer. O sistema se adapta ao que existe.
+
+## Design
+
+### A vitrine (`App\Support\GaleriaDeRealizados`)
+
+Ela junta duas fontes que o visitante não tem por que distinguir:
+
+| Fonte | De onde vem | Por que |
+|---|---|---|
+| Artes avulsas | `config/galeria.php`, por organizador | Provas anteriores à plataforma. Não têm inscrição, preço nem página — só a arte interessa. |
+| Eventos do banco | Os que já passaram da data e têm arte | Sem isso, uma prova cadastrada aqui sumiria do site no dia seguinte à realização. |
+
+O que sai é sempre a mesma forma — `['url' => ..., 'nome' => ...]` —, então a tela não sabe de onde cada cartaz veio. O evento do banco vem primeiro porque é o mais recente; a config é histórico mais antigo, e assim a vitrine fica em ordem decrescente sem precisar inventar data para arte avulsa.
+
+A chave da config é o **id do organizador**: a vitrine de um não pode vazar no site do outro. Tem teste para isso.
+
+Os arquivos ficam em `publico/organizadores/{id}/realizados/{arquivo}` no bucket. As nove artes vieram do site antigo, recomprimidas de PNG para JPEG — 2,5 MB viraram 959 KB.
+
+O card (`components/app/arte-realizada.blade.php`) é um `<figure>` com uma `<img>` dentro. Sem `<a>` e sem botão: a prova acabou, não há o que fazer com ela.
+
+### O topo da página do evento
+
+Degradê fixo no azul do tema (`#05080d → #0d1b2a → #1a71b2`), 320px no desktop e 200px no celular, com o nome do evento em texto grande e uma linha com data e local. Texto de verdade, desenhado pelo navegador: nunca corta, nunca desfoca, e não custa uma requisição.
+
+O `accent_color` de cada evento continua existindo e continua mandando no card de evento **sem** arte, na home e em "minhas inscrições". O que ele não faz mais é mandar no topo da página, que agora é igual para todos.
+
+O `<h2>` que repetia o nome logo abaixo do topo saiu — com o nome grande no degradê, era a mesma frase duas vezes seguidas.
+
+### O cartão de compartilhamento (`App\Support\ImagemOg`)
+
+Uma terceira derivada da arte, gerada com GD: **1200×630** (a proporção que o WhatsApp e o Facebook esperam), com a arte inteira e nítida no centro, sobre uma versão desfocada e escurecida dela mesma. Assim o cartão fica na cor do evento sem precisar de arte extra, e nada do cartaz é recortado.
+
+O desfoque é feito numa miniatura de 60×32 e depois ampliado — o filtro do GD é fraco e caro; aplicado num pedaço pequeno ele custa quase nada e, ampliado, o borrão sai bem mais suave do que na imagem inteira.
+
+Resultado: as artes de até 1,9 MB viram cartões de 56 a 82 KB. Tem teste garantindo os dois números que vêm de fora (o formato e o teto de 300 KB).
+
+Vale para todas as páginas, não só a de evento: o organizador e a plataforma também ganharam `og.jpg` de 1200×630, e é isso que autoriza o HTML a declarar `og:image:width`/`og:image:height`. **Nunca apontar `og:image` para uma imagem de outro formato sem trocar as dimensões junto.**
+
+Quando o organizador sobe uma arte no painel, a derivada é gerada na hora (`ImagensDoEvento::gerarOg`), dentro de um `try/catch`: a arte já foi salva, e uma falha aqui não pode derrubar o cadastro do evento. Para o que já existia, `php artisan og:gerar`.
+
+### "Minhas inscrições"
+
+O card continua deitado, como sempre foi. O que muda é a arte: `object-fit: contain` sobre o degradê do evento, em vez de `cover`. No celular o card empilha e a coluna da arte ganha altura para o cartaz caber em pé.
+
+## Plano de testes
+
+- `GaleriaDeRealizadosTest` — as artes da config aparecem, o evento passado do banco entra, o evento passado **sem** arte fica de fora (entraria como buraco na grade), os cartazes não são link, a galeria de um organizador não vaza no site do outro, a seção some quando não há nada, e os patrocinadores ficam entre próximos e realizados.
+- `PaginaDoEventoTest` — o topo é o nome sobre o degradê e não a arte; o compartilhamento leva a derivada e o texto cadastrado; evento sem arte cai no cartão do organizador.
+- `ImagemOgTest` — sai sempre 1200×630 (de retrato, paisagem e quadrado), fica abaixo de 300 KB, e reclama quando o conteúdo não é imagem.
+- Verificação visual via Playwright em 1440 / 900 / 390 na home, na página do evento e em "minhas inscrições".
+
+## Consequência assumida
+
+Um organizador que ainda não tem `banner.jpg` no bucket também não vai ter `og.jpg` — o cartão dele fica sem imagem, como já ficava antes. Vale para o organizador 2 (Borafitness), que hoje não tem imagem nenhuma no bucket.

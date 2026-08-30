@@ -4,6 +4,7 @@ namespace App\Support;
 
 use App\Models\Event;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Grava as imagens de um evento no R2.
@@ -35,6 +36,31 @@ class ImagensDoEvento
         self::salvar($event, $arquivo, 'card');
     }
 
+    /**
+     * Gera e grava a imagem do cartão de compartilhamento a partir da arte.
+     *
+     * É derivada, não enviada: quem cadastra manda uma arte só, e o cartão do
+     * WhatsApp precisa de outro formato e outro peso (ver ImagemOg). Um
+     * problema aqui não pode derrubar o cadastro do evento — a arte já foi
+     * salva —, então a falha vira registro no log e o link cai no cartão
+     * padrão da plataforma.
+     */
+    public static function gerarOg(Event $event, string $conteudoDaArte): void
+    {
+        try {
+            ImagemPublica::salvarConteudo(
+                self::caminho($event, 'og'),
+                ImagemOg::gerar($conteudoDaArte),
+                'image/jpeg'
+            );
+        } catch (\Throwable $e) {
+            Log::error('Não consegui gerar a imagem de compartilhamento do evento', [
+                'event_id' => $event->id,
+                'erro' => $e->getMessage(),
+            ]);
+        }
+    }
+
     private static function salvar(Event $event, UploadedFile $arquivo, string $tipo): void
     {
         // Sempre .jpg no destino, independente do que foi enviado: o caminho é
@@ -45,7 +71,7 @@ class ImagensDoEvento
 
     public static function apagar(Event $event): void
     {
-        foreach (['banner', 'card'] as $tipo) {
+        foreach (['banner', 'card', 'og'] as $tipo) {
             ImagemPublica::apagar(self::caminho($event, $tipo));
         }
     }

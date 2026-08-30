@@ -30,45 +30,50 @@
 
 .event-banner {
   width: 100%;
-  /* Altura fixa: com arte ou sem, todo evento abre igual. Antes a altura vinha
-     da proporção da imagem, e arte vertical fazia o topo ocupar a tela toda. */
+  /* Altura fixa: todo evento abre igual, independente do que foi cadastrado.
+     Antes a altura vinha da proporção da arte, e arte retrato fazia o topo
+     ocupar a tela inteira. */
   height: 320px;
+  /* Degradê no azul do tema, igual para todos. A arte da prova é retrato e
+     não cabe bem num quadro largo — ela é o cartaz da home e é o que viaja no
+     compartilhamento; aqui manda o nome, em texto de verdade. */
+  background: linear-gradient(135deg, #05080d 0%, #0d1b2a 42%, #1a71b2 100%);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 14px;
+  padding: 28px 32px;
+  box-sizing: border-box;
   overflow: hidden;
   border-radius: 10px;
-}
-
-.event-banner img,
-.event-banner .banner-img {
-  width: 100%;
-  height: 100%;
-  display: block;
-  max-width: 100%;
-  /* contain e não cover: mostra o cartaz inteiro, centralizado. A arte é
-     vertical e o topo é largo — recortar cortava o nome e a data, que ficam
-     justo na parte de cima do cartaz. O que sobra nas laterais é preenchido
-     pelo degradê do evento, aplicado no elemento pai. */
-  object-fit: contain;
-}
-
-/* Topo sem arte enviada: degradê na cor do evento com o nome por cima. */
-.event-banner--degrade {
-  padding: 24px 28px;
-  box-sizing: border-box;
 }
 
 .event-banner__nome {
   margin: 0;
   color: #fff;
-  font-size: clamp(1.6rem, 4vw, 2.8rem);
+  font-size: clamp(1.7rem, 4.6vw, 3rem);
   font-weight: 800;
-  line-height: 1.15;
+  line-height: 1.12;
   text-align: center;
   text-transform: uppercase;
+  letter-spacing: .01em;
   text-wrap: balance;
-  text-shadow: 0 2px 16px rgba(0, 0, 0, .55);
+  text-shadow: 0 2px 18px rgba(0, 0, 0, .45);
+}
+
+.event-banner__linha {
+  margin: 0;
+  color: rgba(255, 255, 255, .88);
+  font-size: clamp(.95rem, 1.6vw, 1.1rem);
+  font-weight: 600;
+  text-align: center;
+  letter-spacing: .02em;
+}
+
+.event-banner__linha span {
+  padding: 0 6px;
+  opacity: .6;
 }
 
 .banner-overlay {
@@ -173,6 +178,8 @@
   .event-banner {
     width: 100% !important;
     height: 200px;
+    padding: 20px 18px;
+    gap: 10px;
   }
 
   .banner-overlay h1 {

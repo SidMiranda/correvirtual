@@ -175,13 +175,51 @@
 }
 
 /* ---------------------------------------------------------------------------
-   Eventos realizados
+   Eventos realizados — vitrine
    ---------------------------------------------------------------------------
    A arte dos eventos passados fica em cor cheia de propósito: é ela que mostra
    a qualidade do trabalho do organizador para quem está conhecendo a página
-   agora. Quem separa as duas coisas é o título da seção, não um filtro que
-   apaga o material.
+   agora.
+
+   São só cartazes: sem link, sem botão. A prova acabou — não há o que fazer
+   com ela. Por isso cabem mais por linha que os eventos abertos: seis no
+   desktop, três no tablet, dois no celular.
 */
+
+.cards-grid--realizados {
+  gap: 16px;
+}
+
+.arte-realizada {
+  /* figure vem com margem do navegador; sem zerar, a grade abre buracos. */
+  margin: 0;
+  /* 6 por linha: 100%/6 menos a parte do gap que sobra em cada cartaz. */
+  width: calc(16.666% - 14px);
+  /* Mesma proporção das artes (576x1024). */
+  aspect-ratio: 9 / 16;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #0d1b2a;
+  box-shadow: 0 3px 12px rgba(13, 27, 42, .14);
+}
+
+.arte-realizada__imagem {
+  width: 100%;
+  height: 100%;
+  /* cover e não contain: aqui todas as artes têm a mesma proporção do quadro,
+     então não sobra nada — e se um dia sobrar, é melhor um recorte discreto
+     que uma faixa vazia numa grade de seis. */
+  object-fit: cover;
+  display: block;
+}
+
+@media (max-width: 1024px) {
+  .arte-realizada { width: calc(33.333% - 11px); }
+}
+
+@media (max-width: 640px) {
+  .arte-realizada { width: calc(50% - 8px); }
+}
 
 .eventos-vazio {
     text-align: center;

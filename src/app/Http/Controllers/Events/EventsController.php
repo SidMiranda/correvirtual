@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Events;
 use App\Http\Controllers\Controller;
 use App\Models\Event;
 use App\Support\Arquivos;
+use App\Support\GaleriaDeRealizados;
 
 class EventsController extends Controller
 {
@@ -31,7 +32,12 @@ class EventsController extends Controller
             ->sortByDesc('event_date')
             ->values();
 
-        return view('index', compact('proximosEventos', 'eventosPassados'));
+        // A vitrine de realizados não é uma lista de eventos: é uma lista de
+        // artes, e boa parte dela é de provas anteriores à plataforma, que não
+        // têm registro no banco. Quem junta as duas fontes é a GaleriaDeRealizados.
+        $eventosRealizados = GaleriaDeRealizados::montar($organizerId, $eventosPassados);
+
+        return view('index', compact('proximosEventos', 'eventosRealizados'));
     }
 
     public function show($event_id)
@@ -50,7 +56,7 @@ class EventsController extends Controller
             'tipo' => 'article',
             'titulo' => $event->title . ' — ' . $event->event_date?->format('d/m/Y'),
             'descricao' => $event->location . '. ' . $event->description,
-            'imagem' => Arquivos::bannerDoEvento($event),
+            'imagem' => Arquivos::ogDoEvento($event),
         ];
 
         return view('events.event-details', compact('event', 'og'));

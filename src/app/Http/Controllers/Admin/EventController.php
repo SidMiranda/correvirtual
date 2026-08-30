@@ -132,6 +132,16 @@ class EventController extends AdminController
             $subiuAlguma = true;
         }
 
+        // A imagem que vai no cartão do WhatsApp é derivada da arte, não é um
+        // terceiro campo do formulário — pedir mais uma imagem ao organizador
+        // só para isso seria trabalho dele para resolver um problema nosso.
+        // O card tem preferência por ser o cartaz que já circula na home.
+        $arte = $request->file('card') ?? $request->file('banner');
+
+        if ($arte) {
+            ImagensDoEvento::gerarOg($event, file_get_contents($arte->getRealPath()));
+        }
+
         if ($subiuAlguma && !$event->banner_url) {
             $event->banner_url = 'banner.jpg';
             $event->save();

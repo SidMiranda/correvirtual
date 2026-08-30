@@ -20,11 +20,20 @@ class ImagemPublica
 
     public static function salvar(string $caminho, UploadedFile $arquivo): void
     {
+        self::salvarConteudo($caminho, file_get_contents($arquivo->getRealPath()), $arquivo->getMimeType());
+    }
+
+    /**
+     * Grava conteúdo que não veio de um formulário — imagem derivada, gerada
+     * pelo próprio sistema (ver ImagemOg).
+     */
+    public static function salvarConteudo(string $caminho, string $conteudo, string $mime): void
+    {
         Storage::disk('r2')->put(
             $caminho,
-            file_get_contents($arquivo->getRealPath()),
+            $conteudo,
             [
-                'ContentType' => $arquivo->getMimeType(),
+                'ContentType' => $mime,
                 // O nome do arquivo não muda quando a imagem é trocada, então a
                 // versão antiga pode ficar no cache do CDN por um tempo — é o
                 // preço de ter caminho previsível. As telas contornam isso

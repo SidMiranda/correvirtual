@@ -30,13 +30,17 @@ correvirtual-arquivos/          ← TEM domínio público (cdncorrevirtual.mobsp
     ├── organizadores/{organizer_id}/
     │   ├── logo.png · logo.jpg
     │   ├── banner.jpg · banner-mobile.jpg
+    │   ├── og.jpg                            ← 1200x630, cartão de link (derivada do banner)
     │   ├── sobre-nos.jpg
+    │   ├── equipes/{team_id}/brasao.jpg
+    │   ├── realizados/{NN-nome}.jpg          ← vitrine de provas anteriores à plataforma
     │   └── eventos/{event_id}/
     │       ├── banner.jpg
-    │       └── card.jpg
+    │       ├── card.jpg
+    │       └── og.jpg                        ← 1200x630, derivada do card
     └── plataforma/                           ← não pertence a organizador nenhum
         ├── home/banner-{1,2,3}.jpg
-        └── padrao/{banner,card,user}.jpg     ← fallback quando falta imagem
+        └── padrao/{banner,card,user,og}.jpg  ← fallback quando falta imagem
 
 correvirtual-privado/           ← NÃO tem domínio nenhum; só com credencial, pelo back
 ├── organizadores/{organizer_id}/
@@ -44,6 +48,10 @@ correvirtual-privado/           ← NÃO tem domínio nenhum; só com credencial
 │   └── eventos/{event_id}/                   ← comprovante de desafio virtual, etc.
 └── atletas/{user_id}/                        ← documento pessoal
 ```
+
+**`og.jpg` é derivada, nunca enviada.** Quem cadastra manda uma arte só; o cartão de pré-visualização de link precisa de outro formato (1200x630, deitado) e outro peso (abaixo de 300 KB, senão o WhatsApp não monta a prévia). Ela é gerada por `App\Support\ImagemOg` na hora do upload, e `php artisan og:gerar` refaz as que já existem. Ver `docs/specs/frontend-publico.md` (Fase 2).
+
+**`realizados/` é vitrine, não evento.** São as artes de provas que o organizador entregou antes desta plataforma existir — sem inscrição, sem preço e sem página. A lista mora em `config/galeria.php`, por organizador.
 
 O prefixo `publico/` continua existindo dentro do bucket público mesmo ele sendo inteiro público — é o que permite a `ARQUIVOS_BASE_URL` terminar em `/publico` e o disco local espelhar a mesma árvore.
 
