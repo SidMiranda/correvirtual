@@ -104,6 +104,20 @@ docker exec -it corre_app php artisan admin:criar pessoa@exemplo.com.br
 
 Sem `--organizador`, o comando pergunta qual usar (ou assume o único, se só houver um). Ao promover alguém, o e-mail é marcado como confirmado se ainda não estivesse — sem isso o login barra a entrada.
 
+### Imagens de compartilhamento (Open Graph)
+
+Toda arte enviada pelo painel gera na hora a derivada de 1200x630 que o WhatsApp e o Facebook usam no cartão do link. Para refazer as que já existem — depois de importar artes fora do painel, ou se o comando falhou:
+
+```bash
+# tudo: eventos com arte, banners de organizador e o padrão da plataforma
+docker exec corre_app php artisan og:gerar
+
+# um evento só
+docker exec corre_app php artisan og:gerar --evento=12
+```
+
+Roda quantas vezes quiser: só reescreve as derivadas, nunca a arte original. Ver `docs/specs/frontend-publico.md` (Fase 2).
+
 ### Branches
 
 `main` (protegida, deploy automático) ← PR ← `develop` (integração, sem deploy automático) ← PR ← `feature/*` / `fix/*`. Ver ADR 0004.
