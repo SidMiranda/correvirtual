@@ -187,3 +187,43 @@
   }
 
 }
+/* ---------------------------------------------------------------------------
+   Aviso no lugar do botão de inscrição
+   ---------------------------------------------------------------------------
+   Ocupa o mesmo espaço do botão, com a mesma largura, para o bloco lateral não
+   "pular" entre um evento aberto e um encerrado. Fundo neutro e sem aparência
+   de clicável: é informação, não ação.
+*/
+
+.event-aviso {
+  padding: 16px;
+  border-radius: 8px;
+  background: #f1f4f8;
+  border: 1px solid #dbe3ec;
+  color: #46586b;
+  font-size: 15px;
+  line-height: 1.45;
+  text-align: center;
+}
+
+.event-aviso strong {
+  display: block;
+  color: #0d1b2a;
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.event-aviso--realizado {
+  background: #eaf4fb;
+  border-color: #cfe3f2;
+}
+
+.event-erro-inscricao {
+  padding: 14px 16px;
+  margin: 0 0 16px;
+  border-radius: 8px;
+  background: #fdeceb;
+  border: 1px solid #f0b7b2;
+  color: #8c1d16;
+  font-size: 15px;
+}

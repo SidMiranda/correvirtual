@@ -17,7 +17,35 @@ class SubscribeController extends Controller
         $eventId = $request->route('event_id');
         $event = Event::with(['modalities', 'kits'])->findOrFail($eventId);
 
+        if ($erro = $this->recusarSeFechado($event)) {
+            return $erro;
+        }
+
         return view('subscriptions.subscribe', compact('event'));
+    }
+
+    /**
+     * Recusa a inscrição quando o evento não está mais aberto.
+     *
+     * A página do evento já esconde o botão nesse caso, mas esconder no front
+     * não é proteger: o endereço /subscribe/event/{id} pode ser digitado à mão,
+     * ou ter ficado salvo num link antigo. Fecha aqui também.
+     *
+     * Devolve o redirecionamento a ser retornado, ou null quando está tudo bem.
+     */
+    private function recusarSeFechado(Event $event)
+    {
+        if ($event->inscricoesAbertas()) {
+            return null;
+        }
+
+        $motivo = $event->jaAconteceu()
+            ? "O evento \"{$event->title}\" já aconteceu e não recebe mais inscrições."
+            : "As inscrições para \"{$event->title}\" estão encerradas.";
+
+        return redirect()
+            ->route('event.show', $event->id)
+            ->withErrors(['inscricao' => $motivo]);
     }
 
     public function mySubscriptions(Request $request)
@@ -43,6 +71,10 @@ class SubscribeController extends Controller
         // Valida se o evento realmente existe no banco antes de criar a inscrição.
         // Se não existir, retorna um erro 404 automaticamente.
         $event = Event::findOrFail($eventId);
+
+        if ($erro = $this->recusarSeFechado($event)) {
+            return $erro;
+        }
 
         // Valida que a modalidade e o kit foram preenchidos e que de fato pertencem a este evento
         $request->validate([

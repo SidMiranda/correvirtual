@@ -4,7 +4,7 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/top-bar.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/info-evento.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/info-evento.css') }}?v={{ filemtime(public_path('css/info-evento.css')) }}">
 @endpush
 
 @section('content')
@@ -25,6 +25,10 @@
         {{ $event->title }}
     </h2>
 
+  @error('inscricao')
+    <div class="event-erro-inscricao" role="alert">{{ $message }}</div>
+  @enderror
+
   <section class="event-content">
 
     <aside class="event-side">
@@ -38,9 +42,25 @@
         <p>{{ $event->location }}</p>
       </div>
 
-      <a href="/subscribe/event/{{ $event->id }}" class="cta-button">
-        Inscreva-se
-      </a>
+      {{-- Prova já realizada ou com prazo encerrado não oferece inscrição: o
+           botão levaria a pessoa a um formulário que não vai aceitar nada.
+           Esconder aqui é só a metade visível — quem barra de verdade é o
+           SubscribeController, porque o endereço pode ser digitado à mão. --}}
+      @if ($event->inscricoesAbertas())
+        <a href="/subscribe/event/{{ $event->id }}" class="cta-button">
+          Inscreva-se
+        </a>
+      @elseif ($event->jaAconteceu())
+        <div class="event-aviso event-aviso--realizado">
+          <strong>Evento realizado</strong>
+          <span>Aconteceu em {{ $event->event_date->format('d/m/Y') }}.</span>
+        </div>
+      @else
+        <div class="event-aviso">
+          <strong>Inscrições encerradas</strong>
+          <span>O prazo terminou em {{ $event->registration_deadline->format('d/m/Y \à\s H:i') }}.</span>
+        </div>
+      @endif
 
     </aside>
 
