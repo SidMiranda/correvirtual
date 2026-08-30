@@ -5,6 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>@yield('titulo', 'Painel') — {{ auth()->user()->organizer->name ?? 'Corre Virtual' }}</title>
 
+    {{-- Cartão de pré-visualização do link. O painel é fechado, então o cartão
+         não descreve conteúdo nenhum de propósito: quem receber o endereço vê
+         que é uma área restrita, e não um pedaço do site do organizador. --}}
+    <x-app.og
+        tipo="website"
+        :titulo="'Painel do organizador — ' . (auth()->user()->organizer->name ?? 'Corre Virtual')"
+        descricao="Área restrita para o organizador cadastrar eventos, modalidades, kits e equipes."
+        :imagem="\App\Support\Arquivos::bannerDoOrganizador(auth()->user()->organizer_id)" />
+
+    {{-- Painel não entra em busca: é área logada. --}}
+    <meta name="robots" content="noindex, nofollow">
+
     {{-- SB Admin Pro (TEMPLATES/Painel-Admin/), copiado para public/assets/admin/.
          Só o painel usa isso — o site público continua sem Bootstrap/jQuery.
 

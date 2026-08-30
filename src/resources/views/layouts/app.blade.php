@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<x-app.head />
+<x-app.head :og="$og ?? null" />
 <x-app.top-bar />
 
 <body>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Events;
 
 use App\Http\Controllers\Controller;
 use App\Models\Event;
+use App\Support\Arquivos;
 
 class EventsController extends Controller
 {
@@ -31,6 +32,16 @@ class EventsController extends Controller
             ->where('organizer_id', $organizerId)
             ->findOrFail($event_id);
 
-        return view('events.event-details', compact('event'));
+        // Cartão de pré-visualização do link: quando alguém manda a página deste
+        // evento no WhatsApp, é a corrida que precisa aparecer — não a capa
+        // genérica do organizador.
+        $og = [
+            'tipo' => 'article',
+            'titulo' => $event->title . ' — ' . $event->event_date?->format('d/m/Y'),
+            'descricao' => $event->location . '. ' . $event->description,
+            'imagem' => Arquivos::bannerDoEvento($event),
+        ];
+
+        return view('events.event-details', compact('event', 'og'));
     }
 }

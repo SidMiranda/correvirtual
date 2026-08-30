@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<x-app.head />
+<x-app.head :og="$og ?? null" />
 
 <link rel="stylesheet" href="{{ asset('css/home-v2.css') }}?v={{ filemtime(public_path('css/home-v2.css')) }}">
 
