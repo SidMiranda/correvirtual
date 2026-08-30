@@ -6,6 +6,15 @@ Histórico anterior a este arquivo (todo o desenvolvimento inicial do projeto) p
 
 ## [Unreleased]
 
+### Prévia bonita do link ao compartilhar (2026-08-29)
+- **Open Graph e Twitter Card no site e no painel.** Sem isso o endereço chega no WhatsApp como texto cru, sem imagem nem descrição — impressão exatamente errada para uma plataforma que cobra dinheiro.
+- **A página de um evento fala do evento**: título com a data, local e descrição, e a imagem do próprio evento. A home usa o nome e o banner do organizador. Sem imagem específica, cai no banner padrão — cartão sem imagem nenhuma é bem pior que um genérico.
+- A imagem do cartão é sempre **URL absoluta**: quem monta a prévia é um servidor de fora, que não resolve caminho relativo. Tem teste para isso.
+- O painel declara `noindex, nofollow` e um cartão que diz ser área restrita, sem descrever conteúdo — quem receber o endereço vê que não é parte do site do organizador.
+- **A tag de charset subiu para a primeira linha do cabeçalho.** Estava depois de todas as outras meta tags, e os robôs que montam a prévia leem só o começo do documento. A meta `description`, que estava vazia, passou a ser preenchida.
+- `<x-app.head>` agora aceita `:og` — componente Blade não herda variável da view como `@include` faz, e era por isso que os dados do evento não chegavam ao cabeçalho.
+- 5 testes novos. Suíte: **99 testes, 240 asserções**.
+
 ### Brasão da equipe e correção do atalho para o site (2026-08-29)
 - **A equipe pode ter brasão.** Upload no cadastro, direto para o R2 (`publico/organizadores/{id}/equipes/{id}/brasao.jpg`). Na listagem ele aparece **redondo, antes do nome**; equipe sem brasão mostra as iniciais no mesmo tamanho e formato, para a coluna não ficar desalinhada.
 - Coluna `teams.has_logo`: com o CDN não dá para perguntar ao disco se o arquivo existe (seria uma requisição de rede por linha da listagem), então quem responde é o banco. Mesma escolha já feita para a imagem do evento.
