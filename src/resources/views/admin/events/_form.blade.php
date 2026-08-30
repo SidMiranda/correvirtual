@@ -77,7 +77,7 @@
 
             @if ($event?->banner_url)
                 <div class="mb-2">
-                    <img src="{{ \App\Support\Arquivos::bannerDoEvento($event) }}?v={{ $event->updated_at?->timestamp }}"
+                    <img src="{{ \App\Support\Arquivos::bannerDoEvento($event) }}"
                          alt="Banner atual" class="img-fluid rounded border" style="max-height: 110px;"
                          onerror="this.style.display='none';">
                 </div>
@@ -99,7 +99,7 @@
 
             @if ($event?->banner_url)
                 <div class="mb-2">
-                    <img src="{{ \App\Support\Arquivos::cardDoEvento($event) }}?v={{ $event->updated_at?->timestamp }}"
+                    <img src="{{ \App\Support\Arquivos::cardDoEvento($event) }}"
                          alt="Card atual" class="img-fluid rounded border" style="max-height: 110px;"
                          onerror="this.style.display='none';">
                 </div>

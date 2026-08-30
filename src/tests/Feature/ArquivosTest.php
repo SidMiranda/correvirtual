@@ -43,7 +43,7 @@ class ArquivosTest extends TestCase
         $url = Arquivos::cardDoEvento($evento);
 
         $this->assertStringContainsString('/images/', $url);
-        $this->assertStringEndsWith(
+        $this->assertStringContainsString(
             "organizadores/{$evento->organizer_id}/eventos/{$evento->id}/card.jpg",
             $url
         );
@@ -55,7 +55,8 @@ class ArquivosTest extends TestCase
         $evento = $this->eventoCom();
 
         $this->assertSame(
-            "https://cdn.exemplo.com/publico/organizadores/{$evento->organizer_id}/eventos/{$evento->id}/card.jpg",
+            "https://cdn.exemplo.com/publico/organizadores/{$evento->organizer_id}/eventos/{$evento->id}/card.jpg"
+                . '?v=' . $evento->updated_at->timestamp,
             Arquivos::cardDoEvento($evento)
         );
     }
@@ -147,5 +148,24 @@ class ArquivosTest extends TestCase
         $this->assertSame([], $suspeitas,
             'Estas views voltaram a montar caminho de imagem na mão: ' . implode(', ', $suspeitas)
         );
+    }
+
+    public function test_url_da_imagem_muda_quando_o_evento_e_atualizado(): void
+    {
+        // O caminho no bucket é derivado do id e não muda quando a imagem é
+        // trocada, e ela sobe com Cache-Control immutable. Sem o ?v=, o CDN
+        // serviria a imagem antiga por um ano — foi assim que a primeira carga
+        // de eventos saiu com as artes trocadas.
+        config(['arquivos.base_url' => 'https://cdn.exemplo.com/publico']);
+        $evento = $this->eventoCom();
+
+        $antes = Arquivos::cardDoEvento($evento);
+
+        // Data explícita: touch() no mesmo segundo não muda o timestamp.
+        $evento->forceFill(['updated_at' => now()->addHour()])->saveQuietly();
+        $evento->refresh();
+
+        $this->assertStringContainsString('?v=', $antes);
+        $this->assertNotSame($antes, Arquivos::cardDoEvento($evento));
     }
 }

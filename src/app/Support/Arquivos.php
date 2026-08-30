@@ -52,7 +52,7 @@ class Arquivos
     public static function cardDoEvento(Event $event): string
     {
         return $event->banner_url
-            ? self::url("organizadores/{$event->organizer_id}/eventos/{$event->id}/card.jpg")
+            ? self::comVersao(self::url("organizadores/{$event->organizer_id}/eventos/{$event->id}/card.jpg"), $event)
             : self::cardPadrao();
     }
 
@@ -60,8 +60,27 @@ class Arquivos
     public static function bannerDoEvento(Event $event): string
     {
         return $event->banner_url
-            ? self::url("organizadores/{$event->organizer_id}/eventos/{$event->id}/banner.jpg")
+            ? self::comVersao(self::url("organizadores/{$event->organizer_id}/eventos/{$event->id}/banner.jpg"), $event)
             : self::bannerPadrao();
+    }
+
+    /**
+     * Acrescenta ?v={updated_at} à URL da imagem.
+     *
+     * O caminho no bucket é derivado do id e não muda quando a imagem é
+     * trocada — e ela sobe com `Cache-Control: immutable`, então o CDN guarda a
+     * versão antiga por um ano. Sem este parâmetro, trocar a arte de um evento
+     * não aparece para ninguém.
+     *
+     * Foi assim que a primeira carga de eventos saiu com as artes trocadas: o
+     * ambiente de desenvolvimento havia escrito nos mesmos caminhos antes, e o
+     * CDN continuou servindo aquelas imagens.
+     */
+    private static function comVersao(string $url, Event $event): string
+    {
+        $versao = $event->updated_at?->timestamp;
+
+        return $versao ? "{$url}?v={$versao}" : $url;
     }
 
     /*
