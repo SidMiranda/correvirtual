@@ -5,21 +5,36 @@
 @section('subtitulo', $event->title)
 
 @section('acoes')
-    <a class="btn btn-primary" href="{{ route('admin.eventos.kits.create', $event->id) }}">
-        <i class="mr-1" data-feather="plus"></i> Novo kit
-    </a>
+    @unless ($event->jaAconteceu())
+        <a class="btn btn-primary" href="{{ route('admin.eventos.kits.create', $event->id) }}">
+            <i class="mr-1" data-feather="plus"></i> Novo kit
+        </a>
+    @endunless
 @endsection
 
 @section('conteudo')
 
     @include('admin._abas-do-evento')
 
+    @if ($event->jaAconteceu())
+        <div class="alert alert-icon" role="alert" style="background:#f1f4f8; border:1px solid #dbe3ec;">
+            <div class="alert-icon-aside"><i data-feather="lock"></i></div>
+            <div class="alert-icon-content">
+                Este evento já aconteceu em <strong>{{ $event->event_date->format('d/m/Y') }}</strong>,
+                então kits não podem mais ser alterados aqui — mexer depois da prova bagunçaria o
+                histórico de quem se inscreveu.
+            </div>
+        </div>
+    @endif
+
     <div class="card mb-4">
         <div class="card-body p-0">
             @if ($kits->isEmpty())
                 <div class="p-5 text-center text-muted">
                     <p class="mb-3">Este evento ainda não tem kits. O kit define o preço — sem ele, não há o que cobrar.</p>
-                    <a class="btn btn-primary" href="{{ route('admin.eventos.kits.create', $event->id) }}">Criar o primeiro</a>
+                    @unless ($event->jaAconteceu())
+                        <a class="btn btn-primary" href="{{ route('admin.eventos.kits.create', $event->id) }}">Criar o primeiro</a>
+                    @endunless
                 </div>
             @else
                 <div class="table-responsive">
@@ -54,6 +69,7 @@
                                         @endif
                                     </td>
                                     <td class="text-right text-nowrap">
+                                        @unless ($event->jaAconteceu())
                                         <a class="btn btn-datatable btn-icon btn-transparent-dark"
                                            href="{{ route('admin.eventos.kits.edit', [$event->id, $kit->id]) }}" title="Editar">
                                             <i data-feather="edit"></i>
@@ -67,6 +83,7 @@
                                                 <i data-feather="trash-2"></i>
                                             </button>
                                         </form>
+                                        @endunless
                                     </td>
                                 </tr>
                             @endforeach

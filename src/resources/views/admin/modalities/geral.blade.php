@@ -54,10 +54,17 @@
                                         @endif
                                     </td>
                                     <td class="text-right">
-                                        <a class="btn btn-datatable btn-icon btn-transparent-dark"
-                                           href="{{ route('admin.eventos.modalidades.edit', [$modalidade->event_id, $modalidade->id]) }}" title="Editar">
-                                            <i data-feather="edit"></i>
-                                        </a>
+                                        {{-- Evento já realizado não é mais editável. --}}
+                                        @if ($modalidade->event->jaAconteceu())
+                                            <span class="small text-muted" title="Evento já realizado">
+                                                <i data-feather="lock" style="width:16px;height:16px;"></i>
+                                            </span>
+                                        @else
+                                            <a class="btn btn-datatable btn-icon btn-transparent-dark"
+                                               href="{{ route('admin.eventos.modalidades.edit', [$modalidade->event_id, $modalidade->id]) }}" title="Editar">
+                                                <i data-feather="edit"></i>
+                                            </a>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

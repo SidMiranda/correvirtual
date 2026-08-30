@@ -62,14 +62,17 @@ class CatalogoController extends AdminController
     {
         $eventoId = (int) $request->query('evento');
 
-        $existe = Event::where('id', $eventoId)
+        $evento = Event::where('id', $eventoId)
             ->where('organizer_id', $this->organizerId())
-            ->exists();
+            ->first();
 
-        if (!$existe) {
+        // Evento já realizado é recusado aqui também, não só escondido do
+        // seletor: o valor vem de um <select>, e trocar isso no navegador não
+        // pode abrir uma porta que a tela fechou.
+        if (!$evento || $evento->jaAconteceu()) {
             return redirect()
                 ->route($tipo === 'kits' ? 'admin.kits.geral' : 'admin.modalidades.geral')
-                ->withErrors(['evento' => 'Escolha um evento seu antes de cadastrar.']);
+                ->withErrors(['evento' => 'Escolha um evento seu que ainda não aconteceu.']);
         }
 
         return redirect()->route(
@@ -85,11 +88,17 @@ class CatalogoController extends AdminController
         return fn ($q) => $q->where('organizer_id', $organizerId);
     }
 
-    /** Eventos do organizador, o mais recente primeiro, para o seletor. */
+    /**
+     * Eventos que ainda podem receber modalidade ou kit.
+     *
+     * Prova que já aconteceu fica de fora: não há o que cadastrar nela, e
+     * deixá-la na lista só convida ao engano.
+     */
     private function eventosParaEscolha()
     {
         return Event::where('organizer_id', $this->organizerId())
-            ->orderByDesc('event_date')
+            ->where('event_date', '>=', now())
+            ->orderBy('event_date')
             ->get(['id', 'title', 'event_date']);
     }
 }

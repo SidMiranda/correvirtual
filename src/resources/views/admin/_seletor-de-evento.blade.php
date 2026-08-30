@@ -2,8 +2,11 @@
      evento, então antes de abrir o formulário é preciso saber qual. --}}
 
 @if ($eventos->isEmpty())
-    <div class="alert alert-warning" role="alert">
-        Você precisa ter um evento antes de cadastrar {{ $tipoLabel }}.
+    {{-- Só entram eventos que ainda não aconteceram: prova realizada não tem
+         mais o que cadastrar. Se a lista está vazia, ou não há evento nenhum,
+         ou todos já passaram. --}}
+    <div class="alert alert-warning mb-0 py-2 px-3 small" role="alert">
+        Nenhum evento futuro para cadastrar {{ $tipoLabel }}.
         <a href="{{ route('admin.eventos.create') }}">Criar um evento</a>.
     </div>
 @else

@@ -6,6 +6,14 @@ Histórico anterior a este arquivo (todo o desenvolvimento inicial do projeto) p
 
 ## [Unreleased]
 
+### Evento já realizado vira somente leitura, e selo Mobspot (2026-08-29)
+- **Prova que já aconteceu não recebe mais alteração de modalidade nem de kit.** Mexer depois da corrida bagunça o histórico de quem se inscreveu e não muda nada no mundo real. A listagem continua abrindo (vira só leitura, com um aviso e sem os botões), e o evento sai do seletor de "cadastrar em" das telas gerais. A checagem vive no controller, não só na tela: esconder no front não é proteger, e o valor do `<select>` é entrada do usuário como qualquer outra.
+- **Ícone do perfil na barra de cima estava invisível** — a classe `btn-transparent-dark` do template pinta o ícone da própria cor do fundo escuro. Mesmo problema que o botão do menu tinha; agora os dois usam a mesma regra e ficam brancos.
+- **"Ver o site público" saiu do rodapé e virou uma casinha na barra**, à esquerda do perfil — no rodapé ninguém rolava até lá.
+- **Selo "Desenvolvido por Mobspot"** no rodapé do site público e no do painel, com UTM próprio de cada um. Discreto: menor e mais apagado que o resto, sem competir com o conteúdo do organizador.
+- No menu lateral do painel, "Organizador / Corre Virtual Eventos" deu lugar a "Desenvolvido por: Mobspot" — o nome do organizador já aparece na barra de cima, ao lado da logo, e repetir gastava o único espaço fixo do menu.
+- 6 testes novos para a regra de evento realizado. Suíte: **87 testes, 205 asserções**.
+
 ### Ajustes no painel pedidos pelo Sidney (2026-08-29)
 - **"Categoria" virou "modalidade" em todo o painel** — rota, nome de rota, rótulos e testes. É o nome correto do domínio e o que o banco já usava (`EventModality`); a tela é que estava errada.
 - **Modalidades e Kits ganharam entrada no menu lateral**, com listagem de todos os eventos do organizador (coluna do evento junto) e um seletor "cadastrar em [evento]" — modalidade e kit vivem dentro de um evento, então o atalho pergunta em qual antes de abrir o formulário aninhado de sempre. O evento escolhido é validado contra os do organizador: o valor vem de um `<select>`, que é entrada do usuário como qualquer outra.

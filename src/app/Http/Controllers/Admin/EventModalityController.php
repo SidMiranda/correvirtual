@@ -17,7 +17,9 @@ class EventModalityController extends AdminController
 {
     public function index(int $eventoId)
     {
-        $event = $this->evento($eventoId);
+        // Listar continua valendo para evento já realizado: a tela vira só
+        // leitura, sem os botões de criar, editar e apagar.
+        $event = $this->eventoDoOrganizador($eventoId);
         $modalities = $event->modalities()->orderBy('distance_km')->orderBy('name')->get();
 
         return view('admin.modalities.index', compact('event', 'modalities'));
@@ -25,14 +27,14 @@ class EventModalityController extends AdminController
 
     public function create(int $eventoId)
     {
-        $event = $this->evento($eventoId);
+        $event = $this->eventoAbertoDoOrganizador($eventoId);
 
         return view('admin.modalities.create', compact('event'));
     }
 
     public function store(Request $request, int $eventoId)
     {
-        $event = $this->evento($eventoId);
+        $event = $this->eventoAbertoDoOrganizador($eventoId);
 
         $event->modalities()->create($this->validar($request));
 
@@ -43,7 +45,7 @@ class EventModalityController extends AdminController
 
     public function edit(int $eventoId, int $id)
     {
-        $event = $this->evento($eventoId);
+        $event = $this->eventoAbertoDoOrganizador($eventoId);
         $modality = $this->modalidade($event, $id);
 
         return view('admin.modalities.edit', compact('event', 'modality'));
@@ -51,7 +53,7 @@ class EventModalityController extends AdminController
 
     public function update(Request $request, int $eventoId, int $id)
     {
-        $event = $this->evento($eventoId);
+        $event = $this->eventoAbertoDoOrganizador($eventoId);
         $modality = $this->modalidade($event, $id);
 
         $modality->update($this->validar($request));
@@ -63,7 +65,7 @@ class EventModalityController extends AdminController
 
     public function destroy(int $eventoId, int $id)
     {
-        $event = $this->evento($eventoId);
+        $event = $this->eventoAbertoDoOrganizador($eventoId);
         $modality = $this->modalidade($event, $id);
 
         // A foreign key de subscriptions.modality_id é restrictOnDelete, então o
@@ -81,13 +83,6 @@ class EventModalityController extends AdminController
             ->with('sucesso', 'Modalidade apagada.');
     }
 
-    /** O evento, já filtrado pelo organizador do usuário logado. */
-    private function evento(int $id): Event
-    {
-        return Event::where('id', $id)
-            ->where('organizer_id', $this->organizerId())
-            ->firstOrFail();
-    }
 
     /** A modalidade, obrigatoriamente dentro do evento já escopado acima. */
     private function modalidade(Event $event, int $id): EventModality

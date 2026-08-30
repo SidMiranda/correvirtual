@@ -17,7 +17,9 @@ class EventKitController extends AdminController
 {
     public function index(int $eventoId)
     {
-        $event = $this->evento($eventoId);
+        // Listar continua valendo para evento já realizado: a tela vira só
+        // leitura, sem os botões de criar, editar e apagar.
+        $event = $this->eventoDoOrganizador($eventoId);
         $kits = $event->kits()->orderBy('price')->get();
 
         return view('admin.kits.index', compact('event', 'kits'));
@@ -25,14 +27,14 @@ class EventKitController extends AdminController
 
     public function create(int $eventoId)
     {
-        $event = $this->evento($eventoId);
+        $event = $this->eventoAbertoDoOrganizador($eventoId);
 
         return view('admin.kits.create', compact('event'));
     }
 
     public function store(Request $request, int $eventoId)
     {
-        $event = $this->evento($eventoId);
+        $event = $this->eventoAbertoDoOrganizador($eventoId);
 
         $event->kits()->create($this->validar($request));
 
@@ -43,7 +45,7 @@ class EventKitController extends AdminController
 
     public function edit(int $eventoId, int $id)
     {
-        $event = $this->evento($eventoId);
+        $event = $this->eventoAbertoDoOrganizador($eventoId);
         $kit = $this->kit($event, $id);
 
         return view('admin.kits.edit', compact('event', 'kit'));
@@ -51,7 +53,7 @@ class EventKitController extends AdminController
 
     public function update(Request $request, int $eventoId, int $id)
     {
-        $event = $this->evento($eventoId);
+        $event = $this->eventoAbertoDoOrganizador($eventoId);
         $kit = $this->kit($event, $id);
 
         $kit->update($this->validar($request));
@@ -63,7 +65,7 @@ class EventKitController extends AdminController
 
     public function destroy(int $eventoId, int $id)
     {
-        $event = $this->evento($eventoId);
+        $event = $this->eventoAbertoDoOrganizador($eventoId);
         $kit = $this->kit($event, $id);
 
         if ($kit->subscriptions()->exists()) {
@@ -77,13 +79,6 @@ class EventKitController extends AdminController
         return redirect()
             ->route('admin.eventos.kits.index', $event->id)
             ->with('sucesso', 'Kit apagado.');
-    }
-
-    private function evento(int $id): Event
-    {
-        return Event::where('id', $id)
-            ->where('organizer_id', $this->organizerId())
-            ->firstOrFail();
     }
 
     private function kit(Event $event, int $id): EventKit

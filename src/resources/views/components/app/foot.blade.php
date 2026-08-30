@@ -7,6 +7,7 @@
     background-color: #1a71b2; /* Fundo alinhado com o padrão de layout clean */
     border-top: 1px solid #e5e7eb; /* Divisão visual com borda sutil */
     display: flex;
+    flex-wrap: wrap; /* o selo de autoria desce para a própria linha */
     align-items: center;
     justify-content: center;
     width: 100%;
@@ -59,6 +60,28 @@
 .cv-link:hover {
     color: #2e7d32; /* Verde principal do seu site */
 }
+
+/* Selo "Desenvolvido por Mobspot" — o mais apagado do rodapé, para assinar
+   sem disputar atenção com o conteúdo do organizador. */
+.cv-selo-mobspot {
+    /* .cv-footer é flex em linha: sem forçar a largura toda, o selo sobe para
+       a mesma linha dos links sociais em vez de ficar abaixo deles. */
+    flex: 0 0 100%;
+    width: 100%;
+    text-align: center;
+    padding: 14px 16px 18px;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #fff;
+}
+.cv-selo-mobspot a {
+    color: inherit;
+    opacity: .55;
+    text-decoration: none;
+    transition: opacity .15s ease;
+}
+.cv-selo-mobspot a:hover,
+.cv-selo-mobspot a:focus-visible { opacity: 1; text-decoration: underline; }
 </style>
 
 <footer class="cv-footer">
@@ -85,5 +108,12 @@
                 Instagram
             </a>
         </div>
+    </div>
+
+    {{-- Selo de autoria. Discreto de propósito: fica abaixo do bloco principal,
+         menor e mais apagado, sem competir com o conteúdo do organizador. --}}
+    <div class="cv-selo-mobspot">
+        <a href="https://mobspot.com.br/?utm_source=corre-virtual-eventos&utm_medium=selo-rodape&utm_campaign=rede-clientes"
+           target="_blank" rel="noopener">Desenvolvido por Mobspot<span>.</span></a>
     </div>
 </footer>

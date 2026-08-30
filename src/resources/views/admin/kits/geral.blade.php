@@ -59,10 +59,17 @@
                                         @endif
                                     </td>
                                     <td class="text-right">
-                                        <a class="btn btn-datatable btn-icon btn-transparent-dark"
-                                           href="{{ route('admin.eventos.kits.edit', [$kit->event_id, $kit->id]) }}" title="Editar">
-                                            <i data-feather="edit"></i>
-                                        </a>
+                                        {{-- Evento já realizado não é mais editável. --}}
+                                        @if ($kit->event->jaAconteceu())
+                                            <span class="small text-muted" title="Evento já realizado">
+                                                <i data-feather="lock" style="width:16px;height:16px;"></i>
+                                            </span>
+                                        @else
+                                            <a class="btn btn-datatable btn-icon btn-transparent-dark"
+                                               href="{{ route('admin.eventos.kits.edit', [$kit->event_id, $kit->id]) }}" title="Editar">
+                                                <i data-feather="edit"></i>
+                                            </a>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

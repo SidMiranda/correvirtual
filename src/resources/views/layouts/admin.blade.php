@@ -39,11 +39,22 @@
         .topnav.navbar-cv { background: var(--cv-navy) !important; }
         .topnav.navbar-cv .nav-link, .topnav.navbar-cv .navbar-brand-cv { color: #fff !important; }
 
-        /* Botão do menu: branco e do mesmo corpo do nome ao lado. */
-        .botao-menu { color: #fff !important; background: transparent; border: 0; padding: .35rem .5rem; }
-        .botao-menu:hover, .botao-menu:focus { color: #fff !important; background: rgba(255,255,255,.14); }
-        .botao-menu svg { width: 1.35rem; height: 1.35rem; stroke-width: 2.25; }
+        /* Botões da barra escura: brancos. O template usa btn-transparent-dark,
+           que pinta o ícone da própria cor do fundo — invisível. */
+        .botao-menu, .botao-topo {
+            color: #fff !important; background: transparent; border: 0; padding: .35rem .5rem;
+        }
+        .botao-menu:hover, .botao-menu:focus,
+        .botao-topo:hover, .botao-topo:focus {
+            color: #fff !important; background: rgba(255,255,255,.14);
+        }
+        .botao-menu svg, .botao-topo svg { width: 1.35rem; height: 1.35rem; stroke-width: 2.25; }
         .topnav .btn-icon { color: #fff; }
+
+        /* Selo de autoria: presente, nunca protagonista. */
+        .selo-mobspot a { color: inherit; text-decoration: none; opacity: .7; transition: opacity .15s ease; }
+        .selo-mobspot a:hover, .selo-mobspot a:focus-visible { opacity: 1; text-decoration: underline; }
+        .sidenav-footer .selo-mobspot a { color: var(--cv-blue); opacity: .85; font-weight: 600; }
 
         /* Logo do organizador na barra: altura casada com a linha do texto,
            fundo branco porque a maioria das logos é feita para fundo claro. */
@@ -80,8 +91,20 @@
         </button>
 
         <ul class="navbar-nav align-items-center ml-auto">
+            {{-- Atalho para o site público, à esquerda do perfil. Saiu do rodapé
+                 (onde ninguém rolava até) e virou ícone na barra. --}}
+            <li class="nav-item mr-1">
+                <a class="btn btn-icon botao-topo" href="{{ url('/') }}" target="_blank"
+                   rel="noopener" title="Ver o site público" aria-label="Ver o site público">
+                    <i data-feather="home"></i>
+                </a>
+            </li>
+
             <li class="nav-item dropdown no-caret mr-3 dropdown-user">
-                <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownUserImage"
+                {{-- botao-topo no lugar de btn-transparent-dark: a classe do
+                     template pinta o ícone da própria cor do fundo escuro da
+                     barra, deixando-o praticamente invisível. --}}
+                <a class="btn btn-icon botao-topo dropdown-toggle" id="navbarDropdownUserImage"
                    href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i data-feather="user"></i>
                 </a>
@@ -145,10 +168,16 @@
 
                     </div>
                 </div>
+                {{-- O nome do organizador saiu daqui: ele já aparece na barra de
+                     cima, ao lado da logo, e repetir gastava o único espaço fixo
+                     do menu. --}}
                 <div class="sidenav-footer">
                     <div class="sidenav-footer-content">
-                        <div class="sidenav-footer-subtitle">Organizador</div>
-                        <div class="sidenav-footer-title">{{ auth()->user()->organizer->name }}</div>
+                        <div class="sidenav-footer-subtitle">Desenvolvido por:</div>
+                        <div class="sidenav-footer-title selo-mobspot">
+                            <a href="https://mobspot.com.br/?utm_source=corre-virtual-admin&utm_medium=selo-rodape&utm_campaign=rede-clientes"
+                               target="_blank" rel="noopener">Mobspot<span>.</span></a>
+                        </div>
                     </div>
                 </div>
             </nav>
@@ -211,8 +240,9 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-md-6 small">Corre Virtual — painel do organizador</div>
-                        <div class="col-md-6 text-md-right small">
-                            <a href="{{ url('/') }}" target="_blank">Ver o site público</a>
+                        <div class="col-md-6 text-md-right small selo-mobspot">
+                            <a href="https://mobspot.com.br/?utm_source=corre-virtual-admin&utm_medium=selo-rodape&utm_campaign=rede-clientes"
+                               target="_blank" rel="noopener">Desenvolvido por Mobspot<span>.</span></a>
                         </div>
                     </div>
                 </div>

@@ -260,4 +260,105 @@ class CatalogoDoEventoTest extends TestCase
             ->assertRedirect('/admin/kits')
             ->assertSessionHasErrors('evento');
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Evento já realizado é somente leitura
+    |--------------------------------------------------------------------------
+    | Mexer em modalidade ou kit depois da prova bagunça o histórico de quem se
+    | inscreveu e não muda nada no mundo real.
+    */
+
+    private function eventoJaRealizado(): Event
+    {
+        return Event::factory()->create([
+            'organizer_id' => $this->organizadorA->id,
+            'event_date' => now()->subMonth(),
+            'registration_deadline' => now()->subMonths(2),
+        ]);
+    }
+
+    public function test_listar_modalidades_de_evento_realizado_continua_funcionando(): void
+    {
+        $passado = $this->eventoJaRealizado();
+        EventModality::factory()->create(['event_id' => $passado->id, 'name' => '10km']);
+
+        $this->actingAs($this->adminA)
+            ->get("/admin/eventos/{$passado->id}/modalidades")
+            ->assertOk()
+            ->assertSee('10km');
+    }
+
+    public function test_nao_cria_modalidade_em_evento_ja_realizado(): void
+    {
+        $passado = $this->eventoJaRealizado();
+
+        $this->actingAs($this->adminA)
+            ->get("/admin/eventos/{$passado->id}/modalidades/create")
+            ->assertForbidden();
+
+        $this->actingAs($this->adminA)
+            ->post("/admin/eventos/{$passado->id}/modalidades", ['name' => 'Tarde demais', 'active' => 1])
+            ->assertForbidden();
+
+        $this->assertDatabaseMissing('event_modalities', ['name' => 'Tarde demais']);
+    }
+
+    public function test_nao_altera_modalidade_de_evento_ja_realizado(): void
+    {
+        $passado = $this->eventoJaRealizado();
+        $modalidade = EventModality::factory()->create(['event_id' => $passado->id, 'name' => 'Congelada']);
+
+        $this->actingAs($this->adminA)
+            ->put("/admin/eventos/{$passado->id}/modalidades/{$modalidade->id}", ['name' => 'Mexida', 'active' => 1])
+            ->assertForbidden();
+
+        $this->assertSame('Congelada', $modalidade->fresh()->name);
+    }
+
+    public function test_nao_altera_nem_apaga_kit_de_evento_ja_realizado(): void
+    {
+        $passado = $this->eventoJaRealizado();
+        $kit = EventKit::factory()->create(['event_id' => $passado->id, 'price' => 50]);
+
+        $this->actingAs($this->adminA)
+            ->put("/admin/eventos/{$passado->id}/kits/{$kit->id}", ['name' => 'Mexido', 'price' => 1, 'active' => 1])
+            ->assertForbidden();
+
+        $this->actingAs($this->adminA)
+            ->delete("/admin/eventos/{$passado->id}/kits/{$kit->id}")
+            ->assertForbidden();
+
+        $this->assertEquals(50, $kit->fresh()->price);
+    }
+
+    public function test_evento_realizado_fica_fora_do_seletor_de_cadastro(): void
+    {
+        $passado = $this->eventoJaRealizado();
+        $passado->update(['title' => 'Prova Que Ja Passou']);
+
+        $futuro = Event::factory()->create([
+            'organizer_id' => $this->organizadorA->id,
+            'title' => 'Prova Que Vem Ai',
+            'event_date' => now()->addMonth(),
+        ]);
+
+        $this->actingAs($this->adminA)
+            ->get('/admin/modalidades')
+            ->assertOk()
+            ->assertSee('Prova Que Vem Ai')
+            ->assertDontSee('Prova Que Ja Passou (');
+    }
+
+    public function test_atalho_de_cadastro_recusa_evento_ja_realizado(): void
+    {
+        // Escondido do <select> não basta: trocar o value no navegador não pode
+        // abrir a porta que a tela fechou.
+        $passado = $this->eventoJaRealizado();
+
+        $this->actingAs($this->adminA)
+            ->get("/admin/catalogo/modalidades/novo?evento={$passado->id}")
+            ->assertRedirect('/admin/modalidades')
+            ->assertSessionHasErrors('evento');
+    }
 }
