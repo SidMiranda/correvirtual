@@ -12,15 +12,26 @@ class EventsController extends Controller
     {
         $organizerId = app('currentOrganizer')->id;
 
-        // Busca todos os eventos ativos, trazendo junto as modalidades e ordena pelas datas mais próximas
         $events = Event::with('modalities')
             ->where('active', true)
             ->where('organizer_id', $organizerId)
-            ->orderBy('event_date', 'asc')
             ->get();
 
-        // Retorna a view index passando a variável $events
-        return view('index', compact('events'));
+        // Duas listas, com ordens opostas de propósito: o que ainda vai
+        // acontecer sobe pelo mais próximo (é onde o atleta se inscreve), e o
+        // que já passou desce pelo mais recente (é histórico — a prova do ano
+        // passado interessa mais que a de cinco anos atrás).
+        $proximosEventos = $events
+            ->filter(fn ($e) => !$e->jaAconteceu())
+            ->sortBy('event_date')
+            ->values();
+
+        $eventosPassados = $events
+            ->filter(fn ($e) => $e->jaAconteceu())
+            ->sortByDesc('event_date')
+            ->values();
+
+        return view('index', compact('proximosEventos', 'eventosPassados'));
     }
 
     public function show($event_id)

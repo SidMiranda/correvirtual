@@ -29,6 +29,14 @@ jobs:
               ${{ secrets.APP_ENV }}
             EOF
 
+            # VIEW_COMPILED_PATH=/tmp vem do secret e precisa sair: /tmp é
+            # compartilhado e tem sticky bit, então um arquivo compilado que
+            # nasceu de outro usuário (qualquer comando rodado como root)
+            # trava a aplicação inteira com "rename: Operation not permitted".
+            # O padrão do Laravel (storage/framework/views) é volume próprio do
+            # container e não tem esse problema.
+            sed -i '/^VIEW_COMPILED_PATH=/d' /home/correvirtual/src/.env
+
             # Configuração que NÃO é segredo mora aqui, versionada, em vez de
             # escondida dentro do secret APP_ENV — onde ninguém consegue revisar
             # nem ver o histórico de mudança.

@@ -165,3 +165,20 @@
     width: 100%;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Eventos realizados
+   ---------------------------------------------------------------------------
+   A arte dos eventos passados fica em cor cheia de propósito: é ela que mostra
+   a qualidade do trabalho do organizador para quem está conhecendo a página
+   agora. Quem separa as duas coisas é o título da seção, não um filtro que
+   apaga o material.
+*/
+
+.eventos-vazio {
+    text-align: center;
+    color: #5b6d7f;
+    padding: 28px 16px 40px;
+    margin: 0;
+    font-size: 1.05rem;
+}

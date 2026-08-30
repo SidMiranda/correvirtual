@@ -14,7 +14,7 @@
                         <div class="small font-weight-bold text-cv-blue mb-1">Eventos</div>
                         <div class="h3 mb-0">{{ $resumo['eventos'] }}</div>
                     </div>
-                    <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                    <i class="fas fa-calendar fa-2x" style="color: var(--icone-eventos); opacity:.35;"></i>
                 </div>
             </div>
         </div>
@@ -25,7 +25,7 @@
                         <div class="small font-weight-bold text-success mb-1">Eventos ativos</div>
                         <div class="h3 mb-0">{{ $resumo['eventos_ativos'] }}</div>
                     </div>
-                    <i class="fas fa-eye fa-2x text-gray-300"></i>
+                    <i class="fas fa-eye fa-2x" style="color: var(--icone-eventos); opacity:.35;"></i>
                 </div>
             </div>
         </div>
@@ -36,7 +36,7 @@
                         <div class="small font-weight-bold text-cv-blue mb-1">Inscrições</div>
                         <div class="h3 mb-0">{{ $resumo['inscricoes'] }}</div>
                     </div>
-                    <i class="fas fa-users fa-2x text-gray-300"></i>
+                    <i class="fas fa-users fa-2x" style="color: var(--icone-equipes); opacity:.35;"></i>
                 </div>
             </div>
         </div>
@@ -47,7 +47,7 @@
                         <div class="small font-weight-bold text-success mb-1">Inscrições pagas</div>
                         <div class="h3 mb-0">{{ $resumo['inscricoes_pagas'] }}</div>
                     </div>
-                    <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                    <i class="fas fa-check-circle fa-2x" style="color: var(--icone-painel); opacity:.35;"></i>
                 </div>
             </div>
         </div>

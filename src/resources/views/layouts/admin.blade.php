@@ -83,7 +83,6 @@
         /* Selo de autoria: presente, nunca protagonista. */
         .selo-mobspot a { color: inherit; text-decoration: none; opacity: .7; transition: opacity .15s ease; }
         .selo-mobspot a:hover, .selo-mobspot a:focus-visible { opacity: 1; text-decoration: underline; }
-        .sidenav-footer .selo-mobspot a { color: var(--cv-blue); opacity: .85; font-weight: 600; }
 
         /* Logo do organizador na barra: altura casada com a linha do texto,
            fundo branco porque a maioria das logos é feita para fundo claro. */
@@ -91,9 +90,60 @@
             height: 26px; width: auto; max-width: 96px;
             border-radius: 4px; background: #fff; padding: 2px;
         }
-        .sidenav-menu .nav-link.active { color: var(--cv-blue); font-weight: 600; }
-        .sidenav-menu .nav-link.active .nav-link-icon { color: var(--cv-blue); }
+        .sidenav-menu .nav-link.active { color: var(--cv-navy); font-weight: 600; background: var(--cv-blue-pale); }
         .text-cv-blue { color: var(--cv-blue) !important; }
+
+        /*
+        | Cor nos ícones
+        |---------------------------------------------------------------------
+        | O template entrega tudo em cinza. Num painel de poucas áreas, dar uma
+        | cor a cada uma vira atalho de leitura: a pessoa aprende "kit é laranja"
+        | e para de ler o texto do menu.
+        |
+        | São tons de uma mesma família (azul do projeto, verde, laranja, roxo),
+        | todos com contraste suficiente sobre o fundo claro do menu — não é
+        | arco-íris, é código de cor.
+        */
+        :root {
+            --icone-painel:      #1a71b2;  /* azul do projeto */
+            --icone-eventos:     #1c7a4f;  /* verde: o que está por vir */
+            --icone-modalidades: #b45309;  /* âmbar: as distâncias */
+            --icone-kits:        #7c3aed;  /* roxo: o que o atleta recebe */
+            --icone-equipes:     #be185d;  /* magenta: gente */
+        }
+
+        /* Os seletores abaixo precisam ser tão específicos quanto os do template
+           (`.sidenav .sidenav-menu .nav .nav-link .nav-link-icon .feather`),
+           senão o cinza dele vence e nada muda. */
+        .sidenav .sidenav-menu .nav .nav-link .nav-link-icon .feather { stroke-width: 2; }
+
+        .sidenav .sidenav-menu .nav .nav-link.nav-icone-painel .nav-link-icon,
+        .sidenav .sidenav-menu .nav .nav-link.nav-icone-painel .nav-link-icon .feather { color: var(--icone-painel); }
+
+        .sidenav .sidenav-menu .nav .nav-link.nav-icone-eventos .nav-link-icon,
+        .sidenav .sidenav-menu .nav .nav-link.nav-icone-eventos .nav-link-icon .feather { color: var(--icone-eventos); }
+
+        .sidenav .sidenav-menu .nav .nav-link.nav-icone-modalidades .nav-link-icon,
+        .sidenav .sidenav-menu .nav .nav-link.nav-icone-modalidades .nav-link-icon .feather { color: var(--icone-modalidades); }
+
+        .sidenav .sidenav-menu .nav .nav-link.nav-icone-kits .nav-link-icon,
+        .sidenav .sidenav-menu .nav .nav-link.nav-icone-kits .nav-link-icon .feather { color: var(--icone-kits); }
+
+        .sidenav .sidenav-menu .nav .nav-link.nav-icone-equipes .nav-link-icon,
+        .sidenav .sidenav-menu .nav .nav-link.nav-icone-equipes .nav-link-icon .feather { color: var(--icone-equipes); }
+
+        /* No item ativo o ícone não muda de cor — é a faixa clara atrás que
+           marca onde você está, então a cor continua servindo de referência. */
+
+        /* Ícone do cabeçalho de cada página, sobre o banner escuro. */
+        .page-header-icon svg { color: #fff; opacity: .9; }
+
+        /* Ações das tabelas: cinza em repouso, cor na intenção. Colorir todos
+           deixaria a lista poluída — a cor aqui serve para dizer "isto apaga". */
+        .btn-datatable[title="Editar"]:hover  { color: var(--icone-painel) !important; }
+        .btn-datatable[title="Kits"]:hover    { color: var(--icone-kits) !important; }
+        .btn-datatable[title="Modalidades"]:hover { color: var(--icone-modalidades) !important; }
+        .btn-datatable[title="Apagar"]:hover  { color: #b3261e !important; }
     </style>
 </head>
 <body class="nav-fixed">
@@ -170,31 +220,31 @@
 
                         <div class="sidenav-menu-heading">Gestão</div>
 
-                        <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
+                        <a class="nav-link nav-icone-painel {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
                            href="{{ route('admin.dashboard') }}">
                             <div class="nav-link-icon"><i data-feather="activity"></i></div>
                             Painel
                         </a>
 
-                        <a class="nav-link {{ request()->routeIs('admin.eventos.*') ? 'active' : '' }}"
+                        <a class="nav-link nav-icone-eventos {{ request()->routeIs('admin.eventos.*') ? 'active' : '' }}"
                            href="{{ route('admin.eventos.index') }}">
                             <div class="nav-link-icon"><i data-feather="calendar"></i></div>
                             Eventos
                         </a>
 
-                        <a class="nav-link {{ request()->routeIs('admin.modalidades.geral') ? 'active' : '' }}"
+                        <a class="nav-link nav-icone-modalidades {{ request()->routeIs('admin.modalidades.geral') ? 'active' : '' }}"
                            href="{{ route('admin.modalidades.geral') }}">
                             <div class="nav-link-icon"><i data-feather="flag"></i></div>
                             Modalidades
                         </a>
 
-                        <a class="nav-link {{ request()->routeIs('admin.kits.geral') ? 'active' : '' }}"
+                        <a class="nav-link nav-icone-kits {{ request()->routeIs('admin.kits.geral') ? 'active' : '' }}"
                            href="{{ route('admin.kits.geral') }}">
                             <div class="nav-link-icon"><i data-feather="package"></i></div>
                             Kits
                         </a>
 
-                        <a class="nav-link {{ request()->routeIs('admin.equipes.*') ? 'active' : '' }}"
+                        <a class="nav-link nav-icone-equipes {{ request()->routeIs('admin.equipes.*') ? 'active' : '' }}"
                            href="{{ route('admin.equipes.index') }}">
                             <div class="nav-link-icon"><i data-feather="users"></i></div>
                             Equipes
@@ -202,16 +252,14 @@
 
                     </div>
                 </div>
-                {{-- O nome do organizador saiu daqui: ele já aparece na barra de
-                     cima, ao lado da logo, e repetir gastava o único espaço fixo
-                     do menu. --}}
+                {{-- Quem está logado precisa saber de qual organizador é o que
+                     está vendo — o painel é multi-organizador, e essa é a única
+                     marca fixa disso na tela. O selo de autoria fica só no
+                     rodapé da direita. --}}
                 <div class="sidenav-footer">
                     <div class="sidenav-footer-content">
-                        <div class="sidenav-footer-subtitle">Desenvolvido por:</div>
-                        <div class="sidenav-footer-title selo-mobspot">
-                            <a href="https://mobspot.com.br/?utm_source=corre-virtual-admin&utm_medium=selo-rodape&utm_campaign=rede-clientes"
-                               target="_blank" rel="noopener">Mobspot<span>.</span></a>
-                        </div>
+                        <div class="sidenav-footer-subtitle">Organizador</div>
+                        <div class="sidenav-footer-title">{{ auth()->user()->organizer->name }}</div>
                     </div>
                 </div>
             </nav>

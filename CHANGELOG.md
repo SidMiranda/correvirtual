@@ -6,6 +6,19 @@ Histórico anterior a este arquivo (todo o desenvolvimento inicial do projeto) p
 
 ## [Unreleased]
 
+### Home separada em próximos e realizados, e cor nos ícones do painel (2026-08-29)
+- **A home passou a ter duas seções**: "Próximos eventos", do mais perto para o mais longe (é onde o atleta se inscreve), e "Eventos realizados", do mais recente para o mais antigo (é histórico). Antes era uma lista só, com o passado misturado no meio.
+- Sem nenhuma prova futura, a seção explica isso em vez de aparecer vazia.
+- As artes dos eventos passados ficam em **cor cheia** de propósito: é o que mostra a qualidade do trabalho do organizador para quem está conhecendo a página agora. Quem separa as duas coisas é o título da seção.
+- **Cor nos ícones do painel**, uma por área (azul o painel, verde eventos, âmbar modalidades, roxo kits, magenta equipes) — num painel de poucas áreas a cor vira atalho de leitura, e a pessoa para de ler o texto do menu. Continua sendo a biblioteca Feather que já estava no template; o que faltava era cor, não ícone novo.
+- Os seletores precisaram ser tão específicos quanto os do SB Admin Pro (`.sidenav .sidenav-menu .nav .nav-link .nav-link-icon .feather`), senão o cinza dele vencia e nada mudava.
+
+### Correção: aplicação travava com "Operation not permitted" (2026-08-29)
+- `VIEW_COMPILED_PATH=/tmp` foi removido. O `/tmp` é compartilhado e tem sticky bit: um arquivo de view compilada que nasceu de outro usuário (qualquer comando rodado como root no container) trava a aplicação **inteira** com erro 500 e `rename: Operation not permitted`. Aconteceu três vezes durante o desenvolvimento.
+- Agora vale o padrão do Laravel (`storage/framework/views`), que é volume próprio do container. O deploy remove a linha do `.env` gerado a partir do secret, já que ela ainda vive lá.
+- `event-cards.css` ganhou cache-busting (`?v=filemtime`). Sem isso, mudança de estilo só aparece para quem limpa o cache — a Home v2 já tinha esse cuidado, essa folha não.
+- 6 testes novos para a separação da home. Suíte: **105 testes, 251 asserções**.
+
 ### Prévia bonita do link ao compartilhar (2026-08-29)
 - **Open Graph e Twitter Card no site e no painel.** Sem isso o endereço chega no WhatsApp como texto cru, sem imagem nem descrição — impressão exatamente errada para uma plataforma que cobra dinheiro.
 - **A página de um evento fala do evento**: título com a data, local e descrição, e a imagem do próprio evento. A home usa o nome e o banner do organizador. Sem imagem específica, cai no banner padrão — cartão sem imagem nenhuma é bem pior que um genérico.
