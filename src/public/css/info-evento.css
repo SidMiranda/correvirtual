@@ -216,6 +216,17 @@
     font-size: 16px;
   }
 
+  /* O CTA fixo ocupa a largura toda da faixa de baixo: o botão do WhatsApp
+     sobe para não ficar por cima do botão de inscrição, que é a ação
+     principal desta página.
+
+     :has() e não uma regra solta porque o CTA só existe com inscrição aberta —
+     em evento já realizado não há nada embaixo, e o botão ficaria flutuando
+     alto sem motivo. Navegador sem :has() só volta ao comportamento antigo. */
+  body:has(.cta-button) .zap-flutuante {
+    bottom: 84px;
+  }
+
   /* Reserve space so content isn't hidden under the fixed CTA */
   .event-content {
     padding-bottom: 92px;

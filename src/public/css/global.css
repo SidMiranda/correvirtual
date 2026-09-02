@@ -55,3 +55,111 @@ body {
 .block-header-title span {
     color: #1a71b2;
 }
+
+/* ---------------------------------------------------------------------------
+   Botão flutuante do WhatsApp (x-app.whatsapp-flutuante)
+
+   Fica em todas as páginas públicas, então mora aqui e não num CSS de página.
+   z-index alto o bastante para ficar acima do menu fixo da home (1000) e do
+   CTA fixo da página do evento (30).
+   --------------------------------------------------------------------------- */
+.zap-flutuante {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 1200;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    /* Largura só do círculo em repouso; o rótulo cresce a partir daqui no
+       hover, sem empurrar nada porque o elemento é fixed. */
+    height: 58px;
+    padding: 0 13px;
+    border-radius: 999px;
+
+    background: #25d366;
+    color: #fff;
+    text-decoration: none;
+    box-shadow: 0 6px 20px rgba(37, 211, 102, .35), 0 2px 6px rgba(0, 0, 0, .18);
+    transition: background .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+
+.zap-flutuante:hover,
+.zap-flutuante:focus-visible {
+    background: #1eb855;
+    color: #fff;
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 26px rgba(37, 211, 102, .45), 0 2px 6px rgba(0, 0, 0, .18);
+}
+
+.zap-flutuante:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 3px;
+}
+
+.zap-flutuante__icone {
+    width: 32px;
+    height: 32px;
+    flex: 0 0 auto;
+    display: block;
+}
+
+/* O rótulo aparece só no hover/foco: em repouso o botão é o círculo de sempre,
+   que é o que as pessoas reconhecem, e o texto explica o que acontece ao
+   clicar para quem hesita. Anima largura a partir de 0 em vez de display:none
+   para continuar legível por leitor de tela. */
+.zap-flutuante__texto {
+    max-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1;
+    opacity: 0;
+    transition: max-width .25s ease, opacity .2s ease, margin .25s ease;
+}
+
+.zap-flutuante:hover .zap-flutuante__texto,
+.zap-flutuante:focus-visible .zap-flutuante__texto {
+    max-width: 190px;
+    margin-left: 10px;
+    margin-right: 4px;
+    opacity: 1;
+}
+
+/* No celular o dedo cobre o botão e não existe hover: só o círculo, e um
+   pouco mais para dentro da tela por causa da barra do navegador. */
+@media (max-width: 640px) {
+    .zap-flutuante {
+        right: 16px;
+        bottom: 16px;
+        height: 54px;
+        padding: 0 11px;
+    }
+
+    .zap-flutuante__icone {
+        width: 30px;
+        height: 30px;
+    }
+
+    .zap-flutuante:hover .zap-flutuante__texto,
+    .zap-flutuante:focus-visible .zap-flutuante__texto {
+        max-width: 0;
+        margin: 0;
+        opacity: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .zap-flutuante,
+    .zap-flutuante__texto {
+        transition: none;
+    }
+
+    .zap-flutuante:hover,
+    .zap-flutuante:focus-visible {
+        transform: none;
+    }
+}

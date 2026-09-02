@@ -14,6 +14,8 @@
         @yield('content')
     </main>
 
+    <x-app.whatsapp-flutuante />
+
     <x-app.scripts />
     <script src="{{ asset('js/home-v2.js') }}?v={{ filemtime(public_path('js/home-v2.js')) }}" defer></script>
     @stack('scripts')

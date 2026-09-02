@@ -11,6 +11,8 @@
         @yield('content')
     </main>
 
+    <x-app.whatsapp-flutuante />
+
     <x-app.scripts />
     @stack('scripts')
 </body>

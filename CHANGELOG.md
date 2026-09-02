@@ -6,6 +6,15 @@ Histórico anterior a este arquivo (todo o desenvolvimento inicial do projeto) p
 
 ## [Unreleased]
 
+### Botão flutuante de WhatsApp nas páginas públicas (2026-09-01)
+- **Botão fixo no canto inferior direito**, em todas as páginas públicas (home, página do evento, minhas inscrições). Abre `wa.me` em aba nova com a mensagem "Olá, vim do site do Corre Virtual" já digitada — serve de rastreio: quem chega por ali se identifica sem precisar perguntar.
+- **Número e mensagem em `config/contato.php`** (`WHATSAPP_NUMERO` / `WHATSAPP_MENSAGEM` no `.env`), não na view: número de contato muda (troca de chip, atendimento terceirizado) e isso não é motivo para deploy. **Número vazio esconde o botão** — melhor nenhum botão que um que leva a lugar nenhum.
+- O número é limpo (`preg_replace`) antes de virar link: o `wa.me` só aceita dígitos, e "+55 (19) 9…" abre o WhatsApp numa tela de "número inválido" — falha que não aparece em log nenhum, só em reclamação.
+- **Ícone é o glifo oficial do WhatsApp inline em SVG**, extraído do Font Awesome 5.11.2 que já está no repo — sem lib nova. Inline e não `<i class="fab">` porque o Font Awesome aqui é a versão JS, que troca o ícone depois que a página pinta: o botão apareceria vazio por um instante em toda visita.
+- O rótulo "Fale com a gente" aparece no hover no desktop; no celular fica só o círculo, que é o que as pessoas reconhecem, e onde não existe hover.
+- **No mobile da página do evento o botão sobe 84px**: ali o "Inscreva-se" é um CTA fixo na faixa de baixo, e a ação principal da página não pode ficar coberta pelo atendimento. A regra usa `body:has(.cta-button)` porque esse CTA só existe com inscrição aberta — em evento já realizado não há nada embaixo.
+- 4 testes novos. Suíte: **160 testes, 424 asserções**.
+
 ### Cadastro de patrocinadores no painel, e a seção do site lendo o banco (2026-08-30)
 - **CRUD de patrocinadores** em `/admin/patrocinadores`, no molde do de equipes: o patrocinador pertence ao **organizador**, não ao evento — o mesmo apoiador cobre várias provas no ano, e amarrá-lo a um evento obrigaria a recadastrar a cada prova.
 - Campos: nome, logo, site, ordem de exibição, observação interna e "aparece no site". A **ordem é do organizador**, não alfabética — quem aparece primeiro é o que foi negociado no contrato.
